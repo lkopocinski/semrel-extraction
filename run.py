@@ -21,19 +21,24 @@ def main():
     valid_batches = load_batches('./data/valid-52.vectors')
     test_batches = load_batches('./data/test-52.vectors')
 
-    for epoch in range(100):
+    best_valid_loss = float('inf')
+
+    for epoch in range(10):
         train_loss, train_acc = train(network, optimizer, loss_func, train_batches)
         print('Train - Loss: {}, Accuracy: {}'.format(train_loss, train_acc))
 
-        valid_acc = evaluate(network, valid_batches)
-        print('Valid - Accuracy: {}'.format(valid_acc))
+        valid_loss, valid_acc = evaluate(network, valid_batches, loss_func)
+        print('Valid - Loss: {}, Accuracy: {}'.format(valid_loss, valid_acc))
+        if valid_loss < best_valid_loss:
+            best_valid_loss = valid_loss
+            torch.save(network.state_dict(), 'semrel.model.pt')
 
-    test_acc = evaluate(network, test_batches)
+    test_acc = evaluate(network, test_batches, loss_func)
     print(' Test - Accuracy: {}'.format(test_acc))
 
     # extract the layer with embedding
-    embeddings = network.extract_layer_weights('f2')
-    # save the embeddings
+    # embeddings = network.extract_layer_weights('f2')
+    # todo: save the embeddings
 
 
 def load_batches_example(datafile):
@@ -112,8 +117,9 @@ def train(network, optimizer, loss_func, batches):
     return ep_loss / len(batches), ep_acc / len(batches)
 
 
-def evaluate(network, batches):
+def evaluate(network, batches, loss_function):
     eval_acc = 0.0
+    eval_loss = 0.0
     network.eval()
 
     with torch.no_grad():
@@ -124,11 +130,12 @@ def evaluate(network, batches):
             data = torch.FloatTensor([data])
 
             output = network(data).squeeze(0)
+            loss = loss_function(output, target)
             
             accuracy = compute_accuracy(output, target)
             eval_acc += accuracy
-    return eval_acc / len(batches)
-
+            eval_loss += loss.item()
+    return eval_loss / len(batches), eval_acc / len(batches)
 
 if __name__ == "__main__":
     main()

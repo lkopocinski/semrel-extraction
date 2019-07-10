@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -24,3 +25,6 @@ class RelNet(nn.Module):
     def extract_layer_weights(self, layername):
         layer = self.__dict__['_modules'][layername]
         return layer.weight.data.numpy()
+
+    def load(self, model_path):
+        self.load_state_dict(torch.load(model_path))
