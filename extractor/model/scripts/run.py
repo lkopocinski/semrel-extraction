@@ -9,7 +9,7 @@ import torch.nn as nn
 from torch.optim import Adagrad
 from torch.autograd import Variable
 
-from base.model import RelNet
+from relextr.model import RelNet
 
 
 def main():

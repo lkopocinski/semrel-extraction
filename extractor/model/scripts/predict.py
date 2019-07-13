@@ -1,6 +1,7 @@
 import torch
 import numpy as np
-from base.model import RelNet
+
+from relextr.model import RelNet
 
 
 network = RelNet()
