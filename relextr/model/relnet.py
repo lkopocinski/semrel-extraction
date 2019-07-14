@@ -28,3 +28,8 @@ class RelNet(nn.Module):
 
     def load(self, model_path):
         self.load_state_dict(torch.load(model_path))
+
+    def predict(self, data):
+        output = self(torch.FloatTensor([data]))
+        _, predicted = torch.max(output, dim=1)
+        return predicted
