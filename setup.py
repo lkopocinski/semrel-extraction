@@ -10,7 +10,8 @@ setup(
     packages=[
         'relextr',
         'relextr.base',
-        'relextr.model'
+        'relextr.model',
+        'relextr.utils'
     ],
     zip_safe=False
 )
