@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# import sys
-# import argparse
 import os
 from corpus_ccl import cclutils
 
@@ -9,7 +7,6 @@ from relextr.base import Parser
 from relextr.base import Predictor
 from relextr.utils.embutils import ElmoEmb
 from relextr.model import RelNet
-
 
 import argparse
 
@@ -56,6 +53,7 @@ def main(argv=None):
         for sample in parser(doc):
             decision = predictor.predict(sample)
             (f_idx, f_ctx), (s_idx, s_ctx) = sample
+            print('{}\t{}: {}'.format(f_ctx[f_idx].encode('utf-8'), s_ctx[s_idx].encode('utf-8'), decision))
 
 
 if __name__ == "__main__":
