@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chunkList SYSTEM "ccl.dtd">
+<chunkList>
+ <chunk id="ch1" type="p">
+  <sentence id="s1">
+   <tok>
+    <orth>Biała</orth>
+    <lex disamb="1"><base>biały</base><ctag>adj:sg:nom:f:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>dama</orth>
+    <lex disamb="1"><base>dama</base><ctag>subst:sg:nom:f</ctag></lex>
+   </tok>
+   <tok>
+    <orth>użyła</orth>
+    <lex disamb="1"><base>użyć</base><ctag>praet:sg:f:perf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>naiwny</orth>
+    <lex disamb="1"><base>naiwny</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
+    <prop key="BRAND">Naive</prop>
+   </tok>
+   <tok>
+    <orth>klasyfikator</orth>
+    <lex disamb="1"><base>klasyfikator</base><ctag>subst:sg:nom:m3</ctag></lex>
+   </tok>
+   <tok>
+    <orth>bayesowski</orth>
+    <lex disamb="1"><base>bayesowski</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>do</orth>
+    <lex disamb="1"><base>do</base><ctag>prep:gen</ctag></lex>
+   </tok>
+   <tok>
+    <orth>rozpoznawania</orth>
+    <lex disamb="1"><base>rozpoznawać</base><ctag>ger:sg:gen:n:imperf:aff</ctag></lex>
+   </tok>
+   <tok>
+    <orth>białego</orth>
+    <lex disamb="1"><base>biały</base><ctag>adj:sg:gen:n:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>wina</orth>
+    <lex disamb="1"><base>wino</base><ctag>subst:sg:gen:n</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>.</orth>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+   </tok>
+  </sentence>
+  <sentence id="s1">
+   <tok>
+    <orth>Biała</orth>
+    <lex disamb="1"><base>biały</base><ctag>adj:sg:nom:f:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>dama</orth>
+    <lex disamb="1"><base>dama</base><ctag>subst:sg:nom:f</ctag></lex>
+   </tok>
+   <tok>
+    <orth>użyła</orth>
+    <lex disamb="1"><base>użyć</base><ctag>praet:sg:f:perf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>naiwny</orth>
+    <lex disamb="1"><base>naiwny</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>klasyfikator</orth>
+    <lex disamb="1"><base>klasyfikator</base><ctag>subst:sg:nom:m3</ctag></lex>
+   </tok>
+   <tok>
+    <orth>bayesowski</orth>
+    <lex disamb="1"><base>bayesowski</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>do</orth>
+    <lex disamb="1"><base>do</base><ctag>prep:gen</ctag></lex>
+   </tok>
+   <tok>
+    <orth>rozpoznawania</orth>
+    <lex disamb="1"><base>rozpoznawać</base><ctag>ger:sg:gen:n:imperf:aff</ctag></lex>
+   </tok>
+   <tok>
+    <orth>białego</orth>
+    <lex disamb="1"><base>biały</base><ctag>adj:sg:gen:n:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>wina</orth>
+    <lex disamb="1"><base>wino</base><ctag>subst:sg:gen:n</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>.</orth>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+   </tok>
+  </sentence>
+  <sentence id="s2">
+   <tok>
+    <orth>Biała</orth>
+    <lex disamb="1"><base>biały</base><ctag>adj:sg:nom:f:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>dama</orth>
+    <lex disamb="1"><base>dama</base><ctag>subst:sg:nom:f</ctag></lex>
+   </tok>
+   <tok>
+    <orth>użyła</orth>
+    <lex disamb="1"><base>użyć</base><ctag>praet:sg:f:perf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>naiwny</orth>
+    <lex disamb="1"><base>naiwny</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>klasyfikator</orth>
+    <lex disamb="1"><base>klasyfikator</base><ctag>subst:sg:nom:m3</ctag></lex>
+   </tok>
+   <tok>
+    <orth>bayesowski</orth>
+    <lex disamb="1"><base>bayesowski</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>do</orth>
+    <lex disamb="1"><base>do</base><ctag>prep:gen</ctag></lex>
+   </tok>
+   <tok>
+    <orth>rozpoznawania</orth>
+    <lex disamb="1"><base>rozpoznawać</base><ctag>ger:sg:gen:n:imperf:aff</ctag></lex>
+   </tok>
+   <tok>
+    <orth>białego</orth>
+    <lex disamb="1"><base>biały</base><ctag>adj:sg:gen:n:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>wina</orth>
+    <lex disamb="1"><base>wino</base><ctag>subst:sg:gen:n</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>.</orth>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+   </tok>
+  </sentence>
+  <sentence id="s3">
+   <tok>
+    <orth>Biała</orth>
+    <lex disamb="1"><base>biały</base><ctag>adj:sg:nom:f:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>dama</orth>
+    <lex disamb="1"><base>dama</base><ctag>subst:sg:nom:f</ctag></lex>
+   </tok>
+   <tok>
+    <orth>użyła</orth>
+    <lex disamb="1"><base>użyć</base><ctag>praet:sg:f:perf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>naiwny</orth>
+    <lex disamb="1"><base>naiwny</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>klasyfikator</orth>
+    <lex disamb="1"><base>klasyfikator</base><ctag>subst:sg:nom:m3</ctag></lex>
+   </tok>
+   <tok>
+    <orth>bayesowski</orth>
+    <lex disamb="1"><base>bayesowski</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>do</orth>
+    <lex disamb="1"><base>do</base><ctag>prep:gen</ctag></lex>
+   </tok>
+   <tok>
+    <orth>rozpoznawania</orth>
+    <lex disamb="1"><base>rozpoznawać</base><ctag>ger:sg:gen:n:imperf:aff</ctag></lex>
+   </tok>
+   <tok>
+    <orth>białego</orth>
+    <lex disamb="1"><base>biały</base><ctag>adj:sg:gen:n:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>wina</orth>
+    <lex disamb="1"><base>wino</base><ctag>subst:sg:gen:n</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>.</orth>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+   </tok>
+  </sentence>
+  <sentence id="s4">
+   <tok>
+    <orth>Biała</orth>
+    <lex disamb="1"><base>biały</base><ctag>adj:sg:nom:f:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>dama</orth>
+    <lex disamb="1"><base>dama</base><ctag>subst:sg:nom:f</ctag></lex>
+   </tok>
+   <tok>
+    <orth>użyła</orth>
+    <lex disamb="1"><base>użyć</base><ctag>praet:sg:f:perf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>naiwny</orth>
+    <lex disamb="1"><base>naiwny</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>klasyfikator</orth>
+    <lex disamb="1"><base>klasyfikator</base><ctag>subst:sg:nom:m3</ctag></lex>
+   </tok>
+   <tok>
+    <orth>bayesowski</orth>
+    <lex disamb="1"><base>bayesowski</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>do</orth>
+    <lex disamb="1"><base>do</base><ctag>prep:gen</ctag></lex>
+   </tok>
+   <tok>
+    <orth>rozpoznawania</orth>
+    <lex disamb="1"><base>rozpoznawać</base><ctag>ger:sg:gen:n:imperf:aff</ctag></lex>
+   </tok>
+   <tok>
+    <orth>białego</orth>
+    <lex disamb="1"><base>biały</base><ctag>adj:sg:gen:n:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>wina</orth>
+    <lex disamb="1"><base>wino</base><ctag>subst:sg:gen:n</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>.</orth>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+   </tok>
+  </sentence>
+  <sentence id="s5">
+   <tok>
+    <orth>Biała</orth>
+    <lex disamb="1"><base>biały</base><ctag>adj:sg:nom:f:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>dama</orth>
+    <lex disamb="1"><base>dama</base><ctag>subst:sg:nom:f</ctag></lex>
+   </tok>
+   <tok>
+    <orth>użyła</orth>
+    <lex disamb="1"><base>użyć</base><ctag>praet:sg:f:perf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>naiwny</orth>
+    <lex disamb="1"><base>naiwny</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>klasyfikator</orth>
+    <lex disamb="1"><base>klasyfikator</base><ctag>subst:sg:nom:m3</ctag></lex>
+   </tok>
+   <tok>
+    <orth>bayesowski</orth>
+    <lex disamb="1"><base>bayesowski</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>do</orth>
+    <lex disamb="1"><base>do</base><ctag>prep:gen</ctag></lex>
+   </tok>
+   <tok>
+    <orth>rozpoznawania</orth>
+    <lex disamb="1"><base>rozpoznawać</base><ctag>ger:sg:gen:n:imperf:aff</ctag></lex>
+   </tok>
+   <tok>
+    <orth>białego</orth>
+    <lex disamb="1"><base>biały</base><ctag>adj:sg:gen:n:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>wina</orth>
+    <lex disamb="1"><base>wino</base><ctag>subst:sg:gen:n</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>.</orth>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+   </tok>
+  </sentence>
+ </chunk>
+</chunkList>
