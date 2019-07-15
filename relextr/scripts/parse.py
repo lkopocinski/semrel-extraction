@@ -25,10 +25,10 @@ def main():
 
     doc = cclutils.read_ccl('../../data/input.xml')
     for sample in parser(doc):
-        print(sample, file=open('./test.txt', mode='w', encoding='utf-8'))
+        print(sample, file=open('./test.txt', mode='a', encoding='utf-8'))
         decision = predictor.predict(sample)
         (f_idx, f_ctx), (s_idx, s_ctx) = sample
-        print('{}\t{}: {}'.format(f_ctx[f_idx], s_ctx[s_idx], decision), file=open('./out.txt', mode='w', encoding='utf-8'))
+        print('{}\t{}: {}'.format(f_ctx[f_idx], s_ctx[s_idx], decision), file=open('./out.txt', mode='a', encoding='utf-8'))
 
 
 if __name__ == "__main__":
