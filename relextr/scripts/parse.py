@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # import sys
 # import argparse
-
+import os
 from corpus_ccl import cclutils
 
 from relextr.base import Parser
@@ -11,24 +11,51 @@ from relextr.utils.embutils import ElmoEmb
 from relextr.model import RelNet
 
 
-def main():
-    net_model = RelNet()
-    net_model.load('../../models/net-model.pt')
+import argparse
 
-    emb_model = ElmoEmb(
-        '../../models/emb-options.json',
-        '../../models/emb-weights.hdf5',
-    )
+try:
+    import argcomplete
+except ImportError:
+    argcomplete = None
+
+
+def get_args(argv=None):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-m', '--net_model', required=True,
+                        help="A neural model for BRAND - PRODUCT recognition")
+    parser.add_argument('-e', '--emb_model', required=True,
+                        help="A path to embedding model, compatible with "
+                        "neural model (`--net_model` parametere.")
+    parser.add_argument('-b', '--batch', required=True,
+                        help="A path to the list of CCL files to process")
+    if argcomplete:
+        argcomplete.autocomplete(parser)
+    return parser.parse_args(argv)
+
+
+def load_data(datalist):
+    with open(datalist) as ifile:
+        for line in ifile:
+            ccl_path = line.strip()
+            if not os.path.exists(ccl_path):
+                continue
+            yield cclutils.read_ccl(ccl_path)
+
+
+def main(argv=None):
+    args = get_args(argv)
+    net_model = RelNet()
+    net_model.load(args.net_model)
+
+    emb_model = ElmoEmb(args.emb_model)
 
     predictor = Predictor(net_model, emb_model)
     parser = Parser()
 
-    doc = cclutils.read_ccl('../../data/input.xml')
-    for sample in parser(doc):
-        print(sample, file=open('./test.txt', mode='a', encoding='utf-8'))
-        decision = predictor.predict(sample)
-        (f_idx, f_ctx), (s_idx, s_ctx) = sample
-        print('{}\t{}: {}'.format(f_ctx[f_idx], s_ctx[s_idx], decision), file=open('./out.txt', mode='a', encoding='utf-8'))
+    for doc in load_data(args.batch):
+        for sample in parser(doc):
+            decision = predictor.predict(sample)
+            (f_idx, f_ctx), (s_idx, s_ctx) = sample
 
 
 if __name__ == "__main__":
