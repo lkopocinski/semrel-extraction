@@ -1,2 +1,2 @@
-from extractor import Parser
-from predictor import Predictor
+from .extractor import Parser
+from .predictor import Predictor

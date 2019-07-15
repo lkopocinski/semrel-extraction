@@ -32,4 +32,4 @@ class RelNet(nn.Module):
     def predict(self, data):
         output = self(torch.FloatTensor([data]))
         _, predicted = torch.max(output, dim=1)
-        return predicted
+        return predicted.item()
