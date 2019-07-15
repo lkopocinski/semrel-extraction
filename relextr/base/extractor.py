@@ -39,17 +39,20 @@ class ExtractorType(object):
         self._tagset = ccl.get_tagset(tagset)
 
     def tokens(self, context):
-        return (token for sentence in context for token in sentence.tokens())
+        return ((sentence, token)
+                for sentence in context
+                for token in sentence.tokens())
 
     def find_attribute_tokens(self, context, attr='default'):
-        found = set()
-        for token in self.tokens(context):
+        found = list()
+        for ind, (sentence, token) in enumerate(self.tokens(context)):
             if not token.has_metadata():
                 continue
             metadata = token.get_metadata()
             if not metadata.has_attribute(attr):
                 continue
-            found.add(metadata.get_attribute(attr))
+            ctx = [t.orth_utf8() for t in sentence.tokens()]
+            found.append((ind, ctx))
         return found
 
     def is_noun(self, token):
@@ -71,11 +74,12 @@ class NounExtractor(ExtractorType):
         super(NounExtractor, self).__init__(name)
 
     def _extract(self, context):
-        matched = set()
+        matched = list()
 
-        for token in self.tokens(context):
+        for ind, (sentence, token) in enumerate(self.tokens(context)):
             if self.is_noun(token):
-                matched.add(cou.get_lexeme_lemma(token))
+                ctx = [t.orth_utf8() for t in sentence.tokens()]
+                matched.append((ind, ctx))
         return matched
 
 
