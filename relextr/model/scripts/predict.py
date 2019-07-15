@@ -5,7 +5,7 @@ from relextr.model import RelNet
 
 
 network = RelNet()
-network.load('./semrel.model.pt')
+network.load('../../../models/net-model.pt')
 
 data = np.ones(3072)
 

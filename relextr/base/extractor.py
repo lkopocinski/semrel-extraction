@@ -73,7 +73,7 @@ class NounExtractor(ExtractorType):
         matched = list()
 
         for sentence in context:
-            if ind, token in enumerate(sentence.tokens()):
+            for ind, token in enumerate(sentence.tokens()):
                 if self.is_noun(token):
                     ctx = [t.orth_utf8() for t in sentence.tokens()]
                     matched.append((ind, ctx))
