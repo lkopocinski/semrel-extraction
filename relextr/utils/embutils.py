@@ -10,4 +10,4 @@ class ElmoEmb(object):
         character_ids = batch_to_ids([context])
         embeddings = self._model(character_ids)
         v = embeddings['elmo_representations'][1].data.numpy()
-        return [v:,idx,:].flatten()
+        return v[:, idx, :].flatten()
