@@ -8,7 +8,7 @@ class ElmoEmb(object):
     def __init__(self, model_path):
         self._model = self._load_model(model_path)
 
-    def load_model(self, model_path):
+    def _load_model(self, model_path):
         zipf = zipfile.ZipFile(model_path)
         zipf.extractall('./')
         zipf.close()
