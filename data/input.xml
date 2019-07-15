@@ -23,6 +23,7 @@
    <tok>
     <orth>klasyfikator</orth>
     <lex disamb="1"><base>klasyfikator</base><ctag>subst:sg:nom:m3</ctag></lex>
+    <prop key="BRAND">Huawei</prop>
    </tok>
    <tok>
     <orth>bayesowski</orth>
@@ -42,6 +43,10 @@
    </tok>
    <tok>
     <orth>wina</orth>
+    <lex disamb="1"><base>wino</base><ctag>subst:sg:gen:n</ctag></lex>
+   </tok>
+   <tok>
+    <orth>p8</orth>
     <lex disamb="1"><base>wino</base><ctag>subst:sg:gen:n</ctag></lex>
    </tok>
    <ns/>

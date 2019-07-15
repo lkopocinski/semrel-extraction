@@ -1,1 +1,1 @@
-from relnet import RelNet
+from .relnet import RelNet
