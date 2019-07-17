@@ -13,13 +13,15 @@ class RelNet(nn.Module):
     def __init__(self, in_dim=3072, hidden_dim=512, out_dim=2, dropout=0.5):
         super(RelNet, self).__init__()
         self.f1 = nn.Linear(in_dim, hidden_dim)
-        self.f2 = nn.Linear(hidden_dim, out_dim)
+        self.f2 = nn.Linear(hidden_dim, hidden_dim)
+        self.f3 = nn.Linear(hidden_dim, out_dim)
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
         """ x: a concatenation of word vectors """
-        h = self.f1(x)
-        o = self.f2(h)
+        h1 = self.f1(x)
+        h2 = self.f2(h1)
+        o = self.f3(h2)
         return o
 
     def extract_layer_weights(self, layername):
