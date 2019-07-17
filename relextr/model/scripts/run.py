@@ -3,6 +3,7 @@
 import random
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.metrics import precision_recall_fscore_support
 
 import torch
 import torch.nn as nn
@@ -24,17 +25,19 @@ def main():
     best_valid_loss = float('inf')
 
     for epoch in range(10):
-        train_loss, train_acc = train(network, optimizer, loss_func, train_batches)
-        print('Train - Loss: {}, Accuracy: {}'.format(train_loss, train_acc))
+        train_metrics = train(network, optimizer, loss_func, train_batches)
+        print_metrics(train_metrics, 'Train')
 
-        valid_loss, valid_acc = evaluate(network, valid_batches, loss_func)
-        print('Valid - Loss: {}, Accuracy: {}'.format(valid_loss, valid_acc))
+        valid_metrics = evaluate(network, valid_batches, loss_func)
+        print_metrics(valid_metrics, 'Valid')
+
+        valid_loss = valid_metrics['loss']
         if valid_loss < best_valid_loss:
             best_valid_loss = valid_loss
             torch.save(network.state_dict(), 'semrel.model.pt')
 
-    test_acc = evaluate(network, test_batches, loss_func)
-    print(' Test - Accuracy: {}'.format(test_acc))
+    test_metrics = evaluate(network, test_batches, loss_func)
+    print_metrics(test_metrics, 'Test')
 
     # extract the layer with embedding
     # embeddings = network.extract_layer_weights('f2')
@@ -93,9 +96,25 @@ def compute_accuracy(output, targets):
     return (predicted == targets).sum().item() / targets.shape[0]
 
 
+def compute_precision_recall_fscore(output, targets):
+    _, predicted = torch.max(output, dim=1)
+    output = predicted.data.numpy()
+    targets = targets.data.numpy()
+    prec, rec, f, _ = precision_recall_fscore_support(targets, output, average='weighted')
+    return prec, rec, f
+
+
+def print_metrics(metrics, prefix):
+    print(f'{prefix} - Loss: {metrics["loss"]}, '
+          f'Accuracy: {metrics["accuracy"]}, '
+          f'Precision: {metrics["precision"]}, '
+          f'Recall: {metrics["recall"]}, '
+          f'Fscore: {metrics["fscore"]}')
+
+
 def train(network, optimizer, loss_func, batches):
     # TODO: Cosine Embedding Loss, ontologia jako regularyzator!
-    ep_loss, ep_acc = 0.0, 0.0
+    ep_loss, ep_acc, ep_prec, ep_rec, ep_f = 0.0, 0.0, 0.0, 0.0, 0.0
     network.train()
 
     for batch in batches:
@@ -112,30 +131,53 @@ def train(network, optimizer, loss_func, batches):
         optimizer.step()
 
         accuracy = compute_accuracy(output, target)
+        precision, recall, fscore = compute_precision_recall_fscore(output, target)
         ep_loss += loss.item()
+
         ep_acc += accuracy
-    return ep_loss / len(batches), ep_acc / len(batches)
+        ep_prec += precision
+        ep_rec += recall
+        ep_f += fscore
+
+    return {
+        'loss': ep_loss / len(batches),
+        'accuracy': ep_acc / len(batches),
+        'precision': ep_prec / len(batches),
+        'recall': ep_rec / len(batches),
+        'fscore': ep_f / len(batches)
+    }
 
 
 def evaluate(network, batches, loss_function):
-    eval_acc = 0.0
-    eval_loss = 0.0
+    eval_loss, eval_acc, eval_prec, eval_rec, eval_f = 0.0, 0.0, 0.0, 0.0, 0.0
     network.eval()
 
     with torch.no_grad():
         for batch in batches:
-
             labels, data = zip(*batch)
             target = Variable(torch.LongTensor(labels2idx(labels)))
             data = torch.FloatTensor([data])
 
             output = network(data).squeeze(0)
             loss = loss_function(output, target)
-            
+
             accuracy = compute_accuracy(output, target)
-            eval_acc += accuracy
+            precision, recall, fscore = compute_precision_recall_fscore(output, target)
             eval_loss += loss.item()
-    return eval_loss / len(batches), eval_acc / len(batches)
+
+            eval_acc += accuracy
+            eval_prec += precision
+            eval_rec += recall
+            eval_f += fscore
+
+    return {
+        'loss': eval_loss / len(batches),
+        'accuracy': eval_acc / len(batches),
+        'precision': eval_prec / len(batches),
+        'recall': eval_rec / len(batches),
+        'fscore': eval_f / len(batches)
+    }
+
 
 if __name__ == "__main__":
     main()
