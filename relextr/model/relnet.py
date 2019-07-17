@@ -7,7 +7,7 @@ import torch.nn.functional as F
 
 class RelNet(nn.Module):
     """
-        in_dim: konkatenacja wektorow (300), hidden_dim: warstwa ukryta (300),
+        in_dim: konkatenacja wektorow (1024), hidden_dim: warstwa ukryta (512),
         out_dim: liczba relacji
     """
     def __init__(self, in_dim=3072, hidden_dim=512, out_dim=2, dropout=0.5):
