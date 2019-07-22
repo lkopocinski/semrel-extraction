@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from utils import find_token, get_context, corpora_files, load_document,\
-id_to_sent_dict, is_ner_relation, is_in_channel, get_example, print_element
+from utils import corpora_files, load_document, id_to_sent_dict, \
+    is_ner_relation, is_in_channel, get_example, print_element
 
 import argparse
 
