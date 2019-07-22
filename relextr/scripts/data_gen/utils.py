@@ -47,8 +47,13 @@ def is_in_channel(relation, channels):
 def get_context(sent):
     return [token.orth_utf8() for token in sent.tokens()]
 
+
 def get_example(rel, sentences):
     sent = sentences[rel.sentence_id()]
     idx, token = find_token(sent, rel.annotation_number(), rel.channel_name())
     context = get_context(sent) if idx != -1 else None
     return idx, context
+
+
+def print_element(f_idx, f_context, t_idx, t_context):
+    print('{}:{}\t{}:{}'.format(f_idx, f_context, t_idx, t_context))
