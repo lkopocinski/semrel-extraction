@@ -18,9 +18,9 @@ def main():
     optimizer = Adagrad(network.parameters())
     loss_func = nn.CrossEntropyLoss()
 
-    train_batches = load_batches('../../../data/train-52.vectors')
-    valid_batches = load_batches('../../../data/valid-52.vectors')
-    test_batches = load_batches('../../../data/test-52.vectors')
+    train_batches = load_batches('/home/Projects/semrel-extraction/data/ready_data/train.vectors')
+    valid_batches = load_batches('/home/Projects/semrel-extraction/data/ready_data/valid.vectors')
+    test_batches = load_batches('/home/Projects/semrel-extraction/data/ready_data/test.vectors')
 
     best_valid_loss = float('inf')
 
