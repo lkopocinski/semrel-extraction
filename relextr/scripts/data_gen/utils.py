@@ -26,14 +26,6 @@ def id_to_sent_dict(document):
     return {sentence.id(): sentence for par in document.paragraphs() for sentence in par.sentences()}
 
 
-def find_token(sent, ann_number, ann_channel):
-    for idx, token in enumerate(sent.tokens()):
-        number = tou.get_annotation(sent, token, ann_channel)
-        if number == ann_number:
-            return idx, token
-    return -1, None
-
-
 def is_ner_relation(relation):
     return relation.rel_set() == 'NER relation'
 
@@ -44,16 +36,36 @@ def is_in_channel(relation, channels):
 
     return f_ch in channels and t_ch in channels
 
+
 def get_context(sent):
     return [token.orth_utf8() for token in sent.tokens()]
 
 
-def get_example(rel, sentences):
-    sent = sentences[rel.sentence_id()]
-    idx, token = find_token(sent, rel.annotation_number(), rel.channel_name())
-    context = get_context(sent) if idx != -1 else None
-    return idx, context
-
-
 def print_element(f_idx, f_context, t_idx, t_context):
     print('{}:{}\t{}:{}'.format(f_idx, f_context, t_idx, t_context))
+
+
+def get_example(rel, sentences):
+    sent = sentences[rel.sentence_id()]
+    idxs = find_token_indexes(sent, rel.annotation_number(), rel.channel_name())
+
+    if not idxs:
+        return -1, None
+
+    context = get_context(sent)
+    begin = idxs[0]
+    end = idxs[-1]
+
+    phrase = ' '.join(context[begin:end+1])
+    context[begin:end+1] = [phrase]
+
+    return idxs[0], context
+
+
+def find_token_indexes(sent, ann_number, ann_channel):
+    idxs = []
+    for idx, token in enumerate(sent.tokens()):
+        number = tou.get_annotation(sent, token, ann_channel)
+        if number == ann_number:
+            idxs.append(idx)
+    return idxs
