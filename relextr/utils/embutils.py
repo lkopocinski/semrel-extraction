@@ -2,6 +2,9 @@ import os
 import zipfile
 from allennlp.modules.elmo import Elmo, batch_to_ids
 
+import sys
+import numpy
+numpy.set_printoptions(threshold=sys.maxsize)
 
 class ElmoEmb(object):
 
@@ -22,4 +25,5 @@ class ElmoEmb(object):
         character_ids = batch_to_ids([context])
         embeddings = self._model(character_ids)
         v = embeddings['elmo_representations'][1].data.numpy()
+#        print(str(v[:, idx, :].flatten()).replace('\n', ''))
         return v[:, idx, :].flatten()

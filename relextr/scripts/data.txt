@@ -1,1 +1,1 @@
-/home/Projects/data/input.xml
+/home/Projects/semrel-extraction/data/input.xml
