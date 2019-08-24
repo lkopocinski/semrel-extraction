@@ -37,34 +37,45 @@ def train_model(network, batches, loss_function, optimizer, labels2idx, device):
         epoch_rec += recall
         epoch_f += fscore
 
-        return {
-            'loss': epoch_loss / len(batches),
-            'accuracy': epoch_acc / len(batches),
-            'precision': epoch_prec / len(batches),
-            'recall': epoch_rec / len(batches),
-            'fscore': epoch_f / len(batches)
-        }
+    return {
+        'loss': epoch_loss / len(batches),
+        'accuracy': epoch_acc / len(batches),
+        'precision': epoch_prec / len(batches),
+        'recall': epoch_rec / len(batches),
+        'fscore': epoch_f / len(batches)
+    }
 
 
 def evaluate_model(model, batches, loss_function, labels2idx, device):
-    epoch_loss = 0
-    epoch_accuracy = 0
+    eval_loss, eval_acc, eval_prec, eval_rec, eval_f = 0.0, 0.0, 0.0, 0.0, 0.0
 
     model.eval()
 
     with torch.no_grad():
         for batch in batches:
-            output = model(batch.data.to(device)).squeeze(1)
-            # _, predictions = torch.max(output, dim=1)
+            labels, data = zip(*batch)
+            target = Variable(torch.FloatTensor(
+                remap_labels(labels, labels2idx)
+            )).to(device)
+            data = torch.FloatTensor([data])
 
-            targets = Variable(torch.FloatTensor(
-                remap_labels(batch.labels, labels2idx))).to(device)
+            output = model(data.to(device)).squeeze(0)
+            loss = loss_function(output, target)
 
-            loss = loss_function(output, targets)
+            accuracy = compute_accuracy_n(output, target)
+            precision, recall, fscore = compute_precision_recall_fscore(output, target)
+            eval_loss += loss.item()
 
-            accuracy = compute_accuracy_n(output, targets)
+            eval_acc += accuracy
+            eval_prec += precision
+            eval_rec += recall
+            eval_f += fscore
 
-            epoch_loss += loss.item()
-            epoch_accuracy += accuracy
-    return epoch_loss / len(batches), epoch_accuracy / len(batches)
+    return {
+        'loss': eval_loss / len(batches),
+        'accuracy': eval_acc / len(batches),
+        'precision': eval_prec / len(batches),
+        'recall': eval_rec / len(batches),
+        'fscore': eval_f / len(batches)
+    }
 
