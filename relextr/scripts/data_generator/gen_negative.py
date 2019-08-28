@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import random
+from itertools import permutations, product
 
 from corpus_ccl import corpus_object_utils as cou
 
@@ -29,7 +30,7 @@ def is_noun(token):
     return 'subst' == cou.get_pos(token, 'nkjp', True)
 
 
-def get_nouns(sent):
+def get_nouns_idx(sent):
     return [idx for idx, token in enumerate(sent.tokens()) if is_noun(token)]
 
 
@@ -49,40 +50,41 @@ def main(argv=None):
                     f_idx, f_context = get_example(f, sentences)
                     t_idx, t_context = get_example(t, sentences)
 
-                    f_sent = sentences[f.sentence_id()]
-                    f_nouns = get_nouns(f_sent)
-
-                    t_sent = sentences[t.sentence_id()]
-                    t_nouns = get_nouns(t_sent)
-
                     if f_context == t_context:
                         context = f_context
-                        nouns = [idx for idx in f_nouns if idx not in (f_idx, t_idx)]
+                        nouns_idx = get_nouns_idx(sentences[f.sentence_id()])
+                        nouns_idx = [idx for idx in nouns_idx if idx not in (f_idx, t_idx)]
 
-                        if not nouns:
+                        if not nouns_idx:
                             continue
 
-                        f_idx_noun = random.choice(nouns)
-                        nouns.remove(f_idx_noun)
+                        for idx in nouns_idx:
+                            if abs(idx - f_idx) <= 3:
+                                print_element(f_idx, context, idx, context)
+                            if abs(idx - t_idx) <= 3:
+                                print_element(idx, context, t_idx, context)
 
-                        if not nouns:
-                            continue
-
-                        t_idx_noun = random.choice(nouns)
-                        print_element(f_idx, context, t_idx_noun, context)
-                        print_element(f_idx_noun, context, t_idx, context)
+                        for idx_f, idx_t in permutations(nouns_idx, 2):
+                            if abs(idx_f - idx_t) <= 3:
+                                print_element(idx_f, context, idx_t, context)
                     else:
-                        f_nouns = [idx for idx in f_nouns if idx is not f_idx]
-                        t_nouns = [idx for idx in t_nouns if idx is not t_idx]
+                        f_nouns = get_nouns_idx(sentences[f.sentence_id()])
+                        t_nouns = get_nouns_idx(sentences[t.sentence_id()])
+
+                        f_nouns_idx = [idx for idx in f_nouns if idx is not f_idx]
+                        t_nouns_idx = [idx for idx in t_nouns if idx is not t_idx]
 
                         if not f_nouns or not t_nouns:
                             continue
 
-                        f_idx_noun = random.choice(f_nouns)
-                        t_idx_noun = random.choice(t_nouns)
+                        for idx in f_nouns_idx:
+                            print_element(idx, f_context, t_idx, t_context)
 
-                        print_element(f_idx, f_context, t_idx_noun, t_context)
-                        print_element(f_idx_noun, f_context, t_idx, t_context)
+                        for idx in t_nouns_idx:
+                            print_element(f_idx, f_context, idx, t_context)
+
+                        for idx_f, idx_t in product(f_nouns_idx, t_nouns_idx):
+                            print_element(idx_f, f_context, idx_t, t_context)
 
 
 if __name__ == "__main__":

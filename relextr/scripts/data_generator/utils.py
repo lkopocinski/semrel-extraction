@@ -59,31 +59,14 @@ def print_element(f_idx, f_context, t_idx, t_context):
     print('{}:{}\t{}:{}'.format(f_idx, f_context, t_idx, t_context))
 
 
-def get_first_occurence(elements):
-    if not elements:
-        return []
-
-    idxs = [elements[0]]
-    for idx, element in enumerate(elements):
-        try:
-            if element == (elements[idx+1]-1):
-                idxs.append(elements[idx+1])
-            else:
-                break
-        except Exception as e:
-            return idxs
-
-    return idxs
-
-
 def get_example(rel, sentences):
     sent = sentences[rel.sentence_id()]
     idxs = find_token_indexes(sent, rel.annotation_number(), rel.channel_name())
+
     if not idxs:
         return -1, None
 
     context = get_context(sent)
-    idxs = get_first_occurence(idxs)
     begin = idxs[0]
     end = idxs[-1]
 
@@ -98,5 +81,6 @@ def find_token_indexes(sent, ann_number, ann_channel):
     for idx, token in enumerate(sent.tokens()):
         number = tou.get_annotation(sent, token, ann_channel)
         if number == ann_number:
-            idxs.append(idx)
+           idxs.append(idx)
     return idxs
+
