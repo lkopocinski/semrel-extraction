@@ -1,6 +1,6 @@
 import numpy as np
 
-def load_batches(datapath, batch_size=10):
+def load_batches(datapath, batch_size=15):
     with open(datapath, encoding="utf-8") as ifile:
         dataset = []
         batch = []

@@ -18,9 +18,9 @@ def main():
     optimizer = Adagrad(network.parameters())
     loss_func = nn.CrossEntropyLoss()
 
-    train_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_5/train.vectors')
-    valid_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_5/valid.vectors')
-    test_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_5/test.vectors')
+    train_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_6/train.vectors')
+    valid_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_6/valid.vectors')
+    test_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_6/test.vectors')
 
     best_valid_loss = float('inf')
 
@@ -34,7 +34,7 @@ def main():
         valid_loss = valid_metrics['loss']
         if valid_loss < best_valid_loss:
             best_valid_loss = valid_loss
-            torch.save(network.state_dict(), 'semrel.model_5.pt')
+            torch.save(network.state_dict(), 'semrel.model_6.pt')
 
     test_metrics = evaluate(network, test_batches, loss_func)
     print_metrics(test_metrics, 'Test')

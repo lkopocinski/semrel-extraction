@@ -24,9 +24,11 @@ class CNN(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, embedded):
+        print(embedded.shape)
         # embedded: batch, sent, emb
         embedded = embedded.unsqueeze(1)
         # embedded: batch, 1, sent, emb
+        print(embedded.shape)
         convoluted = [
             F.relu(conv(embedded)).squeeze(3)
             for conv in self.convolutions

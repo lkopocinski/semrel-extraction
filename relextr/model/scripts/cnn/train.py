@@ -20,9 +20,10 @@ def train_model(network, batches, loss_function, optimizer, labels2idx, device):
         target = Variable(torch.FloatTensor(
             remap_labels(labels, labels2idx)
         )).to(device)
+        import pudb; pudb.set_trace()
         data = torch.FloatTensor([data])
 
-        output = network(data.to(device)).squeeze(0)
+        output = network(data.to(device)).squeeze(1)
         loss = loss_function(output, target)
 
         loss.backward()
@@ -59,7 +60,7 @@ def evaluate_model(model, batches, loss_function, labels2idx, device):
             )).to(device)
             data = torch.FloatTensor([data])
 
-            output = model(data.to(device)).squeeze(0)
+            output = model(data.to(device)).squeeze(1)
             loss = loss_function(output, target)
 
             accuracy = compute_accuracy_n(output, target)
