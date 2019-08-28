@@ -44,19 +44,37 @@ def is_in_channel(relation, channels):
 
     return f_ch in channels and t_ch in channels
 
+
 def get_context(sent):
     return [token.orth_utf8() for token in sent.tokens()]
 
 
-def get_example(rel, sentences):
-    sent = sentences[rel.sentence_id()]
-    idx, token = find_token(sent, rel.annotation_number(), rel.channel_name())
-    context = get_context(sent) if idx != -1 else None
-    return idx, context
+# def get_example(rel, sentences):
+#     sent = sentences[rel.sentence_id()]
+#     idx, token = find_token(sent, rel.annotation_number(), rel.channel_name())
+#     context = get_context(sent) if idx != -1 else None
+#     return idx, context
 
 
 def print_element(f_idx, f_context, t_idx, t_context):
     print('{}:{}\t{}:{}'.format(f_idx, f_context, t_idx, t_context))
+
+
+def get_first_occurence(elements):
+    if not elements:
+        return []
+
+    idxs = [elements[0]]
+    for idx, element in enumerate(elements):
+        try:
+            if element == (elements[idx+1]-1):
+                idxs.append(elements[idx+1])
+            else:
+                break
+        except Exception as e:
+            return idxs
+
+    return idxs
 
 
 def get_example(rel, sentences):
@@ -67,6 +85,7 @@ def get_example(rel, sentences):
         return -1, None
 
     context = get_context(sent)
+    idxs = get_first_occurence(idxs)
     begin = idxs[0]
     end = idxs[-1]
 
