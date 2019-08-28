@@ -34,6 +34,10 @@ def get_nouns_idx(sent):
     return [idx for idx, token in enumerate(sent.tokens()) if is_noun(token)]
 
 
+def are_close(idx_f, idx_t):
+    return abs(idx_f - idx_t) <= 3
+
+
 def main(argv=None):
     args = get_args(argv)
 
@@ -47,35 +51,29 @@ def main(argv=None):
                     f = relation.rel_from()
                     t = relation.rel_to()
 
-                    f_idx, f_context = get_example(f, sentences)
-                    t_idx, t_context = get_example(t, sentences)
+                    f_idx, f_context, f_idxs = get_example(f, sentences)
+                    t_idx, t_context, t_idxs = get_example(t, sentences)
 
                     if f_context == t_context:
                         context = f_context
                         nouns_idx = get_nouns_idx(sentences[f.sentence_id()])
-                        nouns_idx = [idx for idx in nouns_idx if idx not in (f_idx, t_idx)]
-
-                        if not nouns_idx:
-                            continue
+                        nouns_idx = [idx for idx in nouns_idx if idx not in f_idxs]
 
                         for idx in nouns_idx:
-                            if abs(idx - f_idx) <= 3:
+                            if are_close(f_idx, idx):
                                 print_element(f_idx, context, idx, context)
-                            if abs(idx - t_idx) <= 3:
+                            if are_close(t_idx, idx):
                                 print_element(idx, context, t_idx, context)
 
                         for idx_f, idx_t in permutations(nouns_idx, 2):
-                            if abs(idx_f - idx_t) <= 3:
+                            if are_close(idx_f, idx_t):
                                 print_element(idx_f, context, idx_t, context)
                     else:
                         f_nouns = get_nouns_idx(sentences[f.sentence_id()])
                         t_nouns = get_nouns_idx(sentences[t.sentence_id()])
 
-                        f_nouns_idx = [idx for idx in f_nouns if idx is not f_idx]
-                        t_nouns_idx = [idx for idx in t_nouns if idx is not t_idx]
-
-                        if not f_nouns or not t_nouns:
-                            continue
+                        f_nouns_idx = [idx for idx in f_nouns if idx not in f_idxs]
+                        t_nouns_idx = [idx for idx in t_nouns if idx not in t_idxs]
 
                         for idx in f_nouns_idx:
                             print_element(idx, f_context, t_idx, t_context)

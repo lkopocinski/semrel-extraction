@@ -35,8 +35,8 @@ def main(argv=None):
                     f = relation.rel_from()
                     t = relation.rel_to()
 
-                    f_idx, f_context = get_example(f, sentences)
-                    t_idx, t_context = get_example(t, sentences)
+                    f_idx, f_context, _ = get_example(f, sentences)
+                    t_idx, t_context, _ = get_example(t, sentences)
 
                     if f_idx != -1 and t_idx != -1:
                         print_element(f_idx, f_context, t_idx, t_context)
