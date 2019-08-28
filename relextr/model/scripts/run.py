@@ -18,13 +18,13 @@ def main():
     optimizer = Adagrad(network.parameters())
     loss_func = nn.CrossEntropyLoss()
 
-    train_batches = load_batches('/home/Projects/semrel-extraction/data/ready_data/train.vectors')
-    valid_batches = load_batches('/home/Projects/semrel-extraction/data/ready_data/valid.vectors')
-    test_batches = load_batches('/home/Projects/semrel-extraction/data/ready_data/test.vectors')
+    train_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_6/train.vectors')
+    valid_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_6/valid.vectors')
+    test_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_6/test.vectors')
 
     best_valid_loss = float('inf')
 
-    for epoch in range(10):
+    for epoch in range(40):
         train_metrics = train(network, optimizer, loss_func, train_batches)
         print_metrics(train_metrics, 'Train')
 
@@ -34,7 +34,7 @@ def main():
         valid_loss = valid_metrics['loss']
         if valid_loss < best_valid_loss:
             best_valid_loss = valid_loss
-            torch.save(network.state_dict(), 'semrel.model.pt')
+            torch.save(network.state_dict(), 'semrel.model_6.pt')
 
     test_metrics = evaluate(network, test_batches, loss_func)
     print_metrics(test_metrics, 'Test')
@@ -66,7 +66,7 @@ def load_batches_example(datafile):
 
 
 def load_batches(datapath, batch_size=10):
-    with open(datapath) as ifile:
+    with open(datapath, encoding="utf-8") as ifile:
         dataset = []
         batch = []
         for ind, line in enumerate(ifile, 1):

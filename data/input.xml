@@ -18,12 +18,12 @@
    <tok>
     <orth>naiwny</orth>
     <lex disamb="1"><base>naiwny</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
-    <prop key="BRAND">Naive</prop>
+    <prop key="BRAND">naiwny</prop>
    </tok>
    <tok>
-    <orth>klasyfikator</orth>
-    <lex disamb="1"><base>klasyfikator</base><ctag>subst:sg:nom:m3</ctag></lex>
-    <prop key="BRAND">Huawei</prop>
+    <orth>Rimmel</orth>
+    <lex disamb="1"><base>Rimmel</base><ctag>subst:sg:nom:m3</ctag></lex>
+    <prop key="BRAND">Rimmel</prop>
    </tok>
    <tok>
     <orth>bayesowski</orth>
