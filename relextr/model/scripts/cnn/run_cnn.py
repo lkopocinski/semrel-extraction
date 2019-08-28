@@ -10,13 +10,14 @@ from torch.autograd import Variable
 
 from model import CNN
 from data_loader import load_batches
+from train import train_model, evaluate_model
 
 def main():
-    train_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_5/train.vectors')
-    valid_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_5/valid.vectors')
-    test_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_5/test.vectors')
+    train_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_5_temp/train_.vectors')
+    valid_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_5_temp/valid_.vectors')
+    test_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_5_temp/test_.vectors')
 
-    mapping = {
+    labels2idx = {
         'no_relation': 0,
         'in_relation': 1,
     }
@@ -25,34 +26,42 @@ def main():
 	'emb_dim': 3072, 
 	'n_filters': 128, 
 	'filter_sizes': (4, 8, 16, 32),
+#	'filter_sizes': (4, 8),
         'out_dim': 2, 
 	'dropout': 0.5
     }
     
-    model = CNN(**params)
+    network = CNN(**params)
     loss_function = nn.BCEWithLogitsLoss()
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model.to(device)
+    network.to(device)
     loss_function.to(device)
   
-    optimizer = Adagrad(model.parameters())
- 
+    optimizer = Adagrad(network.parameters())
+    print(network) 
     # training 
     best_valid_loss = float('inf')
     for epoch in range(20):
-        train_metrics = train(network, optimizer, loss_func, train_batches)
+        train_metrics = train_model(
+            network, train_batches, loss_function, optimizer, labels2idx, device
+        )
         print_metrics(train_metrics, 'Train')
-
-        valid_metrics = evaluate(network, valid_batches, loss_func)
+        
+        valid_metrics = evaluate_model(
+            network, valid_batches, loss_function, labels2idx, device
+        )
         print_metrics(valid_metrics, 'Valid')
 
         valid_loss = valid_metrics['loss']
         if valid_loss < best_valid_loss:
             best_valid_loss = valid_loss
-            torch.save(network.state_dict(), 'semrel.model_5.pt')
+            torch.save(network.state_dict(), 'semrel.model.cnn.pt')
 
-    test_metrics = evaluate(network, test_batches, loss_func)
+    # testing
+    test_metrics = evaluate_model(
+        network, test_batches, loss_function, labels2idx, device
+    )
     print_metrics(test_metrics, 'Test')
 
 
