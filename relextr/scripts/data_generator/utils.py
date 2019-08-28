@@ -85,14 +85,14 @@ def get_example(rel, sentences):
         return -1, None
 
     context = get_context(sent)
-    idxs = get_first_occurence(idxs)
-    begin = idxs[0]
-    end = idxs[-1]
+    # idxs = get_first_occurence(idxs)
+    # begin = idxs[0]
+    # end = idxs[-1]
+    #
+    # phrase = ' '.join(context[begin:end+1])
+    # context[begin:end+1] = [phrase]
 
-    phrase = ' '.join(context[begin:end+1])
-    context[begin:end+1] = [phrase]
-
-    return idxs[0], context
+    return idxs[0], context, idxs
 
 
 def find_token_indexes(sent, ann_number, ann_channel):
