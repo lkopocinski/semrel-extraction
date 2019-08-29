@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import random
+
 from itertools import permutations, product
 
 from corpus_ccl import corpus_object_utils as cou
@@ -23,6 +23,7 @@ def get_args(argv=None):
                         help="A relation channels to be considered while generating set.")
     if argcomplete:
         argcomplete.autocomplete(parser)
+
     return parser.parse_args(argv)
 
 

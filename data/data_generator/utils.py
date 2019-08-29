@@ -3,7 +3,7 @@ import os
 from corpus_ccl import cclutils as ccl
 from corpus_ccl import token_utils as tou
 
-from constants import RELATIONS_FILE_EXT
+from .constants import RELATIONS_FILE_EXT
 
 
 def corpora_files(directory):
