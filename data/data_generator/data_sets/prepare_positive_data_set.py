@@ -13,6 +13,8 @@ def get_args(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--source_file', required=True,
                         help="A file to be processed")
+    parser.add_argument('-n', '--save_file_name', required=True,
+                        help="Save file name")
     if argcomplete:
         argcomplete.autocomplete(parser)
 
@@ -64,9 +66,9 @@ def main(argv=None):
             elif size == 1:
                 train, valid, test = sample_sets(lines, size_valid=0, size_test=0)
 
-        save_to_file(train, 'train.negative.subst.context')
-        save_to_file(valid, 'valid.negative.subst.context')
-        save_to_file(test, 'test.negative.subst.context')
+        save_to_file(train, f'train.{args.save_file_name}.context')
+        save_to_file(valid, f'valid.{args.save_file_name}.context')
+        save_to_file(test, f'test.{args.save_file_name}.context')
 
 
 def sample_sets(data, size_valid, size_test):
