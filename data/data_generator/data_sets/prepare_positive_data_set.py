@@ -3,7 +3,10 @@ import math
 import random
 from collections import defaultdict
 
-import argcomplete
+try:
+    import argcomplete
+except ImportError:
+    argcomplete = None
 
 
 def get_args(argv=None):
