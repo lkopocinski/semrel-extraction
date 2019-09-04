@@ -74,6 +74,10 @@ def load_batches(datapath, batch_size=10):
         batch = []
         for ind, line in enumerate(ifile, 1):
             row = line.strip().split('\t')
+
+            if len(row) < 3:
+                continue
+
             cls = row[0]
             v1, v2 = np.array(eval(row[1])), np.array(eval(row[2]))
             if (ind % batch_size) == 0:
