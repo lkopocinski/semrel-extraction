@@ -40,7 +40,7 @@ def main():
             torch.save(network.state_dict(), 'semrel.model.pt')
 
     test_metrics = evaluate(network, test_batches, loss_func)
-    print_metrics(test_metrics, 'Test')
+    print_metrics(test_metrics, '\n\nTest')
 
     # extract the layer with embedding
     # embeddings = network.extract_layer_weights('f2')
