@@ -12,6 +12,7 @@ from torch.autograd import Variable
 
 from relextr.model import RelNet
 
+EPOCHS_QUANTITY = 40
 
 def main():
     network = RelNet(out_dim=2)
@@ -24,7 +25,9 @@ def main():
 
     best_valid_loss = float('inf')
 
-    for epoch in range(40):
+    for epoch in range(EPOCHS_QUANTITY):
+        print(f'Epoch: {epoch} / {EPOCHS_QUANTITY}')
+
         train_metrics = train(network, optimizer, loss_func, train_batches)
         print_metrics(train_metrics, 'Train')
 
