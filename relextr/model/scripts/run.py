@@ -34,7 +34,7 @@ def main():
         valid_loss = valid_metrics['loss']
         if valid_loss < best_valid_loss:
             best_valid_loss = valid_loss
-            torch.save(network.state_dict(), 'semrel.model_6.pt')
+            torch.save(network.state_dict(), 'semrel.model.pt')
 
     test_metrics = evaluate(network, test_batches, loss_func)
     print_metrics(test_metrics, 'Test')
