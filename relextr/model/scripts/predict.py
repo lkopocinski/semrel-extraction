@@ -20,7 +20,7 @@ def main():
 	}
 
 	network = RelNet()
-	network.load('./semrel.model.pt')
+	network.load('./semrel.3d.static.model.pt')
 	for line in sys.stdin:
 		try:
 			rel, v_a, v_b, w_a, w_b = line.strip().split('\t')
