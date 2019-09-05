@@ -33,8 +33,9 @@ def main():
 			w_b = 'unk'
 		v_a = np.array(eval(v_a))
 		v_b = np.array(eval(v_b))
-		v_diff = v_a - v_b
-		v = np.concatenate([v_a, v_b, v_diff])
+#		v_diff = v_a - v_b
+#		v = np.concatenate([v_a, v_b, v_diff])
+		v = np.concatenate([v_a, v_b])
 
 
 		output = network(torch.FloatTensor([v]))
