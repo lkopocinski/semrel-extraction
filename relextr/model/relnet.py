@@ -10,7 +10,7 @@ class RelNet(nn.Module):
         in_dim: konkatenacja wektorow (1024), hidden_dim: warstwa ukryta (512),
         out_dim: liczba relacji
     """
-    def __init__(self, in_dim=3072, hidden_dim=512, out_dim=2, dropout=0.5):
+    def __init__(self, in_dim=2048, hidden_dim=512, out_dim=2, dropout=0.5):
         super(RelNet, self).__init__()
         self.f1 = nn.Linear(in_dim, hidden_dim)
         self.f2 = nn.Linear(hidden_dim, hidden_dim)

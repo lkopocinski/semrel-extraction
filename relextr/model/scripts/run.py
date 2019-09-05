@@ -12,19 +12,22 @@ from torch.autograd import Variable
 
 from relextr.model import RelNet
 
+EPOCHS_QUANTITY = 40
 
 def main():
     network = RelNet(out_dim=2)
     optimizer = Adagrad(network.parameters())
     loss_func = nn.CrossEntropyLoss()
 
-    train_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_6/train.vectors')
-    valid_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_6/valid.vectors')
-    test_batches = load_batches('/home/Projects/semrel-extraction/data/data_model_6/test.vectors')
+    train_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset/train.vectors')
+    valid_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset/valid.vectors')
+    test_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset/test.vectors')
 
     best_valid_loss = float('inf')
 
-    for epoch in range(40):
+    for epoch in range(EPOCHS_QUANTITY):
+        print(f'Epoch: {epoch} / {EPOCHS_QUANTITY}')
+
         train_metrics = train(network, optimizer, loss_func, train_batches)
         print_metrics(train_metrics, 'Train')
 
@@ -34,10 +37,10 @@ def main():
         valid_loss = valid_metrics['loss']
         if valid_loss < best_valid_loss:
             best_valid_loss = valid_loss
-            torch.save(network.state_dict(), 'semrel.model_6.pt')
+            torch.save(network.state_dict(), 'semrel.2d.static.model.pt')
 
     test_metrics = evaluate(network, test_batches, loss_func)
-    print_metrics(test_metrics, 'Test')
+    print_metrics(test_metrics, '\n\nTest')
 
     # extract the layer with embedding
     # embeddings = network.extract_layer_weights('f2')
@@ -71,13 +74,18 @@ def load_batches(datapath, batch_size=10):
         batch = []
         for ind, line in enumerate(ifile, 1):
             row = line.strip().split('\t')
+
+            if len(row) < 3:
+                continue
+
             cls = row[0]
             v1, v2 = np.array(eval(row[1])), np.array(eval(row[2]))
             if (ind % batch_size) == 0:
                 dataset.append(batch)
                 batch = []
-            vdiff = v1 - v2
-            batch.append((cls, np.concatenate([v1, v2, vdiff])))
+            # vdiff = v1 - v2
+            # batch.append((cls, np.concatenate([v1, v2, vdiff])))
+            batch.append((cls, np.concatenate([v1, v2])))
         if batch:
             dataset.append(batch)
         return dataset
