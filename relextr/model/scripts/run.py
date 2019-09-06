@@ -108,7 +108,7 @@ def compute_precision_recall_fscore(output, targets):
     _, predicted = torch.max(output, dim=1)
     output = predicted.data.numpy()
     targets = targets.data.numpy()
-    prec, rec, f, _ = precision_recall_fscore_support(targets, output, average='weighted')
+    prec, rec, f, _ = precision_recall_fscore_support(targets, output, average='weighted', labels=[0, 1])
     return prec, rec, f
 
 
