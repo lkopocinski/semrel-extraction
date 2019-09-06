@@ -14,10 +14,11 @@ from relextr.model import RelNet
 
 def main():
     network = RelNet(out_dim=2)
+    network.load('../../../models/model_2d_static.pt')
     loss_func = nn.CrossEntropyLoss()
-    test_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset/test.vectors')
+    test_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset/huawei.vectors')
 
-    test_metrics = evaluate(network, test_batchesi, loss_func)
+    test_metrics = evaluate(network, test_batches, loss_func)
     print_metrics(test_metrics, 'Test')
 
 
@@ -61,21 +62,22 @@ def compute_precision_recall_fscore(output, targets):
     _, predicted = torch.max(output, dim=1)
     output = predicted.data.numpy()
     targets = targets.data.numpy()
-    prec, rec, f, _ = precision_recall_fscore_support(targets, output, average='weighted', labels=[0, 1])
+    prec, rec, f, _ = precision_recall_fscore_support(targets, output, average=None, labels=[0, 1])
     return prec, rec, f
 
 
 def print_metrics(metrics, prefix):
-    print(f'{prefix} - Loss: {metrics["loss"]}, '
-          f'Accuracy: {metrics["accuracy"]}, '
-          f'Precision: {metrics["precision"]}, '
-          f'Recall: {metrics["recall"]}, '
-          f'Fscore: {metrics["fscore"]}')
+    print(f'\n\n{prefix}' 
+	  f'\nLoss: {metrics["loss"]}, '
+          f'\nAccuracy: {metrics["accuracy"]}, '
+          f'\nPrecision: {metrics["precision"]}, '
+          f'\nRecall: {metrics["recall"]}, '
+          f'\nFscore: {metrics["fscore"]}')
 
 
 def evaluate(network, batches, loss_function):
     eval_loss = 0.0
-    eval_acc = (0.0, 0.0)
+    eval_acc = 0.0
     eval_prec = (0.0, 0.0)
     eval_rec = (0.0, 0.0)
     eval_f = (0.0, 0.0)
@@ -94,7 +96,7 @@ def evaluate(network, batches, loss_function):
             precision, recall, fscore = compute_precision_recall_fscore(output, target)
             eval_loss += loss.item()
 
-            eval_acc = tuple(sum(x) for x in zip(eval_acc, accuracy))
+            eval_acc += accuracy
             eval_prec = tuple(sum(x) for x in zip(eval_prec, precision))
             eval_rec = tuple(sum(x) for x in zip(eval_rec, recall))
             eval_f = tuple(sum(x) for x in zip(eval_f, fscore))
@@ -102,7 +104,7 @@ def evaluate(network, batches, loss_function):
     
     return {
         'loss': eval_loss / len(batches),
-        'accuracy': [acc / len(batches) for acc in eval_acc],
+        'accuracy': eval_acc / len(batches),
         'precision': [prec / len(batches) for prec in eval_prec],
         'recall': [rec / len(batches) for rec in eval_rec],
         'fscore': [f / len(batches) for f in eval_f]
