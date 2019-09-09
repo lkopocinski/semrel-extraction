@@ -1,7 +1,7 @@
 #!/bin/bash
 
 file_nrs=(52 54 55 81 82 83)
-prefix='negative'
+prefix='negative.fixed'
 
 
 for file_nr in ${file_nrs[*]}
