@@ -58,7 +58,7 @@ def main(argv=None):
                     if f_context == t_context:
                         context = f_context
                         nouns_idx = get_nouns_idx(sentences[f.sentence_id()])
-                        nouns_idx = [idx for idx in nouns_idx if idx not in f_idxs]
+                        nouns_idx = [idx for idx in nouns_idx if idx not in f_idxs + t_idxs]
 
                         for idx in nouns_idx:
                             if are_close(f_idx, idx):
