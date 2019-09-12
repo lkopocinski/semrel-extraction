@@ -57,8 +57,8 @@ def get_context(sent):
 
 
 def print_element(f_idx, f_context, t_idx, t_context):
-    # print('{}:{}\t{}:{}'.format(f_idx, f_context, t_idx, t_context))
-    print('{} : {}\t{}:{}\t{}:{}'.format(f_context[f_idx], t_context[t_idx], f_idx, f_context, t_idx, t_context))
+    print('{}:{}\t{}:{}'.format(f_idx, f_context, t_idx, t_context))
+    # print('{} : {}\t{}:{}\t{}:{}'.format(f_context[f_idx], t_context[t_idx], f_idx, f_context, t_idx, t_context))
 
 
 def get_first_occurence(elements):
