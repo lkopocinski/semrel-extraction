@@ -39,3 +39,4 @@ with open('negative.fixed.filtered.context') as f_pos:
 
         # if (f_word, t_word) not in positive_pairs:
         #     print(line)
+
