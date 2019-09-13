@@ -138,18 +138,17 @@ def train(network, optimizer, loss_func, batches, device):
         optimizer.zero_grad()
 
         labels, data = zip(*batch)
-        target = Variable(torch.LongTensor(labels2idx(labels)))
+        target = Variable(torch.LongTensor(labels2idx(labels))).to(device)
         data = torch.FloatTensor([data])
-        data.to(device)
 
-        output = network(data).squeeze(0)
+        output = network(data.to(device)).squeeze(0)
         loss = loss_func(output, target)
 
         loss.backward()
         optimizer.step()
 
         accuracy = compute_accuracy(output, target)
-        precision, recall, fscore = compute_precision_recall_fscore(output, target)
+        precision, recall, fscore = compute_precision_recall_fscore(output.cpu(), target.cpu())
         ep_loss += loss.item()
 
         ep_acc += accuracy
@@ -173,15 +172,14 @@ def evaluate(network, batches, loss_function, device):
     with torch.no_grad():
         for batch in batches:
             labels, data = zip(*batch)
-            target = Variable(torch.LongTensor(labels2idx(labels)))
+            target = Variable(torch.LongTensor(labels2idx(labels))).to(device)
             data = torch.FloatTensor([data])
-            data.to(device)
 
-            output = network(data).squeeze(0)
+            output = network(data.to(device)).squeeze(0)
             loss = loss_function(output, target)
 
             accuracy = compute_accuracy(output, target)
-            precision, recall, fscore = compute_precision_recall_fscore(output, target)
+            precision, recall, fscore = compute_precision_recall_fscore(output.cpu(), target.cpu())
             eval_loss += loss.item()
 
             eval_acc += accuracy
