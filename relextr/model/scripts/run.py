@@ -12,21 +12,21 @@ from torch.autograd import Variable
 
 from relextr.model import RelNet
 
-EPOCHS_QUANTITY = 40
+EPOCHS_QUANTITY = 30
 
 def main():
     network = RelNet(out_dim=2)
     optimizer = Adagrad(network.parameters())
     loss_func = nn.CrossEntropyLoss()
 
-    train_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset/train.vectors')
-    valid_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset/valid.vectors')
-    test_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset/test.vectors')
+    train_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/train.vectors')
+    valid_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/valid.vectors')
+    test_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/test.vectors')
 
     best_valid_loss = float('inf')
 
     for epoch in range(EPOCHS_QUANTITY):
-        print(f'Epoch: {epoch} / {EPOCHS_QUANTITY}')
+        print(f'\nEpoch: {epoch} / {EPOCHS_QUANTITY}')
 
         train_metrics = train(network, optimizer, loss_func, train_batches)
         print_metrics(train_metrics, 'Train')
@@ -37,7 +37,7 @@ def main():
         valid_loss = valid_metrics['loss']
         if valid_loss < best_valid_loss:
             best_valid_loss = valid_loss
-            torch.save(network.state_dict(), 'semrel.2d.static.model.pt')
+            torch.save(network.state_dict(), 'semrel.2d.static.fixed.arek.model.pt')
 
     test_metrics = evaluate(network, test_batches, loss_func)
     print_metrics(test_metrics, '\n\nTest')
