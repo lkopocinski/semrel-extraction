@@ -1,7 +1,7 @@
 #!/bin/bash
 
 file_nrs=(52 54 55 81 82 83)
-prefix='negative.fixed'
+prefix='negative.fixed.arek'
 
 
 for file_nr in ${file_nrs[*]}
@@ -14,7 +14,7 @@ done
 for file_nr in ${file_nrs[*]}
 do
 	cat ${file_nr}.context >> ${prefix}.context
-       echo $file_nr	
+       	echo $file_nr	
 done
 
 sort -u -o ${prefix}.context ${prefix}.context 
