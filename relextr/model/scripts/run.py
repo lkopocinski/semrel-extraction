@@ -16,6 +16,7 @@ EPOCHS_QUANTITY = 30
 
 use_cuda = torch.cuda.is_available()
 device = torch.device("cuda:0" if use_cuda else "cpu")
+print(device)
 
 
 def main():
@@ -24,9 +25,12 @@ def main():
     optimizer = Adagrad(network.parameters())
     loss_func = nn.CrossEntropyLoss()
 
-    train_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/train.vectors')
-    valid_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/valid.vectors')
-    test_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/test.vectors')
+    # train_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/train.vectors')
+    # valid_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/valid.vectors')
+    # test_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/test.vectors')
+    train_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/train1k.vectors')
+    valid_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/valid100.vectors')
+    test_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/test100.vectors')
 
     best_valid_loss = float('inf')
 
