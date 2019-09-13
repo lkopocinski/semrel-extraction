@@ -20,17 +20,15 @@ def main():
 	}
 
 	network = RelNet()
-	network.load('./semrel.3d.static.model.pt')
+	network.load('./semrel.2d.static.fixed.model.pt')
 	for line in sys.stdin:
 		try:
 			rel, v_a, v_b, w_a, w_b = line.strip().split('\t')
 		except ValueError:
 			try:
-				rel, v_a, v_b = line.strip().split('\t')
+				rel, v_a, v_b, w_a, w_b, ctx_a, ctx_b = line.strip().split('\t')
 			except ValueError:
 				continue
-			w_a = 'unk'
-			w_b = 'unk'
 		v_a = np.array(eval(v_a))
 		v_b = np.array(eval(v_b))
 #		v_diff = v_a - v_b
@@ -41,9 +39,10 @@ def main():
 		output = network(torch.FloatTensor([v]))
 		_, predicted = torch.max(output, dim=1)
 		if mapping[predicted.item()] == rel:
-			prGreen('{} : {}\tpred: {}\ttrue: {}'.format(w_a, w_b, mapping[predicted.item()], rel))
+			pass
+#			prGreen('\n{} : {}\tpred: {}\ttrue: {}\t{}\t{}'.format(w_a, w_b, mapping[predicted.item()], rel, ctx_a, ctx_b))
 		else:
-			prRed('{} : {}\tpred: {}\ttrue: {}'.format(w_a, w_b, mapping[predicted.item()], rel))
+			prRed('\n{} : {}\tpred: {}\ttrue: {}\t{}\t{}'.format(w_a, w_b, mapping[predicted.item()], rel, ctx_a, ctx_b))
 
 
 if __name__ == "__main__":
