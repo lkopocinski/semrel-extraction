@@ -11,9 +11,9 @@ from relextr.model import RelNet
 
 def main():
     network = RelNet(out_dim=2)
-    network.load('../../../models/model_2d_static.pt')
+    network.load('./semrel.2d.static.fixed.balanced_2.model.pt')
     loss_func = nn.CrossEntropyLoss()
-    test_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset/huawei.vectors')
+    test_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed/test.vectors')
 
     test_metrics = evaluate(network, test_batches, loss_func)
     print_metrics(test_metrics, 'Test')
