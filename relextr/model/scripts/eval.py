@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import random
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.metrics import precision_recall_fscore_support
-
 import torch
 import torch.nn as nn
-from torch.optim import Adagrad
+from sklearn.metrics import precision_recall_fscore_support
 from torch.autograd import Variable
 
 from relextr.model import RelNet
+
 
 def main():
     network = RelNet(out_dim=2)
@@ -67,8 +64,8 @@ def compute_precision_recall_fscore(output, targets):
 
 
 def print_metrics(metrics, prefix):
-    print(f'\n\n{prefix}' 
-	  f'\nLoss: {metrics["loss"]}, '
+    print(f'\n\n{prefix}'
+          f'\nLoss: {metrics["loss"]}, '
           f'\nAccuracy: {metrics["accuracy"]}, '
           f'\nPrecision: {metrics["precision"]}, '
           f'\nRecall: {metrics["recall"]}, '
@@ -100,8 +97,7 @@ def evaluate(network, batches, loss_function):
             eval_prec = tuple(sum(x) for x in zip(eval_prec, precision))
             eval_rec = tuple(sum(x) for x in zip(eval_rec, recall))
             eval_f = tuple(sum(x) for x in zip(eval_f, fscore))
- 
-    
+
     return {
         'loss': eval_loss / len(batches),
         'accuracy': eval_acc / len(batches),
