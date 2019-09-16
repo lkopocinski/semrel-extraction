@@ -12,10 +12,11 @@ from torch.autograd import Variable
 
 from relextr.model import RelNet
 
-EPOCHS_QUANTITY = 40
+EPOCHS_QUANTITY = 30
 
 use_cuda = torch.cuda.is_available()
 device = torch.device("cuda:0" if use_cuda else "cpu")
+print(device)
 
 
 def main():
@@ -24,14 +25,17 @@ def main():
     optimizer = Adagrad(network.parameters())
     loss_func = nn.CrossEntropyLoss()
 
-    train_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset/train.vectors')
-    valid_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset/valid.vectors')
-    test_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset/test.vectors')
+    # train_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/train.vectors')
+    # valid_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/valid.vectors')
+    # test_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/test.vectors')
+    train_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/train1k.vectors')
+    valid_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/valid100.vectors')
+    test_batches = load_batches('/home/Projects/semrel-extraction/data/static_dataset_fixed_arek/test100.vectors')
 
     best_valid_loss = float('inf')
 
     for epoch in range(EPOCHS_QUANTITY):
-        print(f'Epoch: {epoch} / {EPOCHS_QUANTITY}')
+        print(f'\nEpoch: {epoch} / {EPOCHS_QUANTITY}')
 
         train_metrics = train(network, optimizer, loss_func, train_batches, device)
         print_metrics(train_metrics, 'Train')
@@ -42,7 +46,7 @@ def main():
         valid_loss = valid_metrics['loss']
         if valid_loss < best_valid_loss:
             best_valid_loss = valid_loss
-            torch.save(network.state_dict(), 'semrel.2d.static.model.pt')
+            torch.save(network.state_dict(), 'semrel.2d.static.fixed.arek.model.pt')
 
     test_metrics = evaluate(network, test_batches, loss_func, device)
     print_metrics(test_metrics, '\n\nTest')
@@ -134,18 +138,17 @@ def train(network, optimizer, loss_func, batches, device):
         optimizer.zero_grad()
 
         labels, data = zip(*batch)
-        target = Variable(torch.LongTensor(labels2idx(labels)))
+        target = Variable(torch.LongTensor(labels2idx(labels))).to(device)
         data = torch.FloatTensor([data])
-        data.to(device)
 
-        output = network(data).squeeze(0)
+        output = network(data.to(device)).squeeze(0)
         loss = loss_func(output, target)
 
         loss.backward()
         optimizer.step()
 
         accuracy = compute_accuracy(output, target)
-        precision, recall, fscore = compute_precision_recall_fscore(output, target)
+        precision, recall, fscore = compute_precision_recall_fscore(output.cpu(), target.cpu())
         ep_loss += loss.item()
 
         ep_acc += accuracy
@@ -169,15 +172,14 @@ def evaluate(network, batches, loss_function, device):
     with torch.no_grad():
         for batch in batches:
             labels, data = zip(*batch)
-            target = Variable(torch.LongTensor(labels2idx(labels)))
+            target = Variable(torch.LongTensor(labels2idx(labels))).to(device)
             data = torch.FloatTensor([data])
-            data.to(device)
 
-            output = network(data).squeeze(0)
+            output = network(data.to(device)).squeeze(0)
             loss = loss_function(output, target)
 
             accuracy = compute_accuracy(output, target)
-            precision, recall, fscore = compute_precision_recall_fscore(output, target)
+            precision, recall, fscore = compute_precision_recall_fscore(output.cpu(), target.cpu())
             eval_loss += loss.item()
 
             eval_acc += accuracy
