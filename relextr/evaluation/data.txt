@@ -1,0 +1,1 @@
+/home/Projects/semrel-extraction/data/input.xml

@@ -4,11 +4,11 @@ from setuptools import setup
 
 setup(
     name='relextr',
-    version='0.1.0',
+    version='0.1.1',
     author='Arkadiusz Janz',
     author_email='arkadiusz.janz@pwr.edu.pl',
     maintainer='Łukasz Kopociński',
-    maintainer_email='lukasz.kopocinski@pwr.edu.pl'
+    maintainer_email='lukasz.kopocinski@pwr.edu.pl',
     packages=[
         'relextr',
         'relextr.base',
