@@ -31,8 +31,6 @@ def main():
 				continue
 		v_a = np.array(eval(v_a))
 		v_b = np.array(eval(v_b))
-#		v_diff = v_a - v_b
-#		v = np.concatenate([v_a, v_b, v_diff])
 		v = np.concatenate([v_a, v_b])
 
 
@@ -40,7 +38,7 @@ def main():
 		_, predicted = torch.max(output, dim=1)
 		if mapping[predicted.item()] == rel:
 			pass
-#			prGreen('\n{} : {}\tpred: {}\ttrue: {}\t{}\t{}'.format(w_a, w_b, mapping[predicted.item()], rel, ctx_a, ctx_b))
+			prGreen('\n{} : {}\tpred: {}\ttrue: {}\t{}\t{}'.format(w_a, w_b, mapping[predicted.item()], rel, ctx_a, ctx_b))
 		else:
 			prRed('\n{} : {}\tpred: {}\ttrue: {}\t{}\t{}'.format(w_a, w_b, mapping[predicted.item()], rel, ctx_a, ctx_b))
 
