@@ -5,7 +5,7 @@ from corpus_ccl import cclutils
 
 from relextr.evaluation.base import Parser
 from relextr.evaluation.base import Predictor
-from relextr.evaluation.embutils import ElmoEmb
+from relextr.evaluation.scripts.embutils import ElmoEmb
 from relextr.model import RelNet
 
 import argparse
