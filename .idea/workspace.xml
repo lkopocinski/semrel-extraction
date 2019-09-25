@@ -2,50 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a90ff98c-79aa-4f71-9285-ff46cbbb2caa" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/relextr/model/scripts/relnet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/relextr/model/datasets/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/relextr/model/scripts/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/scripts/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/data/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/evaluation/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/constants.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/data_sets/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/model/scripts/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/data_sets/prepare_data_sets.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/data_sets/prepare_data_sets_for_subst.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/gen_contexts.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/gen_negative.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/gen_negative_substituted.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/gen_positive.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/generated/filter_negative.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/generated/negative.context" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/generated/negative.filtered.context" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/generated/negative.fixed.context" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/generated/positive.context" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/test_substitute.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/data_generator/utils.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/generate_datasets.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/input.xml" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/evaluation/input.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/emb-model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/model/resources/emb-model.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/net-model.pt" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/model/resources/net-model.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/base/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/evaluation/base/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/base/extractor.py" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/evaluation/base/extractor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/base/predictor.py" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/evaluation/base/predictor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/model/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/model/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/model/relnet.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/model/scripts/eval.py" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/evaluation/eval.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/model/scripts/predict.py" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/evaluation/predict.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/model/scripts/predictions/.results" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/model/scripts/results" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/evaluation/results" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/model/scripts/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/model/scripts/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/model/scripts/semrel.3d.static.model.pt" beforeDir="false" afterPath="$PROJECT_DIR$/models/semrel.3d.static.model.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/model/scripts/try_model.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/scripts/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/scripts/data.txt" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/evaluation/data.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/scripts/emb-options.json" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/evaluation/emb-options.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/scripts/emb-weights.hdf5" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/evaluation/emb-weights.hdf5" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/scripts/parse.py" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/evaluation/parse.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/utils/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/relextr/utils/embutils.py" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/evaluation/embutils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/semrel.3d.static.model.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/relextr/model/scripts/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/relextr/model/scripts/train.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -58,13 +19,37 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/relextr/evaluation/embutils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="264">
-              <caret line="11" column="35" lean-forward="true" selection-start-line="11" selection-start-column="35" selection-end-line="11" selection-end-column="35" />
+            <state relative-caret-position="168">
+              <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/relextr/model/scripts/train.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-24">
+              <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
+              <folding>
+                <element signature="e#47#59#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/relextr/model/scripts/relnet.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="384">
+              <caret line="22" column="24" lean-forward="true" selection-start-line="22" selection-start-column="24" selection-end-line="22" selection-end-column="24" />
+              <folding>
+                <element signature="e#46#58#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -115,6 +100,7 @@
         <option value="$PROJECT_DIR$/relextr/utils/embutils.py" />
         <option value="$PROJECT_DIR$/relextr/model/relnet.py" />
         <option value="$PROJECT_DIR$/relextr/model/scripts/train.py" />
+        <option value="$PROJECT_DIR$/relextr/model/scripts/utils.py" />
       </list>
     </option>
   </component>
@@ -146,6 +132,20 @@
               <item name="semrel-extraction" type="462c0819:PsiDirectoryNode" />
               <item name="relextr" type="462c0819:PsiDirectoryNode" />
               <item name="model" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="semrel-extraction" type="b2602c69:ProjectViewProjectNode" />
+              <item name="semrel-extraction" type="462c0819:PsiDirectoryNode" />
+              <item name="relextr" type="462c0819:PsiDirectoryNode" />
+              <item name="model" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="semrel-extraction" type="b2602c69:ProjectViewProjectNode" />
+              <item name="semrel-extraction" type="462c0819:PsiDirectoryNode" />
+              <item name="relextr" type="462c0819:PsiDirectoryNode" />
+              <item name="model" type="462c0819:PsiDirectoryNode" />
+              <item name="scripts" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -224,7 +224,7 @@
       <workItem from="1563874338418" duration="18000" />
       <workItem from="1564390184559" duration="26276000" />
       <workItem from="1566983827170" duration="6387000" />
-      <workItem from="1569420867656" duration="1997000" />
+      <workItem from="1569420867656" duration="3089000" />
     </task>
     <task id="LOCAL-00001" summary="change values in comment">
       <created>1563278467057</created>
@@ -366,14 +366,22 @@
       <option name="project" value="LOCAL" />
       <updated>1569421060255</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Refactor project structure">
+      <created>1569422867744</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1569422867744</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="65466000" />
+    <option name="totallyTimeSpent" value="66558000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.3506925" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -621,19 +629,29 @@
     <entry file="file://$PROJECT_DIR$/relextr/evaluation/eval.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/relextr/model/scripts/train.py">
+    <entry file="file://$PROJECT_DIR$/relextr/model/scripts/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
+        <state relative-caret-position="606">
+          <caret line="49" column="46" lean-forward="true" selection-start-line="49" selection-start-column="46" selection-end-line="49" selection-end-column="46" />
           <folding>
-            <element signature="e#46#59#0" expanded="true" />
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/relextr/evaluation/embutils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/relextr/model/scripts/relnet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
+        <state relative-caret-position="384">
           <caret line="22" column="24" lean-forward="true" selection-start-line="22" selection-start-column="24" selection-end-line="22" selection-end-column="24" />
           <folding>
             <element signature="e#46#58#0" expanded="true" />
@@ -641,12 +659,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/relextr/evaluation/embutils.py">
+    <entry file="file://$PROJECT_DIR$/relextr/model/scripts/train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="11" column="35" lean-forward="true" selection-start-line="11" selection-start-column="35" selection-end-line="11" selection-end-column="35" />
+        <state relative-caret-position="-24">
+          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
           <folding>
-            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#47#59#0" expanded="true" />
           </folding>
         </state>
       </provider>
