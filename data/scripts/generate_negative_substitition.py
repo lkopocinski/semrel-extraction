@@ -25,7 +25,7 @@ def get_args(argv=None):
     parser.add_argument('-s', '--source_file', required=True,
                         help="A file with relations contexts.")
     parser.add_argument('--sample_size', required=True, type=int,
-                        help="How many brand should be selected to substitution.")
+                        help="How many brands should be selected to substitution.")
 
     if argcomplete:
         argcomplete.autocomplete(parser)
@@ -79,8 +79,8 @@ def substitute(path, brand_products_dict, sample_size):
 
             for lemma, orths in random.sample(brand_products_dict.items(), sample_size):
                 if lemma.lower() != lemma_brand.lower():
-                    subst_orth = random.sample(orths, 1)
-                    idx_brand, ctx_brand, idx_product, ctx_product = substitute_brand(subst_orth[0], idx_brand, ctx_brand, idx_product, ctx_product)
+                    subst_orth = random.sample(orths, 1)[0]
+                    idx_brand, ctx_brand, idx_product, ctx_product = substitute_brand(subst_orth, idx_brand, ctx_brand, idx_product, ctx_product)
                     print_element(
                         lemma, lemma_product,
                         'BRAND_NAME', 'PRODUCT_NAME',

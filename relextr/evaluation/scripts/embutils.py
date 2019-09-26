@@ -17,7 +17,7 @@ class ElmoEmb(object):
         zipf.extractall('./')
         zipf.close()
 
-        model_dir = os.path.abspath('./')
+        model_dir = os.path.abspath('../resources')
         options_file = os.path.join(model_dir, 'emb-options.json')
         weights_file = os.path.join(model_dir, 'emb-weights.hdf5')
         return Elmo(options_file, weights_file, 2, dropout=0)

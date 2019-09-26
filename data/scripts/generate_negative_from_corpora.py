@@ -5,7 +5,7 @@ from itertools import permutations, product
 
 from utils import corpora_files, load_document, id_to_sent_dict, \
     is_ner_relation, is_in_channel, get_relation_element, print_element, \
-    get_nouns_idx, get_lemma
+    get_nouns_idx, get_lemma, are_close
 
 try:
     import argcomplete
@@ -23,10 +23,6 @@ def get_args(argv=None):
         argcomplete.autocomplete(parser)
 
     return parser.parse_args(argv)
-
-
-def are_close(idx_f, idx_t):
-    return abs(idx_f - idx_t) <= 3
 
 
 def main(argv=None):

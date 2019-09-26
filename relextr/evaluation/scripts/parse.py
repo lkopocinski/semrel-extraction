@@ -27,6 +27,7 @@ def get_args(argv=None):
                         help="A path to the list of CCL files to process")
     if argcomplete:
         argcomplete.autocomplete(parser)
+
     return parser.parse_args(argv)
 
 

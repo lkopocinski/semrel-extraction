@@ -77,6 +77,10 @@ def print_element(
     print(f'{f_lemma} : {t_lemma}\t{f_channel_name} : {t_channel_name}\t{f_idx}:{f_context}\t{t_idx}:{t_context}')
 
 
+def are_close(idx_f, idx_t):
+    return abs(idx_f - idx_t) <= 3
+
+
 def get_nouns_idx(sent):
     return [idx for idx, token in enumerate(sent.tokens()) if is_noun(token)]
 
