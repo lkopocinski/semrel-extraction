@@ -80,19 +80,22 @@ def substitute(path, brand_products_dict, sample_size):
             for lemma, orths in random.sample(brand_products_dict.items(), sample_size):
                 if lemma.lower() != lemma_brand.lower():
                     subst_orth = random.sample(orths, 1)[0]
-                    idx_brand, ctx_brand, idx_product, ctx_product = substitute_brand(subst_orth, idx_brand, ctx_brand, idx_product, ctx_product)
+                    idx_brand_, ctx_brand_, idx_product_, ctx_product_ = substitute_brand(subst_orth, idx_brand, ctx_brand, idx_product, ctx_product)
                     print_element(
                         lemma, lemma_product,
                         'BRAND_NAME', 'PRODUCT_NAME',
-                        idx_brand, ctx_brand,
-                        idx_product, ctx_product
+                        idx_brand_, ctx_brand_,
+                        idx_product_, ctx_product_
                     )
 
 
 def substitute_brand(brand, idx_brand, ctx_brand, idx_product, ctx_product):
-    ctx_brand[idx_brand:idx_brand + 1] = brand.split(' ')
-    ctx_product[idx_product:idx_product + 1] = ctx_product[idx_product].split(' ')
-    return idx_brand, ctx_brand, idx_product, ctx_product
+    ctx_brand_cp = ctx_brand.copy()
+    ctx_product_cp = ctx_product.copy()
+
+    ctx_brand_cp[idx_brand:idx_brand + 1] = brand.split(' ')
+    ctx_product_cp[idx_product:idx_product + 1] = ctx_product_cp[idx_product].split(' ')
+    return idx_brand, ctx_brand_cp, idx_product, ctx_product_cp
 
 
 def main(argv=None):
