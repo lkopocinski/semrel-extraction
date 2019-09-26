@@ -6,6 +6,7 @@ FILES_NR=(52 54 55 81 82 83)
 CHANNELS='['BRAND_NAME', 'PRODUCT_NAME']'
 SCRIPTS_DIR=scripts
 RES_DIR=data
+BRANDS_SAMPLE=5
 
 # Initialization
 mkdir -p ${RES_DIR}/positive
@@ -20,5 +21,5 @@ do
     python3.6 ${SCRIPTS_DIR}/generate_positive_from_corpora.py -d ${FILES_PATH} -c "${CHANNELS}" > ${RES_DIR}/positive/${nr}.context
     python3.6 ${SCRIPTS_DIR}/generate_negative_from_corpora.py -d ${FILES_PATH} -c "${CHANNELS}" > ${RES_DIR}/negative/${nr}.context
     python3.6 ${SCRIPTS_DIR}/generate_positive_from_corpora.py -d ${FILES_PATH} -c "${CHANNELS}" --multiword True > ${RES_DIR}/positive/multiword/${nr}.context
-    python3.6 ${SCRIPTS_DIR}/generate_negative_substitition.py -s ${RES_DIR}/positive/multiword/${nr}.context --sample_size 5 > ${RES_DIR}/negative/substituted/${nr}.context
+    python3.6 ${SCRIPTS_DIR}/generate_negative_substitition.py -s ${RES_DIR}/positive/multiword/${nr}.context --sample_size ${BRANDS_SAMPLE} > ${RES_DIR}/negative/substituted/${nr}.context
 done

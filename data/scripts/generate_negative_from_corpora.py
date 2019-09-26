@@ -60,7 +60,7 @@ def main(argv=None):
             relation, t_context, t_channel_name = rel_value
             ((f_sent_id, f_idxs), (t_sent_id, t_idxs)) = rel
 
-            if f_context == t_context:
+            if f_sent_id == t_sent_id:
                 context = f_context
                 nouns_idx = get_nouns_idx(sentences[f_sent_id])
                 nouns_idx = [idx for idx in nouns_idx if idx not in f_idxs + t_idxs]
@@ -113,7 +113,7 @@ def main(argv=None):
 
                     f_lemma = get_lemma(sentences[f_sent_id], f_idxs[0])
                     t_lemma = get_lemma(sentences[t_sent_id], idx)
-                    print_element(f_lemma, t_lemma, f_idxs[0], f_context, idx, t_context)
+                    print_element(f_lemma, t_lemma, '', '', f_idxs[0], f_context, idx, t_context)
 
                 for f_idx, t_idx in product(f_nouns_idx, t_nouns_idx):
                     f_lemma = get_lemma(sentences[f_sent_id], f_idx)
