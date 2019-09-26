@@ -5,7 +5,7 @@ from itertools import permutations, product
 
 from utils import corpora_files, load_document, id_to_sent_dict, \
     is_ner_relation, is_in_channel, get_relation_element, print_element, \
-    get_nouns_idx, get_lemma, are_close
+    get_nouns_idx, get_lemma
 
 try:
     import argcomplete
@@ -51,74 +51,45 @@ def main(argv=None):
                     relations[((t_sent_id, t_idxs), (f_sent_id, f_idxs))] = (relation, t_context, t_channel_name)
 
                     for f_idx in f_idxs:
-                        relidxs[(f_sent_id, f_idx)] = f_idxs
+                        relidxs[(f_sent_id, f_idx)] = (f_idxs, f_channel_name)
                     for t_idx in t_idxs:
-                        relidxs[(t_sent_id, t_idx)] = t_idxs
+                        relidxs[(t_sent_id, t_idx)] = (t_idxs, t_channel_name)
 
         for rel, rel_value in relations.items():
             relation, f_context, f_channel_name = rel_value
             relation, t_context, t_channel_name = rel_value
             ((f_sent_id, f_idxs), (t_sent_id, t_idxs)) = rel
 
-            if f_context == t_context:
-                context = f_context
-                nouns_idx = get_nouns_idx(sentences[f_sent_id])
-                nouns_idx = [idx for idx in nouns_idx if idx not in f_idxs + t_idxs]
+            f_nouns = get_nouns_idx(sentences[f_sent_id])
+            t_nouns = get_nouns_idx(sentences[t_sent_id])
 
-                for f_idx, t_idx in permutations(nouns_idx, 2):
-                    if are_close(f_idx, t_idx):
-                        try:
-                            _f_idxs = relidxs[(f_sent_id, f_idx)]
-                        except KeyError:
-                            _f_idxs = None
-
-                        try:
-                            _t_idxs = relidxs[(t_sent_id, t_idx)]
-                        except KeyError:
-                            _t_idxs = None
-
-                        if _f_idxs and _t_idxs:
-                            if ((f_sent_id, _f_idxs), (t_sent_id, _t_idxs)) in relations:
-                                continue
-
-                        f_lemma = get_lemma(sentences[f_sent_id], f_idx)
-                        t_lemma = get_lemma(sentences[t_sent_id], t_idx)
-                        print_element(f_lemma, t_lemma, '', '', f_idx, context, t_idx, context)
+            if f_sent_id == t_sent_id:
+                generator = permutations(f_nouns, 2)
             else:
-                f_nouns = get_nouns_idx(sentences[f_sent_id])
-                t_nouns = get_nouns_idx(sentences[t_sent_id])
+                generator = product(f_nouns, t_nouns)
 
-                f_nouns_idx = [idx for idx in f_nouns if idx not in f_idxs]
-                t_nouns_idx = [idx for idx in t_nouns if idx not in t_idxs]
+            for f_idx, t_idx in generator:
+                try:
+                    _f_idxs, _f_channel_name = relidxs[(f_sent_id, f_idx)]
+                except KeyError:
+                    _f_idxs = None
+                    _f_channel_name = ''
+                    pass
 
-                for idx in f_nouns_idx:
-                    try:
-                        _f_idxs = relidxs[(f_sent_id, idx)]
-                        if ((f_sent_id, _f_idxs), (t_sent_id, t_idxs)) in relations:
-                            continue
-                    except KeyError:
-                        pass
+                try:
+                    _t_idxs, _t_channel_name = relidxs[(t_sent_id, t_idx)]
+                except KeyError:
+                    _t_idxs = None
+                    _t_channel_name = ''
+                    pass
 
-                    f_lemma = get_lemma(sentences[f_sent_id], idx)
-                    t_lemma = get_lemma(sentences[t_sent_id], t_idxs[0])
-                    print_element(f_lemma, t_lemma, '', '', idx, f_context, t_idxs[0], t_context)
+                if _t_idxs and _f_idxs:
+                    if ((t_sent_id, _t_idxs), (f_sent_id, _f_idxs)) in relations:
+                        continue
 
-                for idx in t_nouns_idx:
-                    try:
-                        _t_idxs = relidxs[(t_sent_id, idx)]
-                        if ((t_sent_id, _t_idxs), (f_sent_id, f_idxs)) in relations:
-                            continue
-                    except KeyError:
-                        pass
-
-                    f_lemma = get_lemma(sentences[f_sent_id], f_idxs[0])
-                    t_lemma = get_lemma(sentences[t_sent_id], idx)
-                    print_element(f_lemma, t_lemma, f_idxs[0], f_context, idx, t_context)
-
-                for f_idx, t_idx in product(f_nouns_idx, t_nouns_idx):
-                    f_lemma = get_lemma(sentences[f_sent_id], f_idx)
-                    t_lemma = get_lemma(sentences[t_sent_id], t_idx)
-                    print_element(f_lemma, t_lemma, '', '', f_idx, f_context, t_idx, t_context)
+                f_lemma = get_lemma(sentences[f_sent_id], f_idx)
+                t_lemma = get_lemma(sentences[t_sent_id], t_idx)
+                print_element(f_lemma, t_lemma, _f_channel_name, _t_channel_name, f_idx, f_context, t_idx, t_context)
 
 
 if __name__ == "__main__":
