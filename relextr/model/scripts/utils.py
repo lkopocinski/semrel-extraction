@@ -45,9 +45,47 @@ def compute_precision_recall_fscore(output, targets):
     return prec, rec, f
 
 
-def print_metrics(metrics, prefix):
-    print(f'{prefix} - Loss: {metrics["loss"]}, '
-          f'Accuracy: {metrics["accuracy"]}, '
-          f'Precision: {metrics["precision"]}, '
-          f'Recall: {metrics["recall"]}, '
-          f'Fscore: {metrics["fscore"]}')
+class Metrics:
+
+    def __init__(self):
+        self.loss = 0.0
+        self.acc = 0.0
+        self.prec = (0.0, 0.0)
+        self.rec = (0.0, 0.0)
+        self.f = (0.0, 0.0)
+        self.batches = 0
+
+    def update(self, loss, accuracy, precision, recall, fscore, batches):
+        self.loss += loss
+        self.acc += accuracy
+        self.prec = tuple(sum(x) for x in zip(self.prec, precision))
+        self.rec = tuple(sum(x) for x in zip(self.rec, recall))
+        self.f = tuple(sum(x) for x in zip(self.f, fscore))
+        self.batches = batches
+
+    @property
+    def loss(self):
+        return self.loss / self.batches
+
+    @property
+    def accuracy(self):
+        return self.acc / self.batches
+
+    @property
+    def precision(self):
+        return [prec / self.batches for prec in self.prec]
+
+    @property
+    def recall(self):
+        return [rec / self.batches for rec in self.rec]
+
+    @property
+    def fscore(self):
+        return [f / self.batches for f in self.f]
+
+    def __str__(self):
+        return f'Loss: {self.loss} ' \
+            f'Accuracy: {self.accuracy} ' \
+            f'Precision: {self.precision} ' \
+            f'Recall: {self.recall} ' \
+            f'Fscore: {self.fscore}'

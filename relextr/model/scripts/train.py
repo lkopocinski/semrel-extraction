@@ -1,55 +1,77 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import argparse
+
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
 from torch.optim import Adagrad
 
 from relextr.model.scripts import RelNet
-from relextr.model.scripts.utils import load_batches, print_metrics, compute_accuracy, labels2idx, compute_precision_recall_fscore
+from relextr.model.scripts.utils import load_batches, compute_accuracy, labels2idx, \
+    compute_precision_recall_fscore, Metrics
 
-EPOCHS_QUANTITY = 30
-MODEL_NAME = 'model'
+
+try:
+    import argcomplete
+except ImportError:
+    argcomplete = None
+
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(f'Runing on: {device}.')
 
 
-def main():
+def get_args(argv=None):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-e', '--epochs', required=True, type=int, help="How many epochs should the model be trained.")
+    parser.add_argument('-n', '--model_name', required=True, type=str, help="Save file name for a trained model.")
+    parser.add_argument('-b', '--batch_size', required=True, type=str, help="Batch size.")
+    parser.add_argument('-d', '--datasets_dir', required=True, type=str,
+                        help="Directory with train, validation, test datasets.")
+
+    if argcomplete:
+        argcomplete.autocomplete(parser)
+
+    return parser.parse_args(argv)
+
+
+def main(argv=None):
+    args = get_args(argv)
+
     network = RelNet(out_dim=2)
     network.to(device)
     optimizer = Adagrad(network.parameters())
     loss_func = nn.CrossEntropyLoss()
 
-    train_batches = load_batches('relextr/model/datasets/train.vectors')
-    valid_batches = load_batches('relextr/model/datasets/valid.vectors')
-    test_batches = load_batches('relextr/model/datasets/test.vectors')
+    train_batches = load_batches(f'{args.dataset_dir}/train.vectors', args.batch_size)
+    valid_batches = load_batches(f'{args.dataset_dir}/valid.vectors', args.batch_size)
+    test_batches = load_batches(f'{args.dataset_dir}/test.vectors', args.batch_size)
 
     best_valid_loss = float('inf')
 
-    for epoch in range(EPOCHS_QUANTITY):
-        print(f'\nEpoch: {epoch} / {EPOCHS_QUANTITY}')
+    for epoch in range(args.epochs):
+        print(f'\nEpoch: {epoch} / {args.epochs}')
 
         train_metrics = train(network, optimizer, loss_func, train_batches, device)
-        print_metrics(train_metrics, 'Train')
+        print(f'Train: {train_metrics}')
 
         valid_metrics = evaluate(network, valid_batches, loss_func, device)
-        print_metrics(valid_metrics, 'Valid')
+        print(f'Valid: {valid_metrics}')
 
-        valid_loss = valid_metrics['loss']
-        if valid_loss < best_valid_loss:
-            best_valid_loss = valid_loss
-            torch.save(network.state_dict(), MODEL_NAME)
+        if valid_metrics.loss < best_valid_loss:
+            best_valid_loss = valid_metrics.loss
+            torch.save(network.state_dict(), args.model_name)
 
     test_metrics = evaluate(network, test_batches, loss_func, device)
-    print_metrics(test_metrics, '\n\n-- Test --')
+    print(f'\n\nTest: {test_metrics}')
 
 
 def train(network, optimizer, loss_func, batches, device):
-    ep_loss, ep_acc, ep_prec, ep_rec, ep_f = 0.0, 0.0, 0.0, 0.0, 0.0
-    network.train()
+    metrics = Metrics()
 
+    network.train()
     for batch in batches:
         optimizer.zero_grad()
 
@@ -65,24 +87,13 @@ def train(network, optimizer, loss_func, batches, device):
 
         accuracy = compute_accuracy(output, target)
         precision, recall, fscore = compute_precision_recall_fscore(output.cpu(), target.cpu())
-        ep_loss += loss.item()
+        metrics.update(loss.item(), accuracy, precision, recall, fscore, len(batches))
 
-        ep_acc += accuracy
-        ep_prec += precision
-        ep_rec += recall
-        ep_f += fscore
-
-    return {
-        'loss': ep_loss / len(batches),
-        'accuracy': ep_acc / len(batches),
-        'precision': ep_prec / len(batches),
-        'recall': ep_rec / len(batches),
-        'fscore': ep_f / len(batches)
-    }
+    return metrics
 
 
 def evaluate(network, batches, loss_function, device):
-    eval_loss, eval_acc, eval_prec, eval_rec, eval_f = 0.0, 0.0, 0.0, 0.0, 0.0
+    metrics = Metrics()
     network.eval()
 
     with torch.no_grad():
@@ -96,20 +107,9 @@ def evaluate(network, batches, loss_function, device):
 
             accuracy = compute_accuracy(output, target)
             precision, recall, fscore = compute_precision_recall_fscore(output.cpu(), target.cpu())
-            eval_loss += loss.item()
+            metrics.update(loss.item(), accuracy, precision, recall, fscore, len(batches))
 
-            eval_acc += accuracy
-            eval_prec += precision
-            eval_rec += recall
-            eval_f += fscore
-
-    return {
-        'loss': eval_loss / len(batches),
-        'accuracy': eval_acc / len(batches),
-        'precision': eval_prec / len(batches),
-        'recall': eval_rec / len(batches),
-        'fscore': eval_f / len(batches)
-    }
+    return metrics
 
 
 if __name__ == "__main__":
