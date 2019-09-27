@@ -1,0 +1,7 @@
+md5: df909ec38d9a5456290d2e2d16d5cb8f
+outs:
+- md5: ab360909936ed2aeee39ea6788094248.dir
+  path: korpusy
+  cache: true
+  metric: false
+  persist: false
