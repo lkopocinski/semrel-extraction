@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
 # Params
-ROOT_PATH=./korpusy
-FILES_NR=(52 54 55 81 82 83)
 CHANNELS='['BRAND_NAME', 'PRODUCT_NAME']'
 SCRIPTS_DIR=scripts
 RES_DIR=generated

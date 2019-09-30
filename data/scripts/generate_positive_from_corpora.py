@@ -14,13 +14,15 @@ except ImportError:
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--source_directory', required=True,
-                        help="A directory with corpora and relations files.")
+                        help='A directory with corpora and relations files.')
     parser.add_argument('-c', '--channels', required=True,
-                        help="A relation channels to be considered while generating set.")
+                        help='A relation channels to be considered while generating set.')
     parser.add_argument('-m', '--multiword', type=bool, default=False,
-                        help="Should generate in multiword mode or not")
+                        help='Should generate in multiword mode or not')
+
     if argcomplete:
         argcomplete.autocomplete(parser)
+
     return parser.parse_args(argv)
 
 
