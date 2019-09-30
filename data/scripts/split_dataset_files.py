@@ -47,9 +47,9 @@ def main(argv=None):
     args = get_args(argv)
 
     train, valid, test = sets_split(args.source_directory)
-    save_list(f'{args.output_directory}/train/list_{args.prefix}.txt', train)
-    save_list(f'{args.output_directory}/valid/list_{args.prefix}.txt', valid)
-    save_list(f'{args.output_directory}/test/list_{args.prefix}.txt', test)
+    save_list(f'{args.output_directory}/train/{args.prefix}.list', train)
+    save_list(f'{args.output_directory}/valid/{args.prefix}.list', valid)
+    save_list(f'{args.output_directory}/test/{args.prefix}.list', test)
 
 
 if __name__ == '__main__':
