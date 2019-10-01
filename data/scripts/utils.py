@@ -6,8 +6,9 @@ from corpus_ccl import token_utils as tou
 
 
 def corpora_files(paths_file):
-    with open(paths_file, 'r', encoding='utf-8') as paths:
-        for filepath in paths:
+    with open(paths_file, 'r', encoding='utf-8') as ifile:
+        for line in ifile:
+            filepath = line.strip()
             if filepath.endswith('rel.xml'):
                 rel_file = filepath
                 corpus_file = filepath.replace('.rel', '')
