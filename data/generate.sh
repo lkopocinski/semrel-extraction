@@ -24,20 +24,20 @@ do
     DATASET_LIST_PATH=${SPLITS_DIR}/${dataset_type}
     for files_list in ${DATASET_LIST_PATH}/*.list
     do
-	echo ${files_list}
+        echo ${files_list}
         prefix=$(echo ${files_list} | cut -d"/" -f3 | cut -d"." -f1)
-	dir_path=$(pwd)
+	    dir_path=$(pwd)
 	
-	python3.6 ${SCRIPTS_DIR}/generate_positive_from_corpora.py -d ${dir_path}/${files_list} -c "${CHANNELS}" > ${POSITIVE_DIR}/${prefix}.context
+	    python3.6 ${SCRIPTS_DIR}/generate_positive_from_corpora.py -d ${dir_path}/${files_list} -c "${CHANNELS}" > ${POSITIVE_DIR}/${prefix}.context
         sort -u -o ${POSITIVE_DIR}/${prefix}.context ${POSITIVE_DIR}/${prefix}.context
 
-        #python3.6 ${SCRIPTS_DIR}/generate_negative_from_corpora.py -d ${files_list} -c "${CHANNELS}" > ${NEGATIVE_DIR}/${prefix}.context
-        #sort -u -o ${NEGATIVE_DIR}/${prefix}.context ${NEGATIVE_DIR}/${prefix}.context
+        python3.6 ${SCRIPTS_DIR}/generate_negative_from_corpora.py -d ${files_list} -c "${CHANNELS}" > ${NEGATIVE_DIR}/${prefix}.context
+        sort -u -o ${NEGATIVE_DIR}/${prefix}.context ${NEGATIVE_DIR}/${prefix}.context
 
-        #python3.6 ${SCRIPTS_DIR}/generate_positive_from_corpora.py -d ${files_list} -c "${CHANNELS}" --multiword True > ${MULTIWORD_DIR}/${prefix}.context
-        #sort -u -o ${MULTIWORD_DIR}/${prefix}.context ${MULTIWORD_DIR}/${prefix}.context
+        python3.6 ${SCRIPTS_DIR}/generate_positive_from_corpora.py -d ${files_list} -c "${CHANNELS}" --multiword True > ${MULTIWORD_DIR}/${prefix}.context
+        sort -u -o ${MULTIWORD_DIR}/${prefix}.context ${MULTIWORD_DIR}/${prefix}.context
 
-        #python3.6 ${SCRIPTS_DIR}/generate_negative_substitition.py -s ${MULTIWORD_DIR}/${nr}.context --sample_size ${BRANDS_SAMPLE} > ${SUBSTITUTED_DIR}/${prefix}.context
-        #sort -u -o ${SUBSTITUTED_DIR}/${prefix}.context  ${SUBSTITUTED_DIR}/${prefix}.context
+        python3.6 ${SCRIPTS_DIR}/generate_negative_substitition.py -s ${MULTIWORD_DIR}/${prefix}.context --sample_size ${BRANDS_SAMPLE} > ${SUBSTITUTED_DIR}/${prefix}.context
+        sort -u -o ${SUBSTITUTED_DIR}/${prefix}.context  ${SUBSTITUTED_DIR}/${prefix}.context
     done
 done

@@ -6,8 +6,8 @@ from corpus_ccl import token_utils as tou
 
 
 def corpora_files(paths_file):
-    with open(paths_file, 'r', encoding='utf-8') as ifile:
-        for line in ifile:
+    with open(paths_file, 'r', encoding='utf-8') as in_file:
+        for line in in_file:
             filepath = line.strip()
             if filepath.endswith('rel.xml'):
                 rel_file = filepath
@@ -102,8 +102,8 @@ def get_relation_element_multiword(rel, sentences):
     end = idxs[-1]
 
     context = get_context(sent)
-    phrase = ' '.join(context[begin:end+1])
-    context[begin:end+1] = [phrase]
+    phrase = ' '.join(context[begin:end + 1])
+    context[begin:end + 1] = [phrase]
 
     lemma = get_multiword_lemma(sent, idxs[0])
     return lemma, [begin], context, channel_name

@@ -1,6 +1,6 @@
+import argparse
 import glob
 import random
-import argparse
 
 try:
     import argcomplete
