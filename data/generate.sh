@@ -27,10 +27,11 @@ do
     DATASET_LIST_PATH=${SPLITS_DIR}/${dataset_type}
     for files_list in ${DATASET_LIST_PATH}/*.list
     do
-        prefix=$(cut -d. -f1 ${files_list})
-        echo ${prefix}
-#        python3.6 ${SCRIPTS_DIR}/generate_positive_from_corpora.py -d ${files_list} -c "${CHANNELS}" > ${POSITIVE_DIR}/${prefix}.context
-#        sort -u -o ${POSITIVE_DIR}/${nr}.context ${POSITIVE_DIR}/${nr}.context
+	echo ${files_list}
+        prefix=$(echo ${files_list} | cut -d"/" -f3 | cut -d"." -f1)
+
+	python3.6 ${SCRIPTS_DIR}/generate_positive_from_corpora.py -d ${files_list} -c "${CHANNELS}" > ${POSITIVE_DIR}/${prefix}.context
+        sort -u -o ${POSITIVE_DIR}/${nr}.context ${POSITIVE_DIR}/${nr}.context
 
 #        python3.6 ${SCRIPTS_DIR}/generate_negative_from_corpora.py -d ${FILES_PATH} -c "${CHANNELS}" > ${RES_DIR}/negative/${nr}.context
 #        sort -u -o ${RES_DIR}/negative/${nr}.context ${RES_DIR}/negative/${nr}.context
