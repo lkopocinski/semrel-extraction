@@ -30,6 +30,7 @@ def main(argv=None):
     args = get_args(argv)
 
     for corpora_file, relations_file in corpora_files(args.relations_files):
+        print(corpora_file, relations_file)
         document = load_document(corpora_file, relations_file)
         sentences = id_to_sent_dict(document)
 
