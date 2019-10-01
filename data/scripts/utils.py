@@ -5,16 +5,16 @@ from corpus_ccl import corpus_object_utils as cou
 from corpus_ccl import token_utils as tou
 
 
-def corpora_files(directory):
-    for filename in os.listdir(directory):
-        if filename.endswith('rel.xml'):
-            rel_file = os.path.join(directory, filename)
-            corpus_file = os.path.join(directory, filename.replace('.rel', ''))
-
-            if os.path.isfile(corpus_file):
-                yield corpus_file, rel_file
-        else:
-            continue
+def corpora_files(paths_file):
+    with open(paths_file) as paths:
+        for filepath in paths:
+            if filepath.endswith('rel.xml'):
+                rel_file = filepath
+                corpus_file = filepath.replace('.rel', '')
+                if os.path.isfile(corpus_file):
+                    yield corpus_file, rel_file
+            else:
+                continue
 
 
 def load_document(corpora_file, rel_file):

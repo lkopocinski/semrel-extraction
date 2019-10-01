@@ -18,5 +18,4 @@ do
     FILES_PATH=${ROOT_PATH}/inforex_export_${nr}/documents/
 
     python3.6 ${SCRIPTS_DIR}/split_dataset_files.py -d ${FILES_PATH} -o ${SAVE_DIR} -p ${nr}
-
 done
