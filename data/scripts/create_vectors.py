@@ -1,10 +1,9 @@
-from allennlp.modules.elmo import Elmo, batch_to_ids
-import re
 import argparse
-
-
 import sys
+
 import numpy as np
+from allennlp.modules.elmo import Elmo, batch_to_ids
+
 np.set_printoptions(threshold=sys.maxsize)
 
 try:
@@ -12,79 +11,99 @@ try:
 except ImportError:
     argcomplete = None
 
-"""
-Change options_file and weight_file to path with elmo data
 
-"""
-options_file = '/data2/piotrmilkowski/bilm-tf-data/e2000000/options.json'
-weights_file = '/data2/piotrmilkowski/bilm-tf-data/e2000000/weights.hdf5'
+class Relation:
 
-elmo = Elmo(options_file, weights_file, 2, dropout=0)
+    def __init__(self, line):
+        self.line = line
+        self._from = None
+        self._to = None
+        self._init_from_line()
+
+    def _init_from_line(self):
+        line = self.line.strip()
+        by_tab = line.split('\t')
+
+        lemma_from, lemma_to = by_tab[0].replace(' : ', ':').split(':', 1)
+        channel_from, channel_to = by_tab[1].replace(' : ', ':').split(':', 1)
+        index_from, context_from = by_tab[2].split(':', 1)
+        index_to, context_to = by_tab[3].split(':', 1)
+
+        context_from = eval(context_from)
+        context_to = eval(context_to)
+
+        index_from = int(index_from)
+        index_to = int(index_to)
+
+        self._from = self.Element(lemma_from, channel_from, index_from, context_from)
+        self._to = self.Element(lemma_to, channel_to, index_to, context_to)
+
+    @property
+    def source(self):
+        return self._from
+
+    @property
+    def dest(self):
+        return self._to
+
+    class Element:
+        def __init__(self, lemma, channel, index, context):
+            self.lemma = lemma
+            self.channel = channel
+            self.index = index
+            self.context = context
+
+        def __str__(self):
+            return f'{self.lemma}\t{self.channel}\t{self.index}:{self.context}'
+
+
+class Vector:
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return np.array2string(self.value, separator=', ').replace('\n', '')
+
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--source_file', required=True, help="A file with relations contexts.")
     parser.add_argument('-r', '--relation_type', required=True, help="Example's relation type.")
+    parser.add_argument('-w', '--weights', required=True, help="File with weights to elmo model.")
+    parser.add_argument('-p', '--options', required=True, help="File with options to elmo model.")
+
     if argcomplete:
         argcomplete.autocomplete(parser)
-    
+
     return parser.parse_args(argv)
 
 
-def print_example(relation_type, vector_from, vector_to, phrase_from, phrase_to):
-    print('{}\t{}\t{}\t{}\t{}'.format(relation_type, vector_from, vector_to, phrase_from, phrase_to))
+def create_vectors(elmo, path, relation_type):
+    with open(path, 'r', encoding='utf-8') as in_file:
+        for line in in_file:
+            relation = Relation(line)
+            vector_from = get_context_vector(elmo, relation.source)
+            vector_to = get_context_vector(elmo, relation.dest)
+
+            print_line(relation_type, vector_from, vector_to, relation.source, relation.dest)
 
 
-def print_example_with_ctx(relation_type, vector_from, vector_to, idx_from, idx_to, context_from, context_to):
-    print(f'{relation_type}\t{vector_from}\t{vector_to}\t{context_from[idx_from]}\t{context_to[idx_to]}\t{idx_from}:{context_from}\t{idx_to}:{context_to}')
-
-
-def contextual_vector(context, model, idx):
-    """
-    Creating elmo vector for context (sentence). 
-    idx is a id of meaning word (Brand or Product) in context.
-    Parametres
-    ----------
-    context : str
-        sentence with brand or product marked
-    model : elmo model
-        previous created model Elmo
-    idx : int
-        index of word for creating contextual vector
-    """
-    character_ids = batch_to_ids([context])
+def get_context_vector(model, element):
+    character_ids = batch_to_ids([element.context])
     embeddings = model(character_ids)
     v = embeddings['elmo_representations'][1].data.numpy()
-    return v[:,idx,:].flatten()
+    value = v[:, element.index, :].flatten()
+    return Vector(value)
 
 
-def create_vectors(path, relation):
-    with open(path) as f:
-        for line in f:
-            line = line.strip()
-            by_tab = line.split('\t')
-            
-            idx_from, ctx_from = by_tab[0].split(':', 1)
-            idx_to, ctx_to = by_tab[1].split(':', 1)
-            
-            ctx_from = eval(ctx_from)
-            ctx_to = eval(ctx_to)
-
-            idx_from = int(idx_from)
-            idx_to = int(idx_to)
-
-            vector_from = contextual_vector(ctx_from, elmo, idx_from)
-            vector_to = contextual_vector(ctx_to, elmo, idx_to)
-            
-            vector_from = np.array2string(vector_from, separator=', ').replace('\n', '')
-            vector_to =  np.array2string(vector_to, separator=', ').replace('\n', '')
-
-            print_example_with_ctx(relation, vector_from, vector_to, idx_from, idx_to, ctx_from, ctx_to)
+def print_line(relation_type, vector_from, vector_to, relation_from, relation_to):
+    print(f'{relation_type}\t{vector_from}\t{vector_to}\t{relation_from}\t{relation_to}')
 
 
 def main(argv=None):
     args = get_args(argv)
-    create_vectors(args.source_file, args.relation_type)
+    elmo = Elmo(args.options, args.weights, 2, dropout=0)
+    create_vectors(elmo, args.source_file, args.relation_type)
 
 
 if __name__ == "__main__":
