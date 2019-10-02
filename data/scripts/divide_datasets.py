@@ -45,7 +45,7 @@ def select_positive(source_path, size):
     positive_path = f'{source_path}/positive/*.context'
     files = glob.glob(positive_path)
     files_number = len(files)
-    sample_size = math.floor(size / 1 if files_number == 0 else files_number)
+    sample_size = math.floor(size / (1 if files_number == 0 else files_number))
 
     for file_path in files:
         lines = load_file(file_path)
