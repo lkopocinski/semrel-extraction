@@ -26,7 +26,7 @@ def get_args(argv=None):
 
 def load_file(path):
     with open(path, 'r', encoding='utf-8') as in_file:
-        return in_file.readlines()
+        return [line.strip() for line in in_file]
 
 
 def save_lines(lines, path):
