@@ -4,7 +4,7 @@ import math
 import random
 from collections import defaultdict
 
-from data.scripts.parse_utils import Relation
+from .parse_utils import Relation
 
 try:
     import argcomplete
@@ -113,6 +113,10 @@ def main(argv=None):
         save_lines(lines, save_path)
 
     batch_size = math.floor(negative_size / 4)
+    for lines, file_name in select_negative(source_dir, batch_size):
+        save_path = f'{output_dir}/negative/{file_name}'
+        save_lines(lines, save_path)
+
     for lines, file_name in select_substituted(source_dir, batch_size):
         save_path = f'{output_dir}/negative/substituted/{file_name}'
         save_lines(lines, save_path)
