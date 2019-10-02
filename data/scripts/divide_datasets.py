@@ -49,7 +49,8 @@ def select_positive(source_path, size):
 
     for file_path in files:
         lines = load_file(file_path)
-        lines = random.sample(lines, sample_size)
+        if len(lines) > sample_size:
+            lines = random.sample(lines, sample_size)
 
         file_name = get_file_name(file_path)
         file_name = f'{file_name}.sampled'
