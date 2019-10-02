@@ -1,7 +1,7 @@
 import argparse
 import glob
 import math
-from random import random
+from random import sample
 
 try:
     import argcomplete
@@ -11,7 +11,7 @@ except ImportError:
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--positive_size', required=True, help='How many positive examples should be selected.')
+    parser.add_argument('--positive_size', required=True, type=int, help='How many positive examples should be selected.')
     parser.add_argument('--path', required=True, help='Path to datasets in context format.')
 
     if argcomplete:
@@ -27,19 +27,22 @@ def load_file(path):
 
 def save_lines(lines, path):
     with open(path, 'w', encoding='utf-8') as out_file:
-        out_file.writelines(lines)
+        for line in lines:    
+            out_file.write(f'{line}\n')
 
 
 def select_positive(path, size):
     files = glob.glob(path)
     files_number = len(files)
     batch_size = math.floor(size / files_number)
-
     for file_path in files:
         lines = load_file(file_path)
-        lines = random.sample(lines, batch_size)
+        lines = sample(lines, batch_size)
 
         file = file_path.split('.')[-2]
+        file = file.split('/')[-1]
+        file= f'{file}.sel'
+        print(file)
         yield lines, file
 
 
@@ -50,7 +53,7 @@ def main(argv=None):
 
     positive_path = f'{path}/positive/*.context'
     for lines, file in select_positive(positive_path, positive_size):
-        save_lines(lines, path)
+        save_lines(lines, file)
 
 
 if __name__ == '__main__':
