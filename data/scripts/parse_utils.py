@@ -24,6 +24,9 @@ class Relation:
         self._from = self.Element(lemma_from, channel_from, index_from, context_from)
         self._to = self.Element(lemma_to, channel_to, index_to, context_to)
 
+    def __str__(self):
+        return f'{self._from.lemma} : {self._to.lemma}\t{self._from.channel} : {self._to.channel}\t{self._from.index}:{self._from.context}\t{self._to.index}:{self._to.context}'
+
     @property
     def source(self):
         return self._from
