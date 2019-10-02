@@ -2,6 +2,9 @@ import argparse
 import glob
 import math
 import random
+from collections import defaultdict
+
+from data.scripts.parse_utils import Relation
 
 try:
     import argcomplete
@@ -31,7 +34,7 @@ def load_file(path):
 
 def save_lines(lines, path):
     with open(path, 'w', encoding='utf-8') as out_file:
-        for line in lines:    
+        for line in lines:
             out_file.write(f'{line}\n')
 
 
@@ -41,9 +44,8 @@ def get_file_name(file_path):
     return file_name
 
 
-def select_positive(source_path, size):
-    positive_path = f'{source_path}/positive/*.context'
-    files = glob.glob(positive_path)
+def select(path, size):
+    files = glob.glob(path)
     files_number = len(files)
     sample_size = math.floor(size / (1 if files_number == 0 else files_number))
 
@@ -58,6 +60,45 @@ def select_positive(source_path, size):
         yield lines, file_name
 
 
+def select_positive(source_path, size):
+    path = f'{source_path}/positive/*.context'
+    return select(path, size)
+
+
+def select_substituted(source_path, size):
+    path = f'{source_path}/negative/substituted/*.context'
+    return select(path, size)
+
+
+def select_negative(source_path, size):
+    path = f'{source_path}/negative/*.context'
+    files = glob.glob(path)
+    files_number = len(files)
+    sample_size = math.floor(size / (1 if files_number == 0 else files_number))
+
+    for file_path in files:
+        lines = load_file(file_path)
+
+        cat_dict = defaultdict[list]
+        for line in lines:
+            relation = Relation(line)
+            if relation.source.channel == '' and relation.dest.channel == '':
+                cat_dict['plain'].append(f'{relation}')
+            elif relation.source.channel == 'BRAND_CHANNEL' and relation.dest.channel == '':
+                cat_dict['brand'].append(f'{relation}')
+            elif relation.source.channel == '' and relation.dest.channel == 'PRODUCT_CHANNEL':
+                cat_dict['product'].append(f'{relation}')
+
+        for key, lines in cat_dict.items():
+            if len(lines) > sample_size:
+                lines = random.sample(lines, sample_size)
+
+            file_name = get_file_name(file_path)
+            file_name = f'{file_name}.sampled'
+
+            yield lines, file_name
+
+
 def main(argv=None):
     args = get_args(argv)
 
@@ -69,6 +110,11 @@ def main(argv=None):
 
     for lines, file_name in select_positive(source_dir, positive_size):
         save_path = f'{output_dir}/positive/{file_name}'
+        save_lines(lines, save_path)
+
+    batch_size = math.floor(negative_size / 4)
+    for lines, file_name in select_substituted(source_dir, batch_size):
+        save_path = f'{output_dir}/negative/substituted/{file_name}'
         save_lines(lines, save_path)
 
 
