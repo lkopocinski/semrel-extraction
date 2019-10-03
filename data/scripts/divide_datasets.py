@@ -4,7 +4,7 @@ import math
 import random
 from collections import defaultdict
 
-from .parse_utils import Relation
+from parse_utils import Relation
 
 try:
     import argcomplete
@@ -79,14 +79,14 @@ def select_negative(source_path, size):
     for file_path in files:
         lines = load_file(file_path)
 
-        cat_dict = defaultdict[list]
+        cat_dict = defaultdict(list)
         for line in lines:
             relation = Relation(line)
             if relation.source.channel == '' and relation.dest.channel == '':
                 cat_dict['plain'].append(f'{relation}')
-            elif relation.source.channel == 'BRAND_CHANNEL' and relation.dest.channel == '':
+            elif relation.source.channel == 'BRAND_NAME' and relation.dest.channel == '':
                 cat_dict['brand'].append(f'{relation}')
-            elif relation.source.channel == '' and relation.dest.channel == 'PRODUCT_CHANNEL':
+            elif relation.source.channel == '' and relation.dest.channel == 'PRODUCT_NAME':
                 cat_dict['product'].append(f'{relation}')
 
         for key, lines in cat_dict.items():
