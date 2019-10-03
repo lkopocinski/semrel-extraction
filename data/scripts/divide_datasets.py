@@ -93,7 +93,7 @@ def select_negative(source_path, size):
         for key, lines in cat_dict.items():
             if len(lines) > sample_size:
                 lines = random.sample(lines, sample_size)
-            out_lines.append(lines)
+            out_lines.extend(lines)
 
         file_name = get_file_name(file_path)
         file_name = f'{file_name}.sampled'
