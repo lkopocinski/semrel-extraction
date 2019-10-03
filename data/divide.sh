@@ -7,15 +7,21 @@ VALID_DIR=${RES_DIR}/valid
 TEST_DIR=${RES_DIR}/test
 OUTPUT_DIR=sampled
 
-POSITIVE_SIZE=100
-NEGATIVE_SIZE=100
-
-mkdir -p ${OUTPUT_DIR}/positive
-mkdir -p ${OUTPUT_DIR}/negative
-mkdir -p ${OUTPUT_DIR}/negative/substituted
-
-
-for path in ${TRAIN_DIR}
+# Initialization
+declare -a types=("train" "valid" "test")
+for dataset_type in "${types[@]}"
 do
-    python3.6 scripts/divide_datasets.py --positive_size ${POSITIVE_SIZE} --negative_size ${NEGATIVE_SIZE} --source_dir ${path} --output_dir ${OUTPUT_DIR}
+    # Declaration
+    OUT_DIR=${RES_DIR}/${dataset_type}
+    POSITIVE_DIR=${OUT_DIR}/positive
+    NEGATIVE_DIR=${OUT_DIR}/negative
+    SUBSTITUTED_DIR=${OUT_DIR}/negative/substituted
+
+    mkdir -p ${MULTIWORD_DIR}
+    mkdir -p ${SUBSTITUTED_DIR}
 done
+
+# Generation
+python3.6 scripts/divide_datasets.py --positive_size 1500 --negative_size 3000 --source_dir ${TRAIN_DIR} --output_dir ${OUTPUT_DIR}/train
+python3.6 scripts/divide_datasets.py --positive_size 500 --negative_size 1000 --source_dir ${VALID_DIR} --output_dir ${OUTPUT_DIR}/valid
+python3.6 scripts/divide_datasets.py --positive_size 500 --negative_size 1000 --source_dir ${TEST_DIR} --output_dir ${OUTPUT_DIR}/test
