@@ -48,43 +48,43 @@ def compute_precision_recall_fscore(output, targets):
 class Metrics:
 
     def __init__(self):
-        self.loss = 0.0
-        self.acc = 0.0
-        self.prec = (0.0, 0.0)
-        self.rec = (0.0, 0.0)
-        self.f = (0.0, 0.0)
+        self._loss = 0.0
+        self._acc = 0.0
+        self._prec = (0.0, 0.0)
+        self._rec = (0.0, 0.0)
+        self._f = (0.0, 0.0)
         self.batches = 0
 
     def update(self, loss, accuracy, precision, recall, fscore, batches):
-        self.loss += loss
-        self.acc += accuracy
-        self.prec = tuple(sum(x) for x in zip(self.prec, precision))
-        self.rec = tuple(sum(x) for x in zip(self.rec, recall))
-        self.f = tuple(sum(x) for x in zip(self.f, fscore))
+        self._loss += loss
+        self._acc += accuracy
+        self._prec = tuple(sum(x) for x in zip(self._prec, precision))
+        self._rec = tuple(sum(x) for x in zip(self._rec, recall))
+        self._f = tuple(sum(x) for x in zip(self._f, fscore))
         self.batches = batches
 
     @property
     def loss(self):
-        return self.loss / self.batches
+        return self._loss / self.batches
 
     @property
     def accuracy(self):
-        return self.acc / self.batches
+        return self._acc / self.batches
 
     @property
     def precision(self):
-        return [prec / self.batches for prec in self.prec]
+        return [prec / self.batches for prec in self._prec]
 
     @property
     def recall(self):
-        return [rec / self.batches for rec in self.rec]
+        return [rec / self.batches for rec in self._rec]
 
     @property
     def fscore(self):
-        return [f / self.batches for f in self.f]
+        return [f / self.batches for f in self._f]
 
     def __str__(self):
-        return f'Loss: {self.loss} ' \
+        return f'Loss: {self._loss} ' \
             f'Accuracy: {self.accuracy} ' \
             f'Precision: {self.precision} ' \
             f'Recall: {self.recall} ' \
