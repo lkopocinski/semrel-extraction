@@ -17,7 +17,7 @@ do
     NEGATIVE_DIR=${OUT_DIR}/negative
     SUBSTITUTED_DIR=${OUT_DIR}/negative/substituted
 
-    mkdir -p ${MULTIWORD_DIR}
+    mkdir -p ${POSITIVE_DIR}
     mkdir -p ${SUBSTITUTED_DIR}
 done
 

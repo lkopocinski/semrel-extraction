@@ -4,7 +4,7 @@ import sys
 import numpy as np
 from allennlp.modules.elmo import Elmo, batch_to_ids
 
-from data.scripts.parse_utils import Relation
+from parse_utils import Relation
 
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -49,7 +49,10 @@ def get_context_vector(model, element):
     character_ids = batch_to_ids([element.context])
     embeddings = model(character_ids)
     v = embeddings['elmo_representations'][1].data.numpy()
-    value = v[:, element.index, :].flatten()
+    try:
+        value = v[:, element.index, :].flatten()
+    except:
+        print(element, file=sys.stderr)
     return Vector(value)
 
 
