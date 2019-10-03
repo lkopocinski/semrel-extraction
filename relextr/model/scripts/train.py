@@ -10,14 +10,12 @@ from torch.optim import Adagrad
 
 from relextr.model.scripts import RelNet
 from relextr.model.scripts.utils import load_batches, compute_accuracy, labels2idx, \
-    compute_precision_recall_fscore, Metrics
-
+    compute_precision_recall_fscore, Metrics, save_metrics
 
 try:
     import argcomplete
 except ImportError:
     argcomplete = None
-
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(f'Runing on: {device}.')
@@ -28,8 +26,8 @@ def get_args(argv=None):
     parser.add_argument('-e', '--epochs', required=True, type=int, help="How many epochs should the model be trained.")
     parser.add_argument('-n', '--model_name', required=True, type=str, help="Save file name for a trained model.")
     parser.add_argument('-b', '--batch_size', required=True, type=str, help="Batch size.")
-    parser.add_argument('-d', '--datasets_dir', required=True, type=str,
-                        help="Directory with train, validation, test datasets.")
+    parser.add_argument('-d', '--dataset_dir', required=True, type=str,
+                        help="Directory with train, validation, test dataset.")
 
     if argcomplete:
         argcomplete.autocomplete(parser)
@@ -55,10 +53,10 @@ def main(argv=None):
         print(f'\nEpoch: {epoch} / {args.epochs}')
 
         train_metrics = train(network, optimizer, loss_func, train_batches, device)
-        print(f'Train: {train_metrics}')
+        print(f'\tTrain: {train_metrics}')
 
         valid_metrics = evaluate(network, valid_batches, loss_func, device)
-        print(f'Valid: {valid_metrics}')
+        print(f'\tValid: {valid_metrics}')
 
         if valid_metrics.loss < best_valid_loss:
             best_valid_loss = valid_metrics.loss
@@ -66,6 +64,7 @@ def main(argv=None):
 
     test_metrics = evaluate(network, test_batches, loss_func, device)
     print(f'\n\nTest: {test_metrics}')
+    save_metrics(test_metrics, 'test_metrics.txt')
 
 
 def train(network, optimizer, loss_func, batches, device):
