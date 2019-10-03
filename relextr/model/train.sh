@@ -8,6 +8,8 @@ SAVE_MODEL_NAME='model_temp.pt'
 DATASET_DIR='dataset'
 VECTORS_DIR=../../data/vectors
 
+
+mkdir -p ${DATASET_DIR}
 # Build dataset
 declare -a types=("train" "valid" "test")
 for type in "${types[@]}"
@@ -18,4 +20,4 @@ do
 done
 
 # Execution
-python3.6 train.py --epochs ${EPOCHS_QUANTITY} --batch_size ${BATCH_SIZE} --datasets_dir ${DATASET_DIR} --model_name ${SAVE_MODEL_NAME}
+CUDA_VISIBLE_DEVICES=5,6 python3.6 scripts/train.py --epochs ${EPOCHS_QUANTITY} --batch_size ${BATCH_SIZE} --dataset_dir ${DATASET_DIR} --model_name ${SAVE_MODEL_NAME}
