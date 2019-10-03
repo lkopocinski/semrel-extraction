@@ -12,7 +12,7 @@ declare -a types=("train" "valid" "test")
 for dataset_type in "${types[@]}"
 do
     # Declaration
-    OUT_DIR=${RES_DIR}/${dataset_type}
+    OUT_DIR=${OUTPUT_DIR}/${dataset_type}
     POSITIVE_DIR=${OUT_DIR}/positive
     NEGATIVE_DIR=${OUT_DIR}/negative
     SUBSTITUTED_DIR=${OUT_DIR}/negative/substituted
