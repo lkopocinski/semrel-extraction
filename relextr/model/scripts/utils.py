@@ -89,3 +89,8 @@ class Metrics:
             f'Precision: {self.precision} ' \
             f'Recall: {self.recall} ' \
             f'Fscore: {self.fscore}'
+
+
+def save_metrics(metrics, path):
+    with open(path, 'w', encoding='utf-8') as out_file:
+        out_file.write(f'{metrics}')
