@@ -19,7 +19,7 @@ def get_args(argv=None):
     parser.add_argument('--negative_size', required=True, type=int,
                         help='How many negative examples should be selected.')
     parser.add_argument('--source_dir', required=True, help='Path to datasets in context format.')
-    parser.add_argument('--output_dir', required=True, help='Path to datasets in context format.')
+    parser.add_argument('--output_dir', required=True, help='Save directory path.')
 
     if argcomplete:
         argcomplete.autocomplete(parser)
@@ -89,14 +89,16 @@ def select_negative(source_path, size):
             elif relation.source.channel == '' and relation.dest.channel == 'PRODUCT_NAME':
                 cat_dict['product'].append(f'{relation}')
 
+        out_lines = []
         for key, lines in cat_dict.items():
             if len(lines) > sample_size:
                 lines = random.sample(lines, sample_size)
+            out_lines.append(lines)
 
-            file_name = get_file_name(file_path)
-            file_name = f'{file_name}.sampled'
+        file_name = get_file_name(file_path)
+        file_name = f'{file_name}.sampled'
 
-            yield lines, file_name
+        yield out_lines, file_name
 
 
 def main(argv=None):
