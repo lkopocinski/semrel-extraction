@@ -53,10 +53,10 @@ def main(argv=None):
         print(f'\nEpoch: {epoch} / {args.epochs}')
 
         train_metrics = train(network, optimizer, loss_func, train_batches, device)
-        print(f'\tTrain: {train_metrics}')
+        print(f'Train:\n{train_metrics}')
 
         valid_metrics = evaluate(network, valid_batches, loss_func, device)
-        print(f'\tValid: {valid_metrics}')
+        print(f'Valid:\n{valid_metrics}')
 
         if valid_metrics.loss < best_valid_loss:
             best_valid_loss = valid_metrics.loss
