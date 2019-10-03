@@ -41,7 +41,7 @@ def compute_precision_recall_fscore(output, targets):
     _, predicted = torch.max(output, dim=1)
     output = predicted.data.numpy()
     targets = targets.data.numpy()
-    prec, rec, f, _ = precision_recall_fscore_support(targets, output, average='weighted', labels=[0, 1])
+    prec, rec, f, _ = precision_recall_fscore_support(targets, output, average=None, labels=[0, 1])
     return prec, rec, f
 
 
@@ -84,11 +84,11 @@ class Metrics:
         return [f / self.batches for f in self._f]
 
     def __str__(self):
-        return f'Loss: {self._loss} ' \
-            f'Accuracy: {self.accuracy:.4f} ' \
-            f'Precision: {self.precision:.4f} ' \
-            f'Recall: {self.recall:.4f} ' \
-            f'Fscore: {self.fscore:.4f}'
+        return f'\tLoss: {self._loss} ' \
+            f'\n\tAccuracy: {self.accuracy} ' \
+            f'\n\tPrecision: {self.precision} ' \
+            f'\n\tRecall: {self.recall} ' \
+            f'\n\tFscore: {self.fscore}'
 
 
 def save_metrics(metrics, path):
