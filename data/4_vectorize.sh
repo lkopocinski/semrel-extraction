@@ -25,6 +25,6 @@ do
     FILE_NEGATIVE=${SOURCE_TMP}/negative.context
 
     mkdir -p ${TARGET_DIR}/${type}
-    python3.6 ${SCRIPTS_DIR}/create_vectors.py --source_file ${FILE_POSITIVE} --relation_type "in_relation" --options ${OPTIONS_FILE} -weights ${WEIGHTS_FILE} > ${TARGET_DIR}/${type}/positive.vectors
-    python3.6 ${SCRIPTS_DIR}/create_vectors.py --source_file ${FILE_NEGATIVE} --relation_type "no_relation" --options ${OPTIONS_FILE} -weights ${WEIGHTS_FILE} > ${TARGET_DIR}/${type}/negative.vectors
+    python3.6 ${SCRIPTS_DIR}/create_vectors.py --source_file ${FILE_POSITIVE} --relation_type "in_relation" --options ${OPTIONS_FILE} --weights ${WEIGHTS_FILE} > ${TARGET_DIR}/${type}/positive.vectors
+    python3.6 ${SCRIPTS_DIR}/create_vectors.py --source_file ${FILE_NEGATIVE} --relation_type "no_relation" --options ${OPTIONS_FILE} --weights ${WEIGHTS_FILE} > ${TARGET_DIR}/${type}/negative.vectors
 done
