@@ -10,9 +10,9 @@ except ImportError:
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--source_directory', required=True,
+    parser.add_argument('-s', '--source_dir', required=True,
                         help='A directory with corpora and relations files.')
-    parser.add_argument('-o', '--output_directory', required=True,
+    parser.add_argument('-t', '--target_dir', required=True,
                         help='A directory to save generated splits.')
     parser.add_argument('-p', '--prefix', required=True,
                         help='A prefix for saved file.')
@@ -23,8 +23,8 @@ def get_args(argv=None):
     return parser.parse_args(argv)
 
 
-def sets_split(root_path):
-    path = f'{root_path}/*.rel.xml'
+def split(source_dir_path):
+    path = f'{source_dir_path}/*.rel.xml'
     files = glob.glob(path)
     random.shuffle(files)
     return chunk(files)
@@ -46,10 +46,10 @@ def save_list(file_name, files_list):
 def main(argv=None):
     args = get_args(argv)
 
-    train, valid, test = sets_split(args.source_directory)
-    save_list(f'{args.output_directory}/train/{args.prefix}.list', train)
-    save_list(f'{args.output_directory}/valid/{args.prefix}.list', valid)
-    save_list(f'{args.output_directory}/test/{args.prefix}.list', test)
+    train, valid, test = split(args.source_dir)
+    save_list(f'{args.target_dir}/train/{args.prefix}.list', train)
+    save_list(f'{args.target_dir}/valid/{args.prefix}.list', valid)
+    save_list(f'{args.target_dir}/test/{args.prefix}.list', test)
 
 
 if __name__ == '__main__':
