@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Script takes files from provided corpora and splits them into train, valid, test
-# disjoint data sets. It means each one of the splits contains different files.
+# disjoint data sets list. It means each one of the splits contains different files.
 
 # Params
 SOURCE_DIR=korpusy
