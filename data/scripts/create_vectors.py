@@ -3,7 +3,6 @@ import sys
 
 import numpy as np
 from allennlp.modules.elmo import Elmo, batch_to_ids
-
 from parse_utils import Relation
 
 np.set_printoptions(threshold=sys.maxsize)
