@@ -48,7 +48,7 @@ def main(argv=None):
                     t_idxs = tuple(t_idxs)
 
                     relations[((f_sent_id, f_idxs), (t_sent_id, t_idxs))] = (relation, f_context, t_context)
-                    relations[((t_sent_id, t_idxs), (f_sent_id, f_idxs))] = (relation, f_context, t_context)
+                    relations[((t_sent_id, t_idxs), (f_sent_id, f_idxs))] = (relation, t_context, f_context)
 
                     for f_idx in f_idxs:
                         relidxs[(f_sent_id, f_idx)] = (f_idxs, f_channel_name)
