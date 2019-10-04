@@ -47,8 +47,8 @@ def main(argv=None):
                     f_idxs = tuple(f_idxs)
                     t_idxs = tuple(t_idxs)
 
-                    relations[((f_sent_id, f_idxs), (t_sent_id, t_idxs))] = (relation, f_context, f_channel_name)
-                    relations[((t_sent_id, t_idxs), (f_sent_id, f_idxs))] = (relation, t_context, t_channel_name)
+                    relations[((f_sent_id, f_idxs), (t_sent_id, t_idxs))] = (relation, f_context, t_context)
+                    relations[((t_sent_id, t_idxs), (f_sent_id, f_idxs))] = (relation, f_context, t_context)
 
                     for f_idx in f_idxs:
                         relidxs[(f_sent_id, f_idx)] = (f_idxs, f_channel_name)
@@ -56,8 +56,7 @@ def main(argv=None):
                         relidxs[(t_sent_id, t_idx)] = (t_idxs, t_channel_name)
 
         for rel, rel_value in relations.items():
-            relation, f_context, f_channel_name = rel_value
-            relation, t_context, t_channel_name = rel_value
+            relation, f_context, t_context = rel_value
             ((f_sent_id, f_idxs), (t_sent_id, t_idxs)) = rel
 
             f_nouns = get_nouns_idx(sentences[f_sent_id])
