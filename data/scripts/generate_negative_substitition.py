@@ -12,7 +12,7 @@ except ImportError:
     argcomplete = None
 
 """
-    Script require a file with multi word phrases as one token
+    Script require a file with multi word phrases as one token.
 """
 
 
