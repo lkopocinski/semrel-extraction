@@ -19,6 +19,6 @@ do
 done
 
 # Sample
-python3.6 ${SCRIPTS_DIR}/sample_datasets.py --positive_size 1500 --negative_size 3000 --source_dir ${SOURCE_DIR}/train --output_dir ${TARGET_DIR}/train
-python3.6 ${SCRIPTS_DIR}/sample_datasets.py --positive_size 500 --negative_size 1000 --source_dir ${SOURCE_DIR}/valid --output_dir ${TARGET_DIR}/valid
-python3.6 ${SCRIPTS_DIR}/sample_datasets.py --positive_size 500 --negative_size 1000 --source_dir ${SOURCE_DIR}/test --output_dir ${TARGET_DIR}/test
+python3.6 ${SCRIPTS_DIR}/sample_datasets.py --positive_size 5000 --negative_size 4000 --source_dir ${SOURCE_DIR}/train --output_dir ${TARGET_DIR}/train
+python3.6 ${SCRIPTS_DIR}/sample_datasets.py --positive_size 2500 --negative_size 2000 --source_dir ${SOURCE_DIR}/valid --output_dir ${TARGET_DIR}/valid
+python3.6 ${SCRIPTS_DIR}/sample_datasets.py --positive_size 2500 --negative_size 2000 --source_dir ${SOURCE_DIR}/test --output_dir ${TARGET_DIR}/test
