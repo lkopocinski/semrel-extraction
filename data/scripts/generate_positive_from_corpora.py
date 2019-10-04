@@ -3,7 +3,8 @@
 import argparse
 
 from utils import corpora_files, load_document, id_to_sent_dict, \
-    is_ner_relation, is_in_channel, get_relation_element, print_element, get_relation_element_multiword
+    is_ner_relation, is_in_channel, get_relation_element, print_element, \
+    get_relation_element_multiword
 
 try:
     import argcomplete
@@ -13,7 +14,7 @@ except ImportError:
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--relations_files', required=True,
+    parser.add_argument('-l', '--list_file', required=True,
                         help='A file with paths to relation files.')
     parser.add_argument('-c', '--channels', required=True,
                         help='A relation channels to be considered while generating set.')
@@ -29,7 +30,7 @@ def get_args(argv=None):
 def main(argv=None):
     args = get_args(argv)
 
-    for corpora_file, relations_file in corpora_files(args.relations_files):
+    for corpora_file, relations_file in corpora_files(args.list_file):
         document = load_document(corpora_file, relations_file)
         sentences = id_to_sent_dict(document)
 
