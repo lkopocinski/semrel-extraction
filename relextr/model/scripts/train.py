@@ -64,7 +64,7 @@ def main(argv=None):
 
     test_metrics = evaluate(network, test_batches, loss_func, device)
     print(f'\n\nTest: {test_metrics}')
-    save_metrics(test_metrics, 'test_metrics.txt')
+    save_metrics(test_metrics, 'metrics.txt')
 
 
 def train(network, optimizer, loss_func, batches, device):
