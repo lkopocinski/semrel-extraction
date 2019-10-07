@@ -47,7 +47,7 @@ def main(argv=None):
     valid_batches = load_batches(f'{args.dataset_dir}/valid.vectors', args.batch_size)
     test_batches = load_batches(f'{args.dataset_dir}/test.vectors', args.batch_size)
 
-    best_valid_loss = float('inf')
+    best_valid_fscore = [0.0, 0.0]
 
     for epoch in range(args.epochs):
         print(f'\nEpoch: {epoch} / {args.epochs}')
@@ -58,8 +58,8 @@ def main(argv=None):
         valid_metrics = evaluate(network, valid_batches, loss_func, device)
         print(f'Valid:\n{valid_metrics}')
 
-        if valid_metrics.loss < best_valid_loss:
-            best_valid_loss = valid_metrics.loss
+        if valid_metrics.fscore[0] > best_valid_fscore[0] and valid_metrics.fscore[1] > best_valid_fscore[1]:
+            best_valid_fscore = valid_metrics.fscore
             torch.save(network.state_dict(), args.model_name)
 
     test_metrics = evaluate(network, test_batches, loss_func, device)
