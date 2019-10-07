@@ -1,6 +1,10 @@
-md5: 8d1634ca6cf247b407d995ba5da46cc9
+md5: 335ed2b5b93f14d02ca56e61296f05fc
+cmd: ./3_sample.sh
+deps:
+- md5: 31791966cc1e9d87d804ac657969757e.dir
+  path: generated
 outs:
-- md5: d751713988987e9331980363e24189ce.dir
+- md5: 1ec1707e26f27469586582edaf7fa63e.dir
   path: sampled
   cache: true
   metric: false

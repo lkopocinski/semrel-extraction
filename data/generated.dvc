@@ -1,6 +1,10 @@
-md5: 478f3c9d90b107b035546265ffabb78a
+md5: 14f591fa403ce89f4560c0d817aaaae5
+cmd: ./2_generate.sh
+deps:
+- md5: 1f89bff8b02ceb2b7a2d9d3046b266b1.dir
+  path: splits
 outs:
-- md5: d751713988987e9331980363e24189ce.dir
+- md5: 31791966cc1e9d87d804ac657969757e.dir
   path: generated
   cache: true
   metric: false
