@@ -14,3 +14,5 @@ do
     cat ${SOURCE_DIR}/${type}/positive.vectors >> ${TARGET_DIR}/${type}.vectors
     shuf -o ${TARGET_DIR}/${type}.vectors ${TARGET_DIR}/${type}.vectors
 done
+
+cat ${SOURCE_DIR}/negative/hard.vectors | shuf | head -2000 >> ${TARGET_DIR}/${train_}.vectors
