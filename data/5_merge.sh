@@ -6,6 +6,7 @@ TARGET_DIR=../relextr/model/dataset
 
 mkdir -p ${TARGET_DIR}
 
+
 # Merge
 declare -a types=("train" "valid" "test")
 for type in "${types[@]}"
@@ -15,4 +16,7 @@ do
     shuf -o ${TARGET_DIR}/${type}.vectors ${TARGET_DIR}/${type}.vectors
 done
 
-cat ${SOURCE_DIR}/negative/hard.vectors | shuf | head -2000 >> ${TARGET_DIR}/${train_}.vectors
+shuf ${SOURCE_DIR}/train/negative.hard.vectors | head -2000 >> ${TARGET_DIR}/train.vectors
+shuf -o ${TARGET_DIR}/train.vectors ${TARGET_DIR}/train.vectors
+
+
