@@ -1,0 +1,13 @@
+md5: 63b750dffeaf99cd301a344ea1c10326
+cmd: ./train.sh
+deps:
+- md5: c222f388e069c227309dd0c60ebef2c4.dir
+  path: dataset
+- md5: 076365e17f07e48a9bd45be8bff3a290
+  path: scripts/train.py
+outs:
+- md5: e45074e019c64433155b5e74d4564044
+  path: metrics.txt
+  cache: false
+  metric: true
+  persist: false
