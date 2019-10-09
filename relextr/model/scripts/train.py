@@ -62,6 +62,10 @@ def main(argv=None):
             best_valid_fscore = valid_metrics.fscore
             torch.save(network.state_dict(), args.model_name)
 
+    network = RelNet(out_dim=2)
+    network.load(args.model_name)
+    network.to(device)
+
     test_metrics = evaluate(network, test_batches, loss_func, device)
     print(f'\n\nTest: {test_metrics}')
     save_metrics(test_metrics, 'metrics.txt')
