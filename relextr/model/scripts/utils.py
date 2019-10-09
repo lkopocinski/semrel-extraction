@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import precision_recall_fscore_support, precision_score, recall_score, f1_score
 
 
 def load_batches(datapath, batch_size=10):
@@ -55,6 +55,9 @@ class Metrics:
         self._f = (0.0, 0.0)
         self.batches = 0
 
+        self._predicted = []
+        self._targets = []
+
     def update(self, loss, accuracy, precision, recall, fscore, batches):
         self._loss += loss
         self._acc += accuracy
@@ -62,6 +65,14 @@ class Metrics:
         self._rec = tuple(sum(x) for x in zip(self._rec, recall))
         self._f = tuple(sum(x) for x in zip(self._f, fscore))
         self.batches = batches
+
+    def update_count(self, predicted, targets):
+        _, predicted = torch.max(predicted, dim=1)
+        predicted = predicted.data.numpy()
+        targets = targets.data.numpy()
+
+        self._predicted.extend(predicted)
+        self._targets.extend(targets)
 
     @property
     def loss(self):
@@ -73,15 +84,15 @@ class Metrics:
 
     @property
     def precision(self):
-        return [prec / self.batches for prec in self._prec]
+        return precision_score(self._targets, self._predicted, average=None)
 
     @property
     def recall(self):
-        return [rec / self.batches for rec in self._rec]
+        return recall_score(self._targets, self._predicted, average=None)
 
     @property
     def fscore(self):
-        return [f / self.batches for f in self._f]
+        return f1_score(self._targets, self._predicted, average=None)
 
     def __str__(self):
         return f'\tLoss: {self._loss} ' \
