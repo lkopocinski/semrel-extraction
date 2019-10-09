@@ -50,16 +50,16 @@ class Metrics:
         self._loss = 0.0
         self.batches = 0
 
-        self._predicted = []
-        self._targets = []
+        self._predicted = np.array([])
+        self._targets = np.array([])
 
     def update(self, predicted, targets, loss, batches):
         _, predicted = torch.max(predicted, dim=1)
         predicted = predicted.data.numpy()
         targets = targets.data.numpy()
 
-        self._predicted.extend(predicted)
-        self._targets.extend(targets)
+        self._predicted = np.concatenate(self._predicted, predicted)
+        self._targets = np.concatenate(self._targets, targets)
 
         self._loss += loss
         self.batches = batches
