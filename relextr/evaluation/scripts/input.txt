@@ -1,0 +1,1 @@
+/data6/lukaszkopocinski/repos/semrel-extraction/relextr/evaluation/resources/samples/phones.no.xml
