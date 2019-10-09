@@ -5,10 +5,8 @@ import argparse
 
 import torch
 import torch.nn as nn
-from torch.autograd import Variable
-from torch.optim import Adagrad
-
 from relnet import RelNet
+from torch.autograd import Variable
 from utils import load_batches, compute_accuracy, labels2idx, \
     compute_precision_recall_fscore, Metrics, save_metrics
 
@@ -62,10 +60,7 @@ def evaluate(network, batches, loss_function, device):
             output = network(data.to(device)).squeeze(0)
             loss = loss_function(output, target)
 
-            accuracy = compute_accuracy(output, target)
-            precision, recall, fscore = compute_precision_recall_fscore(output.cpu(), target.cpu())
-            metrics.update(loss.item(), accuracy, precision, recall, fscore, len(batches))
-            metrics.update_count(output.cpu(), target.cpu())
+            metrics.update(output.cpu(), target.cpu(), loss.item(), len(batches))
 
     return metrics
 

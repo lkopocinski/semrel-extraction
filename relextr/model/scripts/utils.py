@@ -32,8 +32,7 @@ def labels2idx(labels):
     return [mapping[label] for label in labels if label in mapping]
 
 
-def compute_accuracy(output, targets):
-    _, predicted = torch.max(output, dim=1)
+def accuracy_score(targets, predicted):
     return (predicted == targets).sum().item() / targets.shape[0]
 
 
@@ -49,24 +48,12 @@ class Metrics:
 
     def __init__(self):
         self._loss = 0.0
-        self._acc = 0.0
-        self._prec = (0.0, 0.0)
-        self._rec = (0.0, 0.0)
-        self._f = (0.0, 0.0)
         self.batches = 0
 
         self._predicted = []
         self._targets = []
 
-    def update(self, loss, accuracy, precision, recall, fscore, batches):
-        self._loss += loss
-        self._acc += accuracy
-        self._prec = tuple(sum(x) for x in zip(self._prec, precision))
-        self._rec = tuple(sum(x) for x in zip(self._rec, recall))
-        self._f = tuple(sum(x) for x in zip(self._f, fscore))
-        self.batches = batches
-
-    def update_count(self, predicted, targets):
+    def update(self, predicted, targets, loss, batches):
         _, predicted = torch.max(predicted, dim=1)
         predicted = predicted.data.numpy()
         targets = targets.data.numpy()
@@ -74,13 +61,16 @@ class Metrics:
         self._predicted.extend(predicted)
         self._targets.extend(targets)
 
+        self._loss += loss
+        self.batches = batches
+
     @property
     def loss(self):
         return self._loss / self.batches
 
     @property
     def accuracy(self):
-        return self._acc / self.batches
+        return accuracy_score(self._targets, self._predicted)
 
     @property
     def precision(self):
