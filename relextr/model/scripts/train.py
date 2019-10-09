@@ -87,6 +87,7 @@ def train(network, optimizer, loss_func, batches, device):
         accuracy = compute_accuracy(output, target)
         precision, recall, fscore = compute_precision_recall_fscore(output.cpu(), target.cpu())
         metrics.update(loss.item(), accuracy, precision, recall, fscore, len(batches))
+        metrics.update_count(output.cpu(), target.cpu())
 
     return metrics
 
@@ -107,6 +108,7 @@ def evaluate(network, batches, loss_function, device):
             accuracy = compute_accuracy(output, target)
             precision, recall, fscore = compute_precision_recall_fscore(output.cpu(), target.cpu())
             metrics.update(loss.item(), accuracy, precision, recall, fscore, len(batches))
+            metrics.update_count(output.cpu(), target.cpu())
 
     return metrics
 
