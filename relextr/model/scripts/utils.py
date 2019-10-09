@@ -36,14 +36,6 @@ def accuracy_score(targets, predicted):
     return (predicted == targets).sum().item() / targets.shape[0]
 
 
-def compute_precision_recall_fscore(output, targets):
-    _, predicted = torch.max(output, dim=1)
-    output = predicted.data.numpy()
-    targets = targets.data.numpy()
-    prec, rec, f, _ = precision_recall_fscore_support(targets, output, average=None, labels=[0, 1])
-    return prec, rec, f
-
-
 class Metrics:
 
     def __init__(self):
@@ -58,8 +50,8 @@ class Metrics:
         predicted = predicted.data.numpy()
         targets = targets.data.numpy()
 
-        self._predicted = np.concatenate(self._predicted, predicted)
-        self._targets = np.concatenate(self._targets, targets)
+        self._predicted = np.concatenate((self._predicted, predicted))
+        self._targets = np.concatenate((self._targets, targets))
 
         self._loss += loss
         self.batches = batches
