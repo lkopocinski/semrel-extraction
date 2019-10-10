@@ -59,7 +59,7 @@ def main(argv=None):
                 for sample in parser(doc):
                     decision = predictor.predict(sample)
                     (f_idx, f_ctx), (s_idx, s_ctx) = sample
-                    out_file.write(f'{f_ctx[f_idx]}\t{s_ctx[s_idx]}: {decision}')
+                    out_file.write(f'{f_ctx[f_idx]}\t{s_ctx[s_idx]}: {decision}\n')
 
 
 if __name__ == "__main__":
