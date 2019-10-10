@@ -2,8 +2,7 @@ import sys
 import torch
 import numpy as np
 
-from relextr.model import RelNet
-
+from relextr.model.scripts import RelNet
 
 def prRed(prt):
 	print("\033[91m {}\033[00m" .format(prt))
@@ -20,13 +19,13 @@ def main():
 	}
 
 	network = RelNet()
-	network.load('./semrel.2d.static.fixed.model.pt')
+	network.load('../../model/relextr_model.pt')
 	for line in sys.stdin:
 		try:
 			rel, v_a, v_b, w_a, w_b = line.strip().split('\t')
 		except ValueError:
 			try:
-				rel, v_a, v_b, w_a, w_b, ctx_a, ctx_b = line.strip().split('\t')
+				rel, v_a, v_b, w_a, c_a, ctx_a, w_b, c_b, ctx_b = line.strip().split('\t')
 			except ValueError:
 				continue
 		v_a = np.array(eval(v_a))

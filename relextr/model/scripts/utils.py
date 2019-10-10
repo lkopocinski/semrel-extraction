@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import precision_recall_fscore_support, precision_score, recall_score, f1_score
 
 
 def load_batches(datapath, batch_size=10):
@@ -32,60 +32,58 @@ def labels2idx(labels):
     return [mapping[label] for label in labels if label in mapping]
 
 
-def compute_accuracy(output, targets):
-    _, predicted = torch.max(output, dim=1)
+def accuracy_score(targets, predicted):
     return (predicted == targets).sum().item() / targets.shape[0]
-
-
-def compute_precision_recall_fscore(output, targets):
-    _, predicted = torch.max(output, dim=1)
-    output = predicted.data.numpy()
-    targets = targets.data.numpy()
-    prec, rec, f, _ = precision_recall_fscore_support(targets, output, average='weighted', labels=[0, 1])
-    return prec, rec, f
 
 
 class Metrics:
 
     def __init__(self):
-        self.loss = 0.0
-        self.acc = 0.0
-        self.prec = (0.0, 0.0)
-        self.rec = (0.0, 0.0)
-        self.f = (0.0, 0.0)
+        self._loss = 0.0
         self.batches = 0
 
-    def update(self, loss, accuracy, precision, recall, fscore, batches):
-        self.loss += loss
-        self.acc += accuracy
-        self.prec = tuple(sum(x) for x in zip(self.prec, precision))
-        self.rec = tuple(sum(x) for x in zip(self.rec, recall))
-        self.f = tuple(sum(x) for x in zip(self.f, fscore))
+        self._predicted = np.array([])
+        self._targets = np.array([])
+
+    def update(self, predicted, targets, loss, batches):
+        _, predicted = torch.max(predicted, dim=1)
+        predicted = predicted.data.numpy()
+        targets = targets.data.numpy()
+
+        self._predicted = np.concatenate((self._predicted, predicted))
+        self._targets = np.concatenate((self._targets, targets))
+
+        self._loss += loss
         self.batches = batches
 
     @property
     def loss(self):
-        return self.loss / self.batches
+        return self._loss / self.batches
 
     @property
     def accuracy(self):
-        return self.acc / self.batches
+        return accuracy_score(self._targets, self._predicted)
 
     @property
     def precision(self):
-        return [prec / self.batches for prec in self.prec]
+        return precision_score(self._targets, self._predicted, average=None)
 
     @property
     def recall(self):
-        return [rec / self.batches for rec in self.rec]
+        return recall_score(self._targets, self._predicted, average=None)
 
     @property
     def fscore(self):
-        return [f / self.batches for f in self.f]
+        return f1_score(self._targets, self._predicted, average=None)
 
     def __str__(self):
-        return f'Loss: {self.loss} ' \
-            f'Accuracy: {self.accuracy} ' \
-            f'Precision: {self.precision} ' \
-            f'Recall: {self.recall} ' \
-            f'Fscore: {self.fscore}'
+        return f'\tLoss: {self._loss} ' \
+            f'\n\tAccuracy: {self.accuracy} ' \
+            f'\n\tPrecision: {self.precision} ' \
+            f'\n\tRecall: {self.recall} ' \
+            f'\n\tFscore: {self.fscore}'
+
+
+def save_metrics(metrics, path):
+    with open(path, 'w', encoding='utf-8') as out_file:
+        out_file.write(f'{metrics}')

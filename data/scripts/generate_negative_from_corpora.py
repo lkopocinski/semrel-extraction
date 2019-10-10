@@ -15,10 +15,10 @@ except ImportError:
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--source_directory', required=True,
-                        help="A directory with corpora and relations files.")
+    parser.add_argument('-l', '--list_file', required=True,
+                        help='A file with paths to relation files.')
     parser.add_argument('-c', '--channels', required=True,
-                        help="A relation channels to be considered while generating set.")
+                        help='A relation channels to be considered while generating set.')
     if argcomplete:
         argcomplete.autocomplete(parser)
 
@@ -28,7 +28,7 @@ def get_args(argv=None):
 def main(argv=None):
     args = get_args(argv)
 
-    for corpora_file, relations_file in corpora_files(args.source_directory):
+    for corpora_file, relations_file in corpora_files(args.list_file):
         document = load_document(corpora_file, relations_file)
         sentences = id_to_sent_dict(document)
 
@@ -47,8 +47,8 @@ def main(argv=None):
                     f_idxs = tuple(f_idxs)
                     t_idxs = tuple(t_idxs)
 
-                    relations[((f_sent_id, f_idxs), (t_sent_id, t_idxs))] = (relation, f_context, f_channel_name)
-                    relations[((t_sent_id, t_idxs), (f_sent_id, f_idxs))] = (relation, t_context, t_channel_name)
+                    relations[((f_sent_id, f_idxs), (t_sent_id, t_idxs))] = (relation, f_context, t_context)
+                    relations[((t_sent_id, t_idxs), (f_sent_id, f_idxs))] = (relation, t_context, f_context)
 
                     for f_idx in f_idxs:
                         relidxs[(f_sent_id, f_idx)] = (f_idxs, f_channel_name)
@@ -56,8 +56,7 @@ def main(argv=None):
                         relidxs[(t_sent_id, t_idx)] = (t_idxs, t_channel_name)
 
         for rel, rel_value in relations.items():
-            relation, f_context, f_channel_name = rel_value
-            relation, t_context, t_channel_name = rel_value
+            relation, f_context, t_context = rel_value
             ((f_sent_id, f_idxs), (t_sent_id, t_idxs)) = rel
 
             f_nouns = get_nouns_idx(sentences[f_sent_id])
