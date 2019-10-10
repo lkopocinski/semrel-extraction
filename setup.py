@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='relextr',
@@ -9,11 +9,6 @@ setup(
     author_email='arkadiusz.janz@pwr.edu.pl',
     maintainer='Łukasz Kopociński',
     maintainer_email='lukasz.kopocinski@pwr.edu.pl',
-    packages=[
-        'relextr',
-        'relextr.base',
-        'relextr.model',
-        'relextr.utils'
-    ],
+    packages=find_packages(),
     zip_safe=False
 )

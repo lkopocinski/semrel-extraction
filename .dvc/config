@@ -1,0 +1,4 @@
+['remote "origin"']
+url = /data6/lukaszkopocinski/dvc_remote
+[core]
+remote = origin

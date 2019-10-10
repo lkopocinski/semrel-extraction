@@ -12,8 +12,7 @@ class Predictor(object):
 
         f_v = self._emb_model.embedd(f_ctx, f_idx)
         s_v = self._emb_model.embedd(s_ctx, s_idx)
-        d_v = f_v - s_v
 
-        v = np.concatenate([f_v, s_v, d_v])
+        v = np.concatenate([f_v, s_v])
 
         return self._net_model.predict(v)

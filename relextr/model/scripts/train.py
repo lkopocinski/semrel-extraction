@@ -5,19 +5,16 @@ import argparse
 
 import torch
 import torch.nn as nn
+from relnet import RelNet
 from torch.autograd import Variable
 from torch.optim import Adagrad
-
-from relextr.model.scripts import RelNet
-from relextr.model.scripts.utils import load_batches, compute_accuracy, labels2idx, \
-    compute_precision_recall_fscore, Metrics
-
+from utils import load_batches, labels2idx, \
+    Metrics, save_metrics
 
 try:
     import argcomplete
 except ImportError:
     argcomplete = None
-
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(f'Runing on: {device}.')
@@ -27,9 +24,9 @@ def get_args(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('-e', '--epochs', required=True, type=int, help="How many epochs should the model be trained.")
     parser.add_argument('-n', '--model_name', required=True, type=str, help="Save file name for a trained model.")
-    parser.add_argument('-b', '--batch_size', required=True, type=str, help="Batch size.")
-    parser.add_argument('-d', '--datasets_dir', required=True, type=str,
-                        help="Directory with train, validation, test datasets.")
+    parser.add_argument('-b', '--batch_size', required=True, type=int, help="Batch size.")
+    parser.add_argument('-d', '--dataset_dir', required=True, type=str,
+                        help="Directory with train, validation, test dataset.")
 
     if argcomplete:
         argcomplete.autocomplete(parser)
@@ -49,23 +46,28 @@ def main(argv=None):
     valid_batches = load_batches(f'{args.dataset_dir}/valid.vectors', args.batch_size)
     test_batches = load_batches(f'{args.dataset_dir}/test.vectors', args.batch_size)
 
-    best_valid_loss = float('inf')
+    best_valid_fscore = [0.0, 0.0]
 
     for epoch in range(args.epochs):
         print(f'\nEpoch: {epoch} / {args.epochs}')
 
         train_metrics = train(network, optimizer, loss_func, train_batches, device)
-        print(f'Train: {train_metrics}')
+        print(f'Train:\n{train_metrics}')
 
         valid_metrics = evaluate(network, valid_batches, loss_func, device)
-        print(f'Valid: {valid_metrics}')
+        print(f'Valid:\n{valid_metrics}')
 
-        if valid_metrics.loss < best_valid_loss:
-            best_valid_loss = valid_metrics.loss
+        if valid_metrics.fscore[0] > best_valid_fscore[0] and valid_metrics.fscore[1] > best_valid_fscore[1]:
+            best_valid_fscore = valid_metrics.fscore
             torch.save(network.state_dict(), args.model_name)
+
+    network = RelNet(out_dim=2)
+    network.load(args.model_name)
+    network.to(device)
 
     test_metrics = evaluate(network, test_batches, loss_func, device)
     print(f'\n\nTest: {test_metrics}')
+    save_metrics(test_metrics, 'metrics.txt')
 
 
 def train(network, optimizer, loss_func, batches, device):
@@ -85,9 +87,7 @@ def train(network, optimizer, loss_func, batches, device):
         loss.backward()
         optimizer.step()
 
-        accuracy = compute_accuracy(output, target)
-        precision, recall, fscore = compute_precision_recall_fscore(output.cpu(), target.cpu())
-        metrics.update(loss.item(), accuracy, precision, recall, fscore, len(batches))
+        metrics.update(output.cpu(), target.cpu(), loss.item(), len(batches))
 
     return metrics
 
@@ -105,9 +105,7 @@ def evaluate(network, batches, loss_function, device):
             output = network(data.to(device)).squeeze(0)
             loss = loss_function(output, target)
 
-            accuracy = compute_accuracy(output, target)
-            precision, recall, fscore = compute_precision_recall_fscore(output.cpu(), target.cpu())
-            metrics.update(loss.item(), accuracy, precision, recall, fscore, len(batches))
+            metrics.update(output.cpu(), target.cpu(), loss.item(), len(batches))
 
     return metrics
 
