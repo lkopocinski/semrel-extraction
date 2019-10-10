@@ -728,6 +728,7 @@
    <tok>
     <orth>Ericsson</orth>
     <lex disamb="1"><base>Ericsson</base><ctag>subst:sg:nom:m3</ctag></lex>
+    <prop key="BRAND">Ericsson</prop>
    </tok>
    <ns/>
    <tok>
@@ -792,10 +793,12 @@
     <orth>Sony</orth>
     <lex disamb="1"><base>Sony</base><ctag>subst:sg:gen:n</ctag></lex>
     <lex disamb="1"><base>sony</base><ctag>subst:sg:gen:n</ctag></lex>
+    <prop key="BRAND">Sony</prop>
    </tok>
    <tok>
     <orth>Ericsson</orth>
     <lex disamb="1"><base>ericsson</base><ctag>subst:sg:nom:m2</ctag></lex>
+    <prop key="BRAND">Ericsson</prop>
    </tok>
    <tok>
     <orth>W300i</orth>
@@ -1114,6 +1117,7 @@
    <tok>
     <orth>LG</orth>
     <lex disamb="1"><base>lg</base><ctag>subst:sg:acc:m3</ctag></lex>
+    <prop key="BRAND">LG</prop>
    </tok>
    <tok>
     <orth>E460</orth>
@@ -1152,10 +1156,12 @@
     <orth>Sony</orth>
     <lex disamb="1"><base>Sony</base><ctag>subst:sg:nom:n</ctag></lex>
     <lex disamb="1"><base>sony</base><ctag>subst:sg:nom:n</ctag></lex>
+    <prop key="BRAND">Sony</prop>
    </tok>
    <tok>
     <orth>Ericsson</orth>
     <lex disamb="1"><base>ericsson</base><ctag>subst:sg:nom:m2</ctag></lex>
+    <prop key="BRAND">Ericsson</prop>
    </tok>
    <tok>
     <orth>W300i</orth>
@@ -1283,10 +1289,12 @@
     <orth>Sony</orth>
     <lex disamb="1"><base>Sony</base><ctag>subst:sg:nom:n</ctag></lex>
     <lex disamb="1"><base>sony</base><ctag>subst:sg:nom:n</ctag></lex>
+    <prop key="BRAND">Sony</prop>
    </tok>
    <tok>
     <orth>Ericsson</orth>
     <lex disamb="1"><base>ericsson</base><ctag>subst:sg:nom:m2</ctag></lex>
+    <prop key="BRAND">Ericsson</prop>
    </tok>
    <tok>
     <orth>W350i</orth>
@@ -1668,6 +1676,7 @@
     <orth>Samsunga</orth>
     <lex disamb="1"><base>Samsung</base><ctag>subst:sg:gen:m3</ctag></lex>
     <lex disamb="1"><base>samsung</base><ctag>subst:sg:gen:m3</ctag></lex>
+    <prop key="BRAND">Samsung</prop>
    </tok>
    <tok>
     <orth>Corby</orth>
@@ -1729,6 +1738,7 @@
    <tok>
     <orth>cat</orth>
     <lex disamb="1"><base>cat</base><ctag>subst:sg:acc:f</ctag></lex>
+    <prop key="BRAND">cat</prop>
    </tok>
    <tok>
     <orth>s</orth>
@@ -1832,6 +1842,7 @@
     <orth>samsung</orth>
     <lex disamb="1"><base>Samsung</base><ctag>subst:sg:nom:m3</ctag></lex>
     <lex disamb="1"><base>samsung</base><ctag>subst:sg:nom:m3</ctag></lex>
+    <prop key="BRAND">samsung</prop>
    </tok>
    <tok>
     <orth>modele</orth>
@@ -2514,6 +2525,7 @@
    <tok>
     <orth>CAT</orth>
     <lex disamb="1"><base>cat</base><ctag>subst:sg:nom:m1</ctag></lex>
+    <prop key="BRAND">CAT</prop>
    </tok>
    <ns/>
    <tok>
@@ -3091,6 +3103,7 @@
    <tok>
     <orth>myPhone&apos;a</orth>
     <lex disamb="1"><base>myphone&apos;a</base><ctag>subst:sg:gen:m1</ctag></lex>
+    <prop key="BRAND">myPhone</prop>
    </tok>
    <tok>
     <orth>Q</orth>
@@ -3496,6 +3509,7 @@
    <tok>
     <orth>myPhone</orth>
     <lex disamb="1"><base>myphone</base><ctag>adj:sg:nom:m1:pos</ctag></lex>
+    <prop key="BRAND">myPhone</prop>
    </tok>
    <tok>
     <orth>Maestro</orth>
@@ -3883,6 +3897,7 @@
    <tok>
     <orth>SHARP</orth>
     <lex disamb="1"><base>sharp</base><ctag>subst:sg:nom:n</ctag></lex>
+    <prop key="BRAND">sharp</prop>
    </tok>
    <tok>
     <orth>LC</orth>
@@ -3905,6 +3920,7 @@
    <tok>
     <orth>Panasonic</orth>
     <lex disamb="1"><base>panasonic</base><ctag>subst:sg:nom:m3</ctag></lex>
+    <prop key="BRAND">panasonic</prop>
    </tok>
    <tok>
     <orth>TX</orth>
