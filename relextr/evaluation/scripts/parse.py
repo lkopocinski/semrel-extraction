@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import argparse
 import os
+
 from corpus_ccl import cclutils
 
 from relextr.evaluation.base import Parser
 from relextr.evaluation.base import Predictor
 from relextr.evaluation.scripts.embutils import ElmoEmb
 from relextr.model.scripts import RelNet
-
-import argparse
 
 try:
     import argcomplete
@@ -22,7 +22,7 @@ def get_args(argv=None):
                         help="A neural model for BRAND - PRODUCT recognition")
     parser.add_argument('-e', '--emb_model', required=True,
                         help="A path to embedding model, compatible with "
-                        "neural model (`--net_model` parametere.")
+                             "neural model (`--net_model` parametere.")
     parser.add_argument('-b', '--batch', required=True,
                         help="A path to the list of CCL files to process")
     if argcomplete:
@@ -31,13 +31,15 @@ def get_args(argv=None):
     return parser.parse_args(argv)
 
 
+def lines(pathfilename):
+    with open(pathfilename) as f:
+        return [line.strip() for line in f if line.strip()]
+
+
 def load_data(datalist):
-    with open(datalist) as ifile:
-        for line in ifile:
-            ccl_path = line.strip()
-            if not os.path.exists(ccl_path):
-                continue
-            yield cclutils.read_ccl(ccl_path)
+    inputs = lines(datalist)
+    outputs = [f'{path}.txt' for path in inputs]
+    return zip(inputs, outputs)
 
 
 def main(argv=None):
@@ -50,11 +52,14 @@ def main(argv=None):
     predictor = Predictor(net_model, emb_model)
     parser = Parser()
 
-    for doc in load_data(args.batch):
-        for sample in parser(doc):
-            decision = predictor.predict(sample)
-            (f_idx, f_ctx), (s_idx, s_ctx) = sample
-            print('{}\t{}: {}'.format(f_ctx[f_idx].encode('utf-8'), s_ctx[s_idx].encode('utf-8'), decision))
+    for in_path, out_path in load_data(args.batch):
+        if os.path.exists(in_path):
+            doc = cclutils.read_ccl(in_path)
+            with open(out_path, 'w', encoding='utf-8') as out_file:
+                for sample in parser(doc):
+                    decision = predictor.predict(sample)
+                    (f_idx, f_ctx), (s_idx, s_ctx) = sample
+                    out_file.write(f'{f_ctx[f_idx]}\t{s_ctx[s_idx]}: {decision}')
 
 
 if __name__ == "__main__":
