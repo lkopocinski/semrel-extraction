@@ -44,7 +44,7 @@ def main(argv=None):
 
     train_batches = load_batches(f'{args.dataset_dir}/train.vectors', args.batch_size)
     valid_batches = load_batches(f'{args.dataset_dir}/valid.vectors', args.batch_size)
-    test_batches = load_batches(f'{args.dataset_dir}/test.vectors', args.batch_size)
+    test_batches = load_batches(f'{args.dataset_dir}/test.uniq_', args.batch_size)
 
     best_valid_fscore = [0.0, 0.0]
 
