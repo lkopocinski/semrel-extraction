@@ -1,4 +1,3 @@
-
 brands = set()
 with open('valid.vectors') as in_file:
     for line in in_file:
