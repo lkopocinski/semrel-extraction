@@ -15,10 +15,11 @@ def load_batches(datapath, batch_size=10):
 
             cls = row[0]
             v1, v2 = np.array(eval(row[1])), np.array(eval(row[2]))
+            vc1, vc2 = np.array(eval(row[9])), np.array(eval(row[10]))
             if (ind % batch_size) == 0:
                 dataset.append(batch)
                 batch = []
-            batch.append((cls, np.concatenate([v1, v2])))
+            batch.append((cls, np.concatenate([v1, v2, vc1, vc2])))
         if batch:
             dataset.append(batch)
         return dataset
