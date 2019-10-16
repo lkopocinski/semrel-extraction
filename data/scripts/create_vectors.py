@@ -61,7 +61,8 @@ def print_line(relation_type, vector_from, vector_to, relation_from, relation_to
 
 def main(argv=None):
     args = get_args(argv)
-    elmo = Elmo(args.options, args.weights, 2, dropout=0)
+    elmo = Elmo(args.options, args.weights, 1, dropout=0,
+               scalar_mix_parameters=[1, -9e10, -9e10])
     create_vectors(elmo, args.source_file, args.relation_type)
 
 
