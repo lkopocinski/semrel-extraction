@@ -34,20 +34,25 @@ def get_args(argv=None):
     return parser.parse_args(argv)
 
 
-def create_vectors(elmo, path, relation_type):
+def create_vectors(elmo, elmo_conv, path, relation_type):
     with open(path, 'r', encoding='utf-8') as in_file:
         for line in in_file:
             relation = Relation(line)
+
             vector_from = get_context_vector(elmo, relation.source)
             vector_to = get_context_vector(elmo, relation.dest)
 
-            print_line(relation_type, vector_from, vector_to, relation.source, relation.dest)
+            vector_conv_from = get_context_vector(elmo_conv, relation.source)
+            vector_conv_to = get_context_vector(elmo_conv, relation.dest)
+
+            print_line(relation_type, vector_from, vector_to, relation.source,
+                       relation.dest, vector_conv_from, vector_conv_to)
 
 
 def get_context_vector(model, element):
     character_ids = batch_to_ids([element.context])
     embeddings = model(character_ids)
-    v = embeddings['elmo_representations'][1].data.numpy()
+    v = embeddings['elmo_representations'][0].data.numpy()
     try:
         value = v[:, element.index, :].flatten()
     except:
@@ -55,15 +60,19 @@ def get_context_vector(model, element):
     return Vector(value)
 
 
-def print_line(relation_type, vector_from, vector_to, relation_from, relation_to):
-    print(f'{relation_type}\t{vector_from}\t{vector_to}\t{relation_from}\t{relation_to}')
+def print_line(relation_type, vector_from, vector_to, relation_from,
+               relation_to, vector_conv_from, vector_conv_to):
+    print(f'{relation_type}\t{vector_from}\t{vector_to}\t{relation_from}\t{relation_to}\t{vector_conv_from}\t{vector_conv_to}')
 
 
 def main(argv=None):
     args = get_args(argv)
-    elmo = Elmo(args.options, args.weights, 1, dropout=0,
+
+    elmo = Elmo(args.options, args.weights, 1, dropout=0)
+    elmo_conv = Elmo(args.options, args.weights, 1, dropout=0,
                scalar_mix_parameters=[1, -9e10, -9e10])
-    create_vectors(elmo, args.source_file, args.relation_type)
+
+    create_vectors(elmo, elmo_conv, args.source_file, args.relation_type)
 
 
 if __name__ == "__main__":
