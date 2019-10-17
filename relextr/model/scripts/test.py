@@ -7,8 +7,7 @@ import torch
 import torch.nn as nn
 from relnet import RelNet
 from torch.autograd import Variable
-from utils import load_batches, compute_accuracy, labels2idx, \
-    compute_precision_recall_fscore, Metrics, save_metrics
+from utils import load_batches, labels2idx, Metrics, save_metrics
 
 try:
     import argcomplete
@@ -36,7 +35,7 @@ def main(argv=None):
 
     loss_func = nn.CrossEntropyLoss()
 
-    test_batches = load_batches(f'{args.dataset_dir}/test.vectors', 20)
+    test_batches = load_batches(f'{args.dataset_dir}/test.vectors_', 20)
 
     network = RelNet(out_dim=2)
     network.load(args.model_name)
