@@ -25,12 +25,15 @@ def main():
 			rel, v_a, v_b, w_a, w_b = line.strip().split('\t')
 		except ValueError:
 			try:
-				rel, v_a, v_b, w_a, c_a, ctx_a, w_b, c_b, ctx_b = line.strip().split('\t')
+				rel, v_a, v_b, w_a, c_a, ctx_a, w_b, c_b, ctx_b, vc_a, vc_b = line.strip().split('\t')
 			except ValueError:
 				continue
 		v_a = np.array(eval(v_a))
 		v_b = np.array(eval(v_b))
-		v = np.concatenate([v_a, v_b])
+		vc_a = np.array(eval(vc_a))
+		vc_b = np.array(eval(vc_b))
+		v = np.concatenate([v_a, v_b, vc_a, vc_b])
+		#v = np.concatenate([vc_a, vc_b])
 
 
 		output = network(torch.FloatTensor([v]))
