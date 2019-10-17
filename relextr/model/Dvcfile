@@ -1,14 +1,14 @@
-md5: 7470e2953b42b44aa1a3f516b5f3d01c
+md5: 3eecdb8cf95048b33693c3035a1a0273
 cmd: ./train.sh
 deps:
-- md5: 1037ea562bc1473bc2e6de01223d0b0f.dir
+- md5: 05a45936fad1976e9c1c14398c36fbed.dir
   path: dataset
-- md5: b0819816d8c6c3a671b434eb93dd5428
+- md5: 5ec34c0d73431b86fd1249ec99991631
   path: scripts/train.py
 - md5: eab566a505d776c239a6ba53e2d798b7
   path: train.sh
 outs:
-- md5: 0c785f287205d54f1aad80e607789e5b
+- md5: 967e1e491e6890fb55a5cd9248eef1bc
   path: metrics.txt
   cache: false
   metric: true
