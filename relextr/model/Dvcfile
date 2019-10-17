@@ -1,7 +1,7 @@
-md5: 3eecdb8cf95048b33693c3035a1a0273
+md5: daf71a6c2b09a5844659750cbf7046d6
 cmd: ./train.sh
 deps:
-- md5: 05a45936fad1976e9c1c14398c36fbed.dir
+- md5: 9e04935e357ef5e9e180c81f3734fbcf.dir
   path: dataset
 - md5: 5ec34c0d73431b86fd1249ec99991631
   path: scripts/train.py
