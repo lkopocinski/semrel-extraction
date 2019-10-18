@@ -91,30 +91,29 @@ def substitute(path, brand_products_dict, sample_size):
                     )
 
 
-def substitute_brand(brand, idx_brand, ctx_brand, idx_product, ctx_product):
+def are_ctx_same(ctx_1, ctx_2):
+    return ' '.join(ctx_1) == ' '.join(ctx_2)
+
+
+def substitute_brand(new_brand, idx_brand, ctx_brand, idx_product, ctx_product):
     ctx_brand_cp = ctx_brand.copy()
     ctx_product_cp = ctx_product.copy()
 
-    if ' '.join(ctx_brand_cp) == ' '.join(ctx_product_cp):
-        brand_new_len = len(brand.split(' '))
-        brand_old_len = len(ctx_brand_cp[idx_brand].split(' '))
+    _new_brand = new_brand.split(' ')
+    _old_brand = ctx_brand[idx_brand].split(' ')
+    _product = ctx_product[idx_product].split(' ')
 
+    ctx_brand_cp[idx_brand:idx_brand + 1] = _new_brand
+
+    if are_ctx_same(ctx_brand, ctx_product):
         if idx_brand < idx_product:
-            shift = brand_new_len - brand_old_len
-            ctx_brand_cp[idx_brand:idx_brand + 1] = brand.split(' ')
-            idx_product_shifted = idx_product + shift
-            ctx_brand_cp[idx_product_shifted:idx_product_shifted + len(ctx_product_cp[idx_product].split(' '))] = \
-            ctx_product_cp[idx_product].split(' ')
-            return idx_brand, ctx_brand_cp, idx_product_shifted, ctx_brand_cp
-        else:
-            ctx_brand_cp[idx_brand:idx_brand + 1] = brand.split(' ')
-            return idx_brand, ctx_brand_cp, idx_product, ctx_brand_cp
-
+            shift = len(_new_brand) - len(_old_brand)
+            idx_product = idx_product + shift
+            ctx_brand_cp[idx_product:idx_product + len(_product)] = _product
+        return idx_brand, ctx_brand_cp, idx_product, ctx_brand_cp
     else:
-        ctx_brand_cp[idx_brand:idx_brand + 1] = brand.split(' ')
-        ctx_product_cp[idx_product:idx_product + 1] = ctx_product_cp[idx_product].split(' ')
-
-    return idx_brand, ctx_brand_cp, idx_product, ctx_product_cp
+        ctx_product_cp[idx_product:idx_product + 1] = _product
+        return idx_brand, ctx_brand_cp, idx_product, ctx_product_cp
 
 
 def main(argv=None):
