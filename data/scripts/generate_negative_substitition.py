@@ -96,22 +96,25 @@ def substitute_brand(brand, idx_brand, ctx_brand, idx_product, ctx_product):
     ctx_product_cp = ctx_product.copy()
 
     if ' '.join(ctx_brand_cp) == ' '.join(ctx_product_cp):
-        brand_len = len(brand.split(' '))
-        if brand_len > 1:
-            if idx_brand < idx_product:
-                ctx_brand_cp[idx_brand:idx_brand + 1] = brand.split(' ')
-                ctx_brand_cp[idx_product+brand_len-1:idx_product+brand_len] = ctx_product_cp[idx_product].split(' ')
-            return idx_brand, ctx_brand_cp, idx_product, ctx_brand_cp
+        brand_new_len = len(brand.split(' '))
+        brand_old_len = len(ctx_brand_cp[idx_brand].split(' '))
+
+        if idx_brand < idx_product:
+            shift = brand_new_len - brand_old_len
+            ctx_brand_cp[idx_brand:idx_brand + 1] = brand.split(' ')
+            idx_product_shifted = idx_product + shift
+            ctx_brand_cp[idx_product_shifted:idx_product_shifted + len(ctx_product_cp[idx_product].split(' '))] = \
+            ctx_product_cp[idx_product].split(' ')
+            return idx_brand, ctx_brand_cp, idx_product_shifted, ctx_brand_cp
         else:
             ctx_brand_cp[idx_brand:idx_brand + 1] = brand.split(' ')
-            ctx_product_cp = ctx_brand_cp
             return idx_brand, ctx_brand_cp, idx_product, ctx_brand_cp
+
     else:
         ctx_brand_cp[idx_brand:idx_brand + 1] = brand.split(' ')
         ctx_product_cp[idx_product:idx_product + 1] = ctx_product_cp[idx_product].split(' ')
 
     return idx_brand, ctx_brand_cp, idx_product, ctx_product_cp
-
 
 
 def main(argv=None):
