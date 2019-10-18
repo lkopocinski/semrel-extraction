@@ -100,10 +100,8 @@ def substitute_brand(brand, idx_brand, ctx_brand, idx_product, ctx_product):
         if brand_len > 1:
             if idx_brand < idx_product:
                 ctx_brand_cp[idx_brand:idx_brand + 1] = brand.split(' ')
-                ctx_product_cp[idx_brand:idx_brand + 1] = brand.split(' ')
-                ctx_product_cp[
-                    idx_product+brand_len:idx_product+brand_len + 1
-                ] = ctx_product_cp[idx_product+brand_len].split(' ')
+                ctx_brand_cp[idx_product+brand_len-1:idx_product+brand_len] = ctx_product_cp[idx_product].split(' ')
+            return idx_brand, ctx_brand_cp, idx_product, ctx_brand_cp
         else:
             ctx_brand_cp[idx_brand:idx_brand + 1] = brand.split(' ')
             ctx_product_cp = ctx_brand_cp
