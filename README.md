@@ -3,7 +3,13 @@
 A project focused on mining semantic relations.working tree
 
 ## Experiments results
-add fast text vector
+| experiment | loss | accuracy | precision | recall | fscore |
+|------------|------|----------|-----------|--------|--------|
+|add fast text vector|258.5631501157622|0.9113468489706124|           |        |        |
+
+
+
+
 Loss: 258.5631501157622 
 Accuracy: 0.9113468489706124 
 Precision: [0.9544711614018546, 0.6706270627062704] 
