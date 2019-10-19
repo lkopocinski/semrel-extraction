@@ -19,7 +19,7 @@ def load_batches(datapath, batch_size=10):
             if (ind % batch_size) == 0:
                 dataset.append(batch)
                 batch = []
-            batch.append((cls, np.concatenate([v1, v2])))
+            batch.append((cls, np.concatenate([v1, v2, vc1, vc2])))
         if batch:
             dataset.append(batch)
         return dataset
