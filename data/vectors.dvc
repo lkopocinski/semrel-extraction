@@ -1,12 +1,14 @@
-md5: 8fea3737bc59227742105d19b443e1f4
+md5: be167be42f6c02a2fda953a6b071b833
 cmd: ./4_vectorize.sh
 deps:
-- md5: 1ec1707e26f27469586582edaf7fa63e.dir
+- md5: 2037e747ae8aeb8abd94a0bbdb1d1340.dir
   path: sampled
 - md5: 7b5f3af3ce7f810da94e96fba966a359
   path: 4_vectorize.sh
+- md5: d8c1649f4853f2e9641f4c29311ddb66
+  path: scripts/create_vectors.py
 outs:
-- md5: f75bc317ff6099412f351144ba39847f.dir
+- md5: 605a4d1fe6ed370c8fb794f09f667165.dir
   path: vectors
   cache: true
   metric: false

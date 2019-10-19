@@ -1,10 +1,14 @@
-md5: 335ed2b5b93f14d02ca56e61296f05fc
+md5: ddc0c72a7c9492507d61da935f385437
 cmd: ./3_sample.sh
 deps:
-- md5: 31791966cc1e9d87d804ac657969757e.dir
+- md5: 3ea5a8363786d28e392f4c705ef29f9a.dir
   path: generated
+- md5: b6e66ce3d027fae96872cd6ea7a584a2
+  path: 3_sample.sh
+- md5: a28131e7e2081fcb6b7f9bd655650ffd
+  path: scripts/sample_datasets.py
 outs:
-- md5: 1ec1707e26f27469586582edaf7fa63e.dir
+- md5: 2037e747ae8aeb8abd94a0bbdb1d1340.dir
   path: sampled
   cache: true
   metric: false

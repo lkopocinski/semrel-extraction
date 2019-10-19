@@ -4,7 +4,7 @@ import argparse
 import random
 from collections import defaultdict
 
-from .utils import print_element
+from utils import print_element
 
 try:
     import argcomplete
