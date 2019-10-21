@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from sklearn.metrics import precision_recall_fscore_support, precision_score, recall_score, f1_score
+from sklearn.metrics import precision_score, recall_score, f1_score
 
 
 def load_batches(datapath, batch_size=10):
