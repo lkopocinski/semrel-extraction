@@ -38,7 +38,11 @@ def get_args(argv=None):
 
 
 def main(argv=None):
+    mlflow.set_tracking_uri("http://0.0.0.0:5000")
+    print(f'mlflow server: {mlflow.get_tracking_uri()}')
     args = get_args(argv)
+
+    mlflow.set_experiment('no_substituted_pairs')
 
     network = RelNet(out_dim=2)
     network.to(device)
@@ -48,7 +52,7 @@ def main(argv=None):
     train_batches = load_batches(f'{args.dataset_dir}/train.vectors', args.batch_size)
     valid_batches = load_batches(f'{args.dataset_dir}/valid.vectors', args.batch_size)
     test_batches = load_batches(f'{args.dataset_dir}/test.vectors', args.batch_size)
-        
+
     train_set_size = reduce((lambda x, y: x + len(y)), train_batches, 0)
     valid_set_size = reduce((lambda x, y: x + len(y)), valid_batches, 0)
     test_set_size = reduce((lambda x, y: x + len(y)), test_batches, 0)
@@ -67,16 +71,16 @@ def main(argv=None):
 
         train_metrics = train(network, optimizer, loss_func, train_batches, device)
         print(f'Train:\n{train_metrics}')
-        mlflow.log_metric('train_fscore', value=train_metrics.fscore, step=epoch)
+        mlflow.log_metric(key='train_loss', value=train_metrics.loss, step=epoch)
 
         valid_metrics = evaluate(network, valid_batches, loss_func, device)
         print(f'Valid:\n{valid_metrics}')
-        mlflow.log_metric('valid_fscore', value=valid_metrics.fscore, step=epoch)
+        mlflow.log_metric(key='valid_loss', value=valid_metrics.loss, step=epoch)
 
         if valid_metrics.fscore[0] > best_valid_fscore[0] and valid_metrics.fscore[1] > best_valid_fscore[1]:
             best_valid_fscore = valid_metrics.fscore
             torch.save(network.state_dict(), args.model_name)
-            mlflow.pytorch.log_model(network, "torch_models")
+            # mlflow.pytorch.log_model(network, "torch_models")
             # mlflow.log_artifact(f'./{args.model_name}, 'path to minio')
 
     network = RelNet(out_dim=2)
@@ -89,9 +93,12 @@ def main(argv=None):
 
     mlflow.log_metric('loss', test_metrics.loss)
     mlflow.log_metric('accuracy', test_metrics.accuracy)
-    mlflow.log_metric('precision', test_metrics.precision)
-    mlflow.log_metric('recall', test_metrics.recall)
-    mlflow.log_metric('fscore', test_metrics.fscore)
+    mlflow.log_metric('precision_pos', test_metrics.precision[1])
+    mlflow.log_metric('precision_neg', test_metrics.precision[0])
+    mlflow.log_metric('recall_pos', test_metrics.recall[1])
+    mlflow.log_metric('recall_neg', test_metrics.recall[0])
+    mlflow.log_metric('fscore_pos', test_metrics.fscore[1])
+    mlflow.log_metric('fscore_neg', test_metrics.fscore[0])
 
 
 def train(network, optimizer, loss_func, batches, device):
