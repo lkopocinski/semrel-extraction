@@ -1,0 +1,7 @@
+md5: caee931111d6e2ccf80322a014e69c37
+outs:
+- md5: b44cd38cdc97474a008db8f6995df30a.dir
+  path: sent2vec
+  cache: true
+  metric: false
+  persist: false

@@ -13,6 +13,7 @@ from utils import load_batches, labels2idx, \
 
 from functools import reduce
 import mlflow
+import sent2vec
 
 try:
     import argcomplete
@@ -30,6 +31,7 @@ def get_args(argv=None):
     parser.add_argument('-b', '--batch_size', required=True, type=int, help="Batch size.")
     parser.add_argument('-d', '--dataset_dir', required=True, type=str,
                         help="Directory with train, validation, test dataset.")
+    parser.add_argument('-s', '--sent2vec', required=True, type=str, help="Sent2vec word embeddings model path.")
 
     if argcomplete:
         argcomplete.autocomplete(parser)
@@ -42,16 +44,20 @@ def main(argv=None):
     print(f'mlflow server: {mlflow.get_tracking_uri()}')
     args = get_args(argv)
 
-    mlflow.set_experiment('no_substituted_pairs')
+    s2v = sent2vec.Sent2vecModel()
+    s2v.load_model(args.sent2vec, inference_mode=True)
+
+
+    mlflow.set_experiment('no_substituted_pairs_sent2vec')
 
     network = RelNet(out_dim=2)
     network.to(device)
     optimizer = Adagrad(network.parameters())
     loss_func = nn.CrossEntropyLoss()
 
-    train_batches = load_batches(f'{args.dataset_dir}/train.vectors', args.batch_size)
-    valid_batches = load_batches(f'{args.dataset_dir}/valid.vectors', args.batch_size)
-    test_batches = load_batches(f'{args.dataset_dir}/test.vectors', args.batch_size)
+    train_batches = load_batches(f'{args.dataset_dir}/train.vectors', s2v, args.batch_size)
+    valid_batches = load_batches(f'{args.dataset_dir}/valid.vectors', s2v, args.batch_size)
+    test_batches = load_batches(f'{args.dataset_dir}/test.vectors', s2v, args.batch_size)
 
     train_set_size = reduce((lambda x, y: x + len(y)), train_batches, 0)
     valid_set_size = reduce((lambda x, y: x + len(y)), valid_batches, 0)
