@@ -2,8 +2,32 @@ import numpy as np
 import torch
 from sklearn.metrics import precision_score, recall_score, f1_score
 
+def mask_sentence(idx_ctx_f, idx_ctx_t):
+    idx_f, ctx_f = idx_ctx_f.split(':', 1)
+    idx_t, ctx_t = idx_ctx_t.split(':', 1)
 
-def load_batches(datapath, batch_size=10):
+    ctx_f = eval(ctx_f)
+    ctx_t = eval(ctx_t)
+
+    if ctx_f == ctx_t:
+        ctx_f[int(idx_f)] = 'MASK'
+        ctx_f[int(idx_t)] = 'MASK'
+        sent_f = ' '.join(ctx_f)
+        sent_t = ' '.join(ctx_f)
+    else:
+        ctx_f[int(idx_f)] = 'MASK'
+        ctx_t[int(idx_t)] = 'MASK'
+        sent_f = ' '.join(ctx_f)
+        sent_t = ' '.join(ctx_t)
+
+    return sent_f, sent_t
+
+def sentences_vectors(row, s2v):
+    sent_f, sent_t = mask_sentence(row[5], row[8])
+    return s2v.embed_sentence(sent_f), s2v.embed_sentence(sent_t)
+
+
+def load_batches(datapath, s2v, batch_size=10):
     with open(datapath, encoding="utf-8") as ifile:
         dataset = []
         batch = []
@@ -16,11 +40,13 @@ def load_batches(datapath, batch_size=10):
             cls = row[0]
             v1, v2 = np.array(eval(row[1])), np.array(eval(row[2]))
             vc1, vc2 = np.array(eval(row[9])), np.array(eval(row[10]))
+            sv1, sv2 = sentences_vectors(row, s2v)
+
             if (ind % batch_size) == 0:
                 dataset.append(batch)
                 batch = []
 #            batch.append((cls, np.concatenate([v1, v2, vc1, vc2])))
-            batch.append((cls, np.concatenate([v1, v2])))
+            batch.append((cls, np.concatenate([v1, v2, sv1.flatten(), sv2.flatten()])))
         if batch:
             dataset.append(batch)
         return dataset
