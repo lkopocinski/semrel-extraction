@@ -11,6 +11,7 @@ from utils import load_batches, labels2idx, Metrics, save_metrics
 from functools import reduce
 
 import mlflow
+import sent2vec
 
 try:
     import argcomplete
@@ -28,6 +29,7 @@ def get_args(argv=None):
                         help="Batch size.")
     parser.add_argument('-d', '--dataset_dir', required=True, type=str,
                         help="Directory with test dataset.")
+    parser.add_argument('-s', '--sent2vec', required=True, type=str, help="Sent2vec word embeddings model path.")
 
     if argcomplete:
         argcomplete.autocomplete(parser)
@@ -40,14 +42,16 @@ def main(argv=None):
     print(f'mlflow server: {mlflow.get_tracking_uri()}')
     args = get_args(argv)
 
-    mlflow.set_experiment('no_substituted_pairs')
+    s2v = sent2vec.Sent2vecModel()
+    s2v.load_model(args.sent2vec, inference_mode=True)
+
+    mlflow.set_experiment('no_substituted_pairs_sent2vec')
     # mlflow.start_run(run_id=None, experiment_id=None, run_name='lexical_filter', nested=False)
     mlflow.set_tag(key='evaluation', value='lexical_filter')
 
     loss_func = nn.CrossEntropyLoss()
 
-    test_batches = load_batches(f'{args.dataset_dir}/test.vectors_',
-                                args.batch_size)
+    test_batches = load_batches(f'{args.dataset_dir}/test.vectors_', s2v, args.batch_size)
     test_set_size = reduce((lambda x, y: x + len(y)), test_batches, 0)
 
     mlflow.log_param('batch_size', args.batch_size)
