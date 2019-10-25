@@ -121,3 +121,7 @@ RUN wget -O - http://download.sgjp.pl/apt/sgjp.gpg.key|sudo apt-key add - && \
 #pip install mlflow
 
 #mkdir -p home/semrel-extraction
+
+
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
