@@ -1,6 +1,9 @@
 FROM ubuntu:18.04
 LABEL maintainer "Łukasz Kopociński <lkopocinski@gmail.com>"
 
+RUN apt update && apt install -y software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa
+
 RUN apt update && apt install -y \
     bison \
     build-essential \
@@ -20,19 +23,19 @@ RUN apt update && apt install -y \
     python3.6 \
     python3.6-dev \
     python3.6-venv \
-    software-properties-common \
     subversion \
     swig \
     wget
 
-#RUN add-apt-repository ppa:deadsnakes/ppa
+RUN update-alternatives --install \
+    /usr/bin/python python /usr/bin/python3.6 10 && \
+    wget https://bootstrap.pypa.io/get-pip.py && \
+    python3.6 get-pip.py && \
+    rm get-pip.py && \
+    pip install --upgrade pip
 
 RUN cd /home/
 RUN mkdir install && cd install
-
-RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
-    python3.6 get-pip.py
-
 RUN git clone http://nlp.pwr.edu.pl/corpus2.git && \
     git clone http://nlp.pwr.edu.pl/maca.git && \
     git clone http://nlp.pwr.edu.pl/toki.git && \
@@ -40,7 +43,6 @@ RUN git clone http://nlp.pwr.edu.pl/corpus2.git && \
     git clone http://nlp.pwr.edu.pl/wcrft2.git
 
 RUN cd corpus2/ && \
-    #git apply /home/files/corpus2.diff && \
     git checkout --track origin/python3.6 && \
     mkdir bin && \
     cd bin/ && \
@@ -51,6 +53,7 @@ RUN cd corpus2/ && \
     cd ../../
 
 RUN cd toki/ && \
+    git checkout --track origin/lkopocinski-cmake-cpp11-support && \
     mkdir bin && \
     cd bin/ && \
     cmake .. && \
@@ -114,6 +117,7 @@ RUN wget -O - http://download.sgjp.pl/apt/sgjp.gpg.key|sudo apt-key add - && \
     cd ..
 
 #pip install dvc
+#pip install dvc[s3]
 #pip install mlflow
 
 #mkdir -p home/semrel-extraction
