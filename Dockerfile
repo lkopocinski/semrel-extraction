@@ -50,19 +50,19 @@ RUN cd corpus2/ && \
     ldconfig && \
     cd ../../
 
-RUN cd maca && \
-    #git apply /home/files/maca.diff && /
+RUN cd toki/ && \
     mkdir bin && \
-    cd bin && \
+    cd bin/ && \
     cmake .. && \
     make -j && \
     make install && \
     ldconfig && \
     cd ../../
 
-RUN cd toki/ && \
+RUN cd maca && \
+    #git apply /home/files/maca.diff && /
     mkdir bin && \
-    cd bin/ && \
+    cd bin && \
     cmake .. && \
     make -j && \
     make install && \
