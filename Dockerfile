@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM nvidia/cuda:10.0-runtime-ubuntu16.04
 LABEL maintainer "Łukasz Kopociński <lkopocinski@gmail.com>"
 
 RUN apt update && apt install -y software-properties-common && \
@@ -12,6 +12,7 @@ RUN apt update && apt install -y \
     flex \
     git \
     g++ \
+    htop \
     libantlr-dev \
     libboost-all-dev \
     libedit-dev \
@@ -20,12 +21,16 @@ RUN apt update && apt install -y \
     libreadline-dev \
     libsfst1-1.4-dev \
     libxml++2.6-dev \
+    locales \
+    locales-all \
     python3.6 \
     python3.6-dev \
     python3.6-venv \
+    ranger \
     subversion \
     swig \
-    wget
+    wget \
+    vim
 
 RUN update-alternatives --install \
     /usr/bin/python python /usr/bin/python3.6 10 && \
@@ -34,15 +39,10 @@ RUN update-alternatives --install \
     rm get-pip.py && \
     pip install --upgrade pip
 
-RUN cd /home/
-RUN mkdir install && cd install
+# Corpus2
+WORKDIR /home/install
 RUN git clone http://nlp.pwr.edu.pl/corpus2.git && \
-    git clone http://nlp.pwr.edu.pl/maca.git && \
-    git clone http://nlp.pwr.edu.pl/toki.git && \
-    git clone http://nlp.pwr.edu.pl/wccl.git && \
-    git clone http://nlp.pwr.edu.pl/wcrft2.git
-
-RUN cd corpus2/ && \
+    cd corpus2/ && \
     git checkout --track origin/python3.6 && \
     mkdir bin && \
     cd bin/ && \
@@ -50,9 +50,13 @@ RUN cd corpus2/ && \
     make -j && \
     make install && \
     ldconfig && \
-    cd ../../
+    cd /home/install && \
+    rm -rf corpus2
 
-RUN cd toki/ && \
+# Toki
+WORKDIR /home/install
+RUN git clone http://nlp.pwr.edu.pl/toki.git && \
+    cd toki/ && \
     git checkout --track origin/lkopocinski-cmake-cpp11-support && \
     mkdir bin && \
     cd bin/ && \
@@ -60,29 +64,39 @@ RUN cd toki/ && \
     make -j && \
     make install && \
     ldconfig && \
-    cd ../../
+    cd /home/install && \
+    rm -rf toki
 
-RUN cd maca && \
-    #git apply /home/files/maca.diff && /
+# Maca
+WORKDIR /home/install
+RUN git clone https://gitlab.clarin-pl.eu/analysers/maca.git && \
+    cd maca && \
     mkdir bin && \
     cd bin && \
     cmake .. && \
     make -j && \
     make install && \
     ldconfig && \
-    cd ../../
+    cd /home/install && \
+    rm -rf maca
 
-RUN cd wccl/ && \
+# Wccl
+WORKDIR /home/install
+RUN git clone http://nlp.pwr.edu.pl/wccl.git && \
+    cd wccl/ && \
     mkdir bin && \
     cd bin && \
     cmake .. && \
     make -j && \
     make install && \
     ldconfig && \
-    cd ../../
+    cd /home/install && \
+    rm -rf wccl
 
-RUN cd wcrft2/ && \
-    #git apply /home/files/wcrft.diff && \
+# Wcrft2
+WORKDIR /home/install
+RUN git clone http://nlp.pwr.edu.pl/wcrft2.git && \
+    cd wcrft2/ && \
     mkdir bin && \
     cd bin/ && \
     cmake .. && \
@@ -91,6 +105,8 @@ RUN cd wcrft2/ && \
     ldconfig && \
     cd ../../
 
+# Crfpp
+WORKDIR /home/install
 RUN mkdir crfpp && \
     cd crfpp && \
     wget http://tools.clarin-pl.eu/share/CRF++-0.58.tar.gz && \
@@ -102,19 +118,20 @@ RUN mkdir crfpp && \
     ldconfig && \
     cd ../../
 
+# Morfeusz
 RUN wget -O - http://download.sgjp.pl/apt/sgjp.gpg.key|sudo apt-key add - && \
-    apt-add-repository http://download.sgjp.pl/apt/ubuntu && \
-    apt update && apt install libmorfeusz2-dev && \
-    dpkg -L libmorfeusz2-dev && \
-    mkdir morfeusz-sgjp && \
-    cd morfeusz-sgjp/ && \
-    wget http://tools.clarin-pl.eu/share/morfeusz-SGJP-linux64-20130413.tar.bz2 && \
+    apt-add-repository http://download.sgjp.pl/apt/ubuntu && apt update && \
+    apt install -y *morfeusz2*
+
+WORKDIR /home/install
+RUN wget http://tools.clarin-pl.eu/share/morfeusz-SGJP-linux64-20130413.tar.bz2 && \
     tar -jxvf morfeusz-SGJP-linux64-20130413.tar.bz2 && \
     mv libmorfeusz* /usr/local/lib/ && \
     mv morfeusz /usr/local/bin/ && \
     mv morfeusz.h /usr/local/include/ && \
     ldconfig && \
-    cd ..
+    cd /home/install && \
+    rm -rf morfeusz-sgjp
 
 #pip install dvc
 #pip install dvc[s3]
@@ -122,6 +139,6 @@ RUN wget -O - http://download.sgjp.pl/apt/sgjp.gpg.key|sudo apt-key add - && \
 
 #mkdir -p home/semrel-extraction
 
-
+RUN locale-gen en_US.UTF-8
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
