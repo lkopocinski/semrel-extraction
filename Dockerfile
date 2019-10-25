@@ -18,8 +18,8 @@ RUN apt update && apt install -y \
     libsfst1-1.4-dev \
     libxml++2.6-dev \
     python3.6 \
-    python3.6-pip \
     python3.6-dev \
+    python3.6-venv \
     software-properties-common \
     subversion \
     swig \
@@ -31,6 +31,10 @@ RUN wget -O - http://sgjp.pl/apt/sgjp.gpg.key | apt-key add - && \
 
 RUN cd /home/
 RUN mkdir install && cd install
+
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+    python3.6 get-pip.py
+
 RUN git clone http://nlp.pwr.edu.pl/corpus2.git && \
     git clone http://nlp.pwr.edu.pl/maca.git && \
     git clone http://nlp.pwr.edu.pl/toki.git && \
@@ -108,7 +112,6 @@ RUN apt update && apt install libmorfeusz2-dev && \
     mv morfeusz.h /usr/local/include/ && \
     ldconfig && \
     cd ..
-
 
 #pip install dvc
 #pip install mlflow
