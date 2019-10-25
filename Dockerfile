@@ -25,9 +25,7 @@ RUN apt update && apt install -y \
     swig \
     wget
 
-RUN wget -O - http://sgjp.pl/apt/sgjp.gpg.key | apt-key add - && \
-    add-apt-repository 'deb http://sgjp.pl/apt/ubuntu-xenial xenial main' && \
-    add-apt-repository ppa:deadsnakes/ppa
+#RUN add-apt-repository ppa:deadsnakes/ppa
 
 RUN cd /home/
 RUN mkdir install && cd install
@@ -101,7 +99,9 @@ RUN mkdir crfpp && \
     ldconfig && \
     cd ../../
 
-RUN apt update && apt install libmorfeusz2-dev && \
+RUN wget -O - http://download.sgjp.pl/apt/sgjp.gpg.key|sudo apt-key add - && \
+    apt-add-repository http://download.sgjp.pl/apt/ubuntu && \
+    apt update && apt install libmorfeusz2-dev && \
     dpkg -L libmorfeusz2-dev && \
     mkdir morfeusz-sgjp && \
     cd morfeusz-sgjp/ && \
