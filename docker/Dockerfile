@@ -4,6 +4,7 @@ LABEL maintainer "Łukasz Kopociński <lkopocinski@gmail.com>"
 RUN apt update && apt install -y software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa
 
+
 RUN apt update && apt install -y \
     bison \
     build-essential \
@@ -23,6 +24,7 @@ RUN apt update && apt install -y \
     libxml++2.6-dev \
     locales \
     locales-all \
+    pkg-config \
     python3.6 \
     python3.6-dev \
     python3.6-venv \
@@ -38,6 +40,22 @@ RUN update-alternatives --install \
     python3.6 get-pip.py && \
     rm get-pip.py && \
     pip install --upgrade pip
+
+# Morfeusz
+RUN wget -O - http://download.sgjp.pl/apt/sgjp.gpg.key|sudo apt-key add - && \
+    apt-add-repository http://download.sgjp.pl/apt/ubuntu && apt update && \
+    apt install -y *morfeusz2*
+
+WORKDIR /home/install
+RUN mksdir morfeusz/ && cd morfeusz/ && \
+    wget http://tools.clarin-pl.eu/share/morfeusz-SGJP-linux64-20130413.tar.bz2 && \
+    tar -jxvf morfeusz-SGJP-linux64-20130413.tar.bz2 && \
+    mv libmorfeusz* /usr/local/lib/ && \
+    mv morfeusz /usr/local/bin/ && \
+    mv morfeusz.h /usr/local/include/ && \
+    ldconfig && \
+    cd /home/install && \
+    rm -rf morfeusz-sgjp
 
 # Corpus2
 WORKDIR /home/install
@@ -71,6 +89,7 @@ RUN git clone http://nlp.pwr.edu.pl/toki.git && \
 WORKDIR /home/install
 RUN git clone https://gitlab.clarin-pl.eu/analysers/maca.git && \
     cd maca && \
+    git checkout --track origin/lkopocinski-add-cmake-cpp11-support && \
     mkdir bin && \
     cd bin && \
     cmake .. && \
@@ -84,6 +103,7 @@ RUN git clone https://gitlab.clarin-pl.eu/analysers/maca.git && \
 WORKDIR /home/install
 RUN git clone http://nlp.pwr.edu.pl/wccl.git && \
     cd wccl/ && \
+    git checkout --track origin/lkopocinski-add-cmake-cpp11-support && \
     mkdir bin && \
     cd bin && \
     cmake .. && \
@@ -93,22 +113,10 @@ RUN git clone http://nlp.pwr.edu.pl/wccl.git && \
     cd /home/install && \
     rm -rf wccl
 
-# Wcrft2
-WORKDIR /home/install
-RUN git clone http://nlp.pwr.edu.pl/wcrft2.git && \
-    cd wcrft2/ && \
-    mkdir bin && \
-    cd bin/ && \
-    cmake .. && \
-    make -j && \
-    make install && \
-    ldconfig && \
-    cd ../../
-
 # Crfpp
 WORKDIR /home/install
 RUN mkdir crfpp && \
-    cd crfpp && \
+    cd crfpp/ && \
     wget http://tools.clarin-pl.eu/share/CRF++-0.58.tar.gz && \
     tar -xvzf CRF++-0.58.tar.gz && \
     cd CRF++-0.58 && \
@@ -116,22 +124,21 @@ RUN mkdir crfpp && \
     make -j && \
     make install && \
     ldconfig && \
-    cd ../../
-
-# Morfeusz
-RUN wget -O - http://download.sgjp.pl/apt/sgjp.gpg.key|sudo apt-key add - && \
-    apt-add-repository http://download.sgjp.pl/apt/ubuntu && apt update && \
-    apt install -y *morfeusz2*
-
-WORKDIR /home/install
-RUN wget http://tools.clarin-pl.eu/share/morfeusz-SGJP-linux64-20130413.tar.bz2 && \
-    tar -jxvf morfeusz-SGJP-linux64-20130413.tar.bz2 && \
-    mv libmorfeusz* /usr/local/lib/ && \
-    mv morfeusz /usr/local/bin/ && \
-    mv morfeusz.h /usr/local/include/ && \
-    ldconfig && \
     cd /home/install && \
-    rm -rf morfeusz-sgjp
+    rm -rf crfpp
+
+# Wcrft2
+#WORKDIR /home/install
+#RUN git clone http://nlp.pwr.edu.pl/wcrft2.git && \
+#    cd wcrft2/ && \
+#    mkdir bin && \
+#    cd bin/ && \
+#    cmake .. && \
+#    make -j && \
+#    make install && \
+#    ldconfig && \
+#    cd /home/install && \
+#    rm -rf wcrft2
 
 #pip install dvc
 #pip install dvc[s3]
@@ -142,3 +149,13 @@ RUN wget http://tools.clarin-pl.eu/share/morfeusz-SGJP-linux64-20130413.tar.bz2 
 RUN locale-gen en_US.UTF-8
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
+
+WORKDIR /home/projects/
+RUN git clone https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction.git && \
+    cd semrel-extraction && \
+    git checkout --track origin/develop	
+
+RUN pip install dvc
+RUN pip install mlflow
+
+ENTRYPOINT ["/bin/bash"]
