@@ -6,8 +6,8 @@ import torch.nn as nn
 
 class RelNet(nn.Module):
     """
-        in_dim: konkatenacja wektorow (1024), hidden_dim: warstwa ukryta (512),
-        out_dim: liczba relacji
+        in_dim: vectors concatenation size, hidden_dim: hidden layer dimension,
+        out_dim: relations quantity
     """
 
     def __init__(self, in_dim=3448, hidden_dim=512, out_dim=2, dropout=0.5):
@@ -35,4 +35,3 @@ class RelNet(nn.Module):
         output = self(torch.FloatTensor([data]))
         _, predicted = torch.max(output, dim=1)
         return predicted.item()
-
