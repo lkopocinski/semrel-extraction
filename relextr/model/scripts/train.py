@@ -19,13 +19,12 @@ print(f'Runing on: {device}.')
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('-e', '--epochs', required=True, type=int, help="How many epochs should the model be trained.")
+    parser.add_argument('-e', '--epochs', required=True, type=int, help="How many epochs should the model be trained on.")
     parser.add_argument('-n', '--model_name', required=True, type=str, help="Save file name for a trained model.")
     parser.add_argument('-b', '--batch_size', required=True, type=int, help="Batch size.")
     parser.add_argument('-d', '--dataset_dir', required=True, type=str,
                         help="Directory with train, validation, test dataset.")
-    parser.add_argument('-s', '--sent2vec', required=False, type=str, help="Sent2vec word embeddings model path.")
-    parser.add_argument('-f', '--fasttext', required=False, type=str, help="Fasttext word embeddings model path.")
+    parser.add_argument('-v', '--vectorizer', required=True, type=str, choices={'default', 'sent2vec', 'fasttext', 'elmoconv'}, help="Vectorizer method")
 
     argcomplete.autocomplete(parser)
     return parser.parse_args(argv)
