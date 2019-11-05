@@ -1,21 +1,20 @@
-#!/usr/bin/env bash
+#!/bin/bash -eux
 
 # Script takes files from provided corpora and splits them into train, valid, test
 # disjoint data sets list. It means each one of the splits contains different files.
 
-# Params
-SOURCE_DIR=korpusy
-TARGET_DIR=splits
-SCRIPTS_DIR=scripts
-FILES_NR=(81 82 83)
+pushd "$(git rev-parse --show-toplevel)"
 
-# Initialization
-mkdir -p ${TARGET_DIR}/train ${TARGET_DIR}/valid ${TARGET_DIR}/test
+DATA_IN="./data/corpora"
+OUTPUT_PATH="./data/splits"
+SCRIPTS_DIR="./data/scripts"
 
-# Split
-for nr in ${FILES_NR[*]}
-do
-    FILES_PATH=$(pwd)/${SOURCE_DIR}/inforex_export_${nr}/documents/
+dvc run \
+-d ${DATA_IN} \
+-d ${SCRIPTS_DIR}/split_dataset.py \
+-o ${OUTPUT_PATH} \
+${SCRIPTS_DIR}/split_dataset.py --data-in ${DATA_IN} \
+                                --output-path ${OUTPUT_PATH} \
+                                --files 81 82 83
 
-    python3.6 ${SCRIPTS_DIR}/split_dataset_files.py --source_dir ${FILES_PATH} --target_dir ${TARGET_DIR} --prefix ${nr}
-done
+popd
