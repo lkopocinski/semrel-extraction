@@ -15,6 +15,6 @@ dvc run \
 -o ${OUTPUT_PATH} \
 ${SCRIPTS_DIR}/split_dataset.py --data-in ${DATA_IN} \
                                 --output-path ${OUTPUT_PATH} \
-                                --files 81 82 83
+                                --directories 81 82 83
 
 popd
