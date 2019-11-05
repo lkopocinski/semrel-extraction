@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 import glob
 import os
@@ -20,7 +22,7 @@ def get_args(argv=None):
 def main(argv=None):
     args = get_args(argv)
 
-    for directory in args.dirs:
+    for directory in args.directories:
         path = os.path.join(args.data_in, directory)
         if os.path.isdir(path):
             train, valid, test = split(path)
@@ -45,7 +47,8 @@ def chunk(seq):
 
 def save_list(path, file_name, files_list):
     try:
-        os.mkdir(path)
+        if not os.path.exists(path):
+            os.makedirs(path)
     except OSError:
         print(f'List saving filed. Can not create {path} directory.')
     else:

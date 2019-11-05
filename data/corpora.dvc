@@ -1,0 +1,7 @@
+md5: e9e21ba1e6a83ebceac75c8579094e5d
+outs:
+- md5: 42c54f02413e8a480fa284ae775d6061.dir
+  path: corpora
+  cache: true
+  metric: false
+  persist: false
