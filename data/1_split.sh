@@ -9,6 +9,8 @@ DATA_IN="./data/corpora"
 OUTPUT_PATH="./data/splits"
 SCRIPTS_DIR="./data/scripts"
 
+mkdir -p ${OUTPUT_PATH}
+
 dvc run \
 -d ${DATA_IN} \
 -d ${SCRIPTS_DIR}/split_dataset.py \
