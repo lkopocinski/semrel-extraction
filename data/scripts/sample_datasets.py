@@ -1,30 +1,63 @@
 import argparse
 import glob
 import math
+import os
 import random
 from collections import defaultdict
+from pathlib import Path
 
+import argcomplete
 from parse_utils import Relation
-
-try:
-    import argcomplete
-except ImportError:
-    argcomplete = None
 
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--positive_size', required=True, type=int,
-                        help='How many positive examples should be selected.')
-    parser.add_argument('--negative_size', required=True, type=int,
-                        help='How many negative examples should be selected.')
-    parser.add_argument('--source_dir', required=True, help='Path to datasets in context format.')
-    parser.add_argument('--output_dir', required=True, help='Save directory path.')
+    parser.add_argument('--data-in', required=True, help='Directory with context format files.')
+    parser.add_argument('--output-path', required=True, help='Directory to save sampled datasets.')
+    parser.add_argument('--train-size', nargs='2', type=int, required=True,
+                        help='Train dataset batch sizes [positive, negative]')
+    parser.add_argument('--valid-size', nargs='2', type=int, required=True,
+                        help='Validation dataset batch sizes [positive, negative]')
+    parser.add_argument('--test-size', nargs='2', type=int, required=True,
+                        help='Test dataset batch sizes [positive, negative]')
 
-    if argcomplete:
-        argcomplete.autocomplete(parser)
+    argcomplete.autocomplete(parser)
 
     return parser.parse_args(argv)
+
+
+def main(argv=None):
+    args = get_args(argv)
+
+    for set_name, size in [('train', args.train_size), ('valid', args.train_size), ('test', args.train_size)]:
+        source_dir = os.path.join(args.data_in, set_name)
+        output_dir = os.path.join(args.output_path, set_name)
+        pos_batch_size, neg_batch_size = size
+
+        for lines, file_name in select_positive(source_dir, pos_batch_size):
+            save_path = os.path.join(output_dir, file_name)
+            save_lines(lines, save_path)
+
+        for lines, file_name in select_negative(source_dir, neg_batch_size):
+            save_path = os.path.join(output_dir, file_name)
+            save_lines(lines, save_path)
+
+
+def select_positive(source_path, batch_size):
+    return select(
+        path=f'{source_path}/positive/*.context',
+        size=batch_size
+    )
+
+
+def select(path, size):
+    for file_path in glob.glob(path):
+        lines = load_file(file_path)
+        if len(lines) > size:
+            lines = random.sample(lines, size)
+
+        file_name = f'{get_file_name(file_path)}.sampled'
+        yield lines, file_name
 
 
 def load_file(path):
@@ -32,96 +65,40 @@ def load_file(path):
         return [line.strip() for line in in_file]
 
 
+def get_file_name(file_path):
+    return Path(file_path).stem
+
+
 def save_lines(lines, path):
     with open(path, 'w', encoding='utf-8') as out_file:
         for line in lines:
             out_file.write(f'{line}\n')
 
-
-def get_file_name(file_path):
-    file_name = file_path.split('/')[-1]
-    file_name = file_name.split('.', 1)[0]
-    return file_name
-
-
-def select(path, size):
-    files = glob.glob(path)
-    files_number = len(files)
-    sample_size = math.floor(size / (1 if files_number == 0 else files_number))
-
-    for file_path in files:
-        lines = load_file(file_path)
-        if len(lines) > sample_size:
-            lines = random.sample(lines, sample_size)
-
-        file_name = get_file_name(file_path)
-        file_name = f'{file_name}.sampled'
-
-        yield lines, file_name
-
-
-def select_positive(source_path, size):
-    path = f'{source_path}/positive/*.context'
-    return select(path, size)
-
-
-def select_substituted(source_path, size):
-    path = f'{source_path}/negative/substituted/*.context'
-    return select(path, size)
-
-
 def select_negative(source_path, size):
+    size = math.floor(size / 3)
     path = f'{source_path}/negative/*.context'
-    files = glob.glob(path)
-    files_number = len(files)
-    sample_size = math.floor(size / (1 if files_number == 0 else files_number))
 
-    for file_path in files:
+    for file_path in glob.glob(path):
         lines = load_file(file_path)
 
-        cat_dict = defaultdict(list)
+        type_dict = defaultdict(list)
         for line in lines:
             relation = Relation(line)
             if relation.source.channel == '' and relation.dest.channel == '':
-                cat_dict['plain'].append(f'{relation}')
+                type_dict['plain'].append(f'{relation}')
             elif relation.source.channel == 'BRAND_NAME' and relation.dest.channel == '':
-                cat_dict['brand'].append(f'{relation}')
+                type_dict['brand'].append(f'{relation}')
             elif relation.source.channel == '' and relation.dest.channel == 'PRODUCT_NAME':
-                cat_dict['product'].append(f'{relation}')
+                type_dict['product'].append(f'{relation}')
 
         out_lines = []
-        for key, lines in cat_dict.items():
-            if len(lines) > sample_size:
-                lines = random.sample(lines, sample_size)
+        for key, lines in type_dict.items():
+            if len(lines) > size:
+                lines = random.sample(lines, size)
             out_lines.extend(lines)
 
-        file_name = get_file_name(file_path)
-        file_name = f'{file_name}.sampled'
-
+        file_name = f'{get_file_name(file_path)}.sampled'
         yield out_lines, file_name
-
-
-def main(argv=None):
-    args = get_args(argv)
-
-    source_dir = args.source_dir
-    output_dir = args.output_dir
-
-    positive_size = args.positive_size
-    negative_size = args.positive_size
-
-    for lines, file_name in select_positive(source_dir, positive_size):
-        save_path = f'{output_dir}/positive/{file_name}'
-        save_lines(lines, save_path)
-
-    batch_size = math.floor(negative_size / 4)
-    for lines, file_name in select_negative(source_dir, batch_size):
-        save_path = f'{output_dir}/negative/{file_name}'
-        save_lines(lines, save_path)
-
-    for lines, file_name in select_substituted(source_dir, batch_size):
-        save_path = f'{output_dir}/negative/substituted/{file_name}'
-        save_lines(lines, save_path)
 
 
 if __name__ == '__main__':

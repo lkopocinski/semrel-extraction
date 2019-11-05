@@ -1,24 +1,26 @@
-#!/usr/bin/env bash
+#!/bin/bash -eux
 
-# Params
-SOURCE_DIR=generated
-TARGET_DIR=sampled
-SCRIPTS_DIR=scripts
+# TODO: description
 
-# Initialization
-declare -a types=("train" "valid" "test")
-for type in "${types[@]}"
-do
+pushd "$(git rev-parse --show-toplevel)"
+
+DATA_IN="./data/generated"
+OUTPUT_PATH="./data/sampled"
+SCRIPTS_DIR="./data/scripts"
+
+dvc run \
+-d ${DATA_IN} \
+-d ${SCRIPTS_DIR}/sample_datasets.py \
+-o ${OUTPUT_PATH} \
+${SCRIPTS_DIR}/sample_datasets.py --data-in ${DATA_IN} \
+                                  --output-path ${OUTPUT_PATH} \
+                                  --train-size 200 400  \
+                                  --valid-size 100 100 \
+                                  --test-size 100 100
+
+popd
+
     # Declaration
-    OUT_DIR=${TARGET_DIR}/${type}
+    OUT_DIR=${OUTPUT_PATH}/${type}
     POSITIVE_DIR=${OUT_DIR}/positive
     NEGATIVE_DIR=${OUT_DIR}/negative
-    SUBSTITUTED_DIR=${OUT_DIR}/negative/substituted
-
-    mkdir -p ${POSITIVE_DIR} ${SUBSTITUTED_DIR}
-done
-
-# Sample
-python3.6 ${SCRIPTS_DIR}/sample_datasets.py --positive_size 5000 --negative_size 4000 --source_dir ${SOURCE_DIR}/train --output_dir ${TARGET_DIR}/train
-python3.6 ${SCRIPTS_DIR}/sample_datasets.py --positive_size 2500 --negative_size 2000 --source_dir ${SOURCE_DIR}/valid --output_dir ${TARGET_DIR}/valid
-python3.6 ${SCRIPTS_DIR}/sample_datasets.py --positive_size 2500 --negative_size 2000 --source_dir ${SOURCE_DIR}/test --output_dir ${TARGET_DIR}/test
