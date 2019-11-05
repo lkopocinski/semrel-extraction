@@ -35,12 +35,12 @@ def main(argv=None):
         pos_batch_size, neg_batch_size = size
 
         for lines, file_name in select_positive(source_dir, pos_batch_size):
-            save_path = os.path.join(output_dir, file_name)
-            save_lines(lines, save_path)
+            save_path = os.path.join(output_dir, 'positive')
+            save_lines(save_path, file_name, lines)
 
         for lines, file_name in select_negative(source_dir, neg_batch_size):
-            save_path = os.path.join(output_dir, file_name)
-            save_lines(lines, save_path)
+            save_path = os.path.join(output_dir, 'negative')
+            save_lines(save_path, file_name, lines)
 
 
 def select_positive(source_path, batch_size):
@@ -69,10 +69,18 @@ def get_file_name(file_path):
     return Path(file_path).stem
 
 
-def save_lines(lines, path):
-    with open(path, 'w', encoding='utf-8') as out_file:
-        for line in lines:
-            out_file.write(f'{line}\n')
+def save_lines(path, file_name, lines):
+    try:
+        if not os.path.exists(path):
+            os.makedirs(path)
+    except OSError:
+        print(f'List saving filed. Can not create {path} directory.')
+    else:
+        file_path = os.path.join(path, file_name)
+        with open(file_path, 'w', encoding='utf-8') as out_file:
+            for line in lines:
+                out_file.write(f'{line}\n')
+
 
 def select_negative(source_path, size):
     size = math.floor(size / 3)
