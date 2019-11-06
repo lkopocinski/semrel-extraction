@@ -9,7 +9,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import argcomplete
-from parse_utils import Relation
+from .relation import Relation
 
 
 def get_args(argv=None):
@@ -31,7 +31,7 @@ def get_args(argv=None):
 def main(argv=None):
     args = get_args(argv)
 
-    for set_name, size in [('train', args.train_size), ('valid',args.valid_size), ('test', args.test_size)]:
+    for set_name, size in [('train', args.train_size), ('valid', args.valid_size), ('test', args.test_size)]:
         source_dir = os.path.join(args.data_in, set_name)
         output_dir = os.path.join(args.output_path, set_name)
         pos_batch_size, neg_batch_size = size

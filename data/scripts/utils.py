@@ -40,17 +40,17 @@ def is_in_channel(relation, channels):
 def get_relation_element(rel, sentences):
     sent = sentences[rel.sentence_id()]
     channel_name = rel.channel_name()
-    idxs = find_token_indexes(sent, rel.annotation_number(), channel_name)
+    indices = find_token_indices(sent, rel.annotation_number(), channel_name)
 
-    if not idxs:
+    if not indices:
         return -1, None
 
     context = get_context(sent)
-    lemma = get_lemma(sent, idxs[0])
-    return lemma, idxs, context, channel_name
+    lemma = get_lemma(sent, indices[0])
+    return Relation.Element(lemma, channel_name, indices, context)
 
 
-def find_token_indexes(sent, ann_number, ann_channel):
+def find_token_indices(sent, ann_number, ann_channel):
     idxs = []
     for idx, token in enumerate(sent.tokens()):
         number = tou.get_annotation(sent, token, ann_channel)
@@ -93,21 +93,22 @@ def is_noun(token):
 def get_relation_element_multiword(rel, sentences):
     sent = sentences[rel.sentence_id()]
     channel_name = rel.channel_name()
-    idxs = find_token_indexes(sent, rel.annotation_number(), channel_name)
+    indices = find_token_indices(sent, rel.annotation_number(), channel_name)
 
-    if not idxs:
+    if not indices:
         return -1, None
 
-    begin = idxs[0]
-    end = idxs[-1]
+    begin = indices[0]
+    end = indices[-1]
 
     context = get_context(sent)
     phrase = ' '.join(context[begin:end + 1])
     context[begin:end + 1] = [phrase]
 
-    lemma = get_multiword_lemma(sent, idxs[0])
-    return lemma, [begin], context, channel_name
+    lemma = get_multiword_lemma(sent, indices[0])
+    return Relation.Element(lemma, channel_name, [begin], context)
 
+from .relation import Relation
 
 def get_multiword_lemma(sent, idx):
     token = [token for token in sent.tokens()][idx]

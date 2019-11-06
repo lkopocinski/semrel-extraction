@@ -10,5 +10,6 @@ setup(
     maintainer='Łukasz Kopociński',
     maintainer_email='lukasz.kopocinski@pwr.edu.pl',
     packages=find_packages(),
-    zip_safe=False
+    zip_safe=False,
+    install_requires=['argcomplete']
 )
