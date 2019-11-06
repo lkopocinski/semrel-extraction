@@ -6,6 +6,18 @@ from gensim.models.fasttext import load_facebook_model
 from wordfreq import zipf_frequency
 
 
+class VectorizerFactory:
+    def get_vectorizer(self, format, model_path):
+        if format == 'sent2vec':
+            return Sent2VecVectorizer(model_path)
+        elif format == 'fasttext':
+            return FastTextVectorizer(model_path)
+        elif format == 'elmoconv':
+            return ElmoConvolutionEngine()
+        else:
+            raise ValueError(format)
+
+
 class Vectorizer(abc.ABC):
 
     @abc.abstractmethod
@@ -70,7 +82,7 @@ class FastTextVectorizer(Vectorizer):
         return lemma_f_vec, lemma_t_vec
 
 
-class ConvVectorEngine(Vectorizer):
+class ElmoConvolutionEngine(Vectorizer):
 
     def make_vectors(self, relation):
         return relation.source.conv_vector, relation.dest.conv_vector

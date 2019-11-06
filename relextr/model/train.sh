@@ -1,13 +1,32 @@
-#!/usr/bin/env bash
+#!/bin/bash -eux
 
-# Params
-DATASET_DIR=dataset
-SCRIPTS_DIR=scripts
+# TODO: description
+
+pushd "$(git rev-parse --show-toplevel)"
+
+DATA_IN="./relextr/model/dataset"
+SCRIPTS_DIR="./relextr/model/dataset/scripts"
+
 EPOCHS_QUANTITY=30
 BATCH_SIZE=10
-SAVE_MODEL_NAME='relextr_model.pt'
-SENT_2_VEC_MODEL=$(pwd)/../../data/sent2vec/kgr10.bin
-FASTTEXT_VEC_MODEL=$(pwd)/../../data/fasttext/
 
-# Execution
-CUDA_VISIBLE_DEVICES=5,6 python3.6 ${SCRIPTS_DIR}/train.py --epochs ${EPOCHS_QUANTITY} --batch_size ${BATCH_SIZE} --dataset_dir ${DATASET_DIR} --model_name ${SAVE_MODEL_NAME} --sent2vec ${SENT_2_VEC_MODEL}
+SENT2VEC_MODEL="./data/sent2vec/kgr10.bin"
+FASTTEXT_MODEL="./data/fasttext/kgr10.bin"
+
+dvc run \
+-d ${DATA_IN} \
+-d ${SCRIPTS_DIR}/train.py \
+-d ${SCRIPTS_DIR}/relnet.py \
+-d ${SCRIPTS_DIR}/engines.py \
+-d ${SCRIPTS_DIR}/utils.py \
+-d ${SCRIPTS_DIR}/metrics.py \
+-M metrics.txt \
+-f train.dvc \
+CUDA_VISIBLE_DEVICES=5,6 ${SCRIPTS_DIR}/train.py --data-in ${DATA_IN} \
+                                                 --save-model-name 'relextr_model.pt' \
+                                                 --batch-size 10 \
+                                                 --epochs 30 \
+                                                 --vectorizer 'default' \
+                                                 --vectors-model ''
+
+popd

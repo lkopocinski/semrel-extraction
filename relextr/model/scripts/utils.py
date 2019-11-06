@@ -19,34 +19,6 @@ def labels2idx(labels):
     return [mapping[label] for label in labels if label in mapping]
 
 
-def load_batches(datapath, batch_size=10, vectors_engine=None):
-    with open(datapath, encoding="utf-8") as in_file:
-        dataset = []
-        batch = []
-        for idx, line in enumerate(in_file, 1):
-            try:
-                relation = Relation(line)
-                vectors = [relation.source.vector, relation.dest.vector]
-
-                if vectors_engine:
-                    vc1, vc2 = vectors_engine.make_vectors(relation)
-                    vectors.append(vc1)
-                    vectors.append(vc2)
-
-                batch.append((relation.label, np.concatenate(vectors)))
-
-                if (idx % batch_size) == 0:
-                    dataset.append(batch)
-                    batch = []
-            except Exception:
-                continue
-
-        if batch:
-            dataset.append(batch)
-
-        return dataset
-
-
 class Relation:
 
     def __init__(self, line):
