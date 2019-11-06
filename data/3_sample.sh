@@ -19,8 +19,3 @@ ${SCRIPTS_DIR}/sample_datasets.py --data-in ${DATA_IN} \
                                   --test-size 100 100
 
 popd
-
-    # Declaration
-    OUT_DIR=${OUTPUT_PATH}/${type}
-    POSITIVE_DIR=${OUT_DIR}/positive
-    NEGATIVE_DIR=${OUT_DIR}/negative
