@@ -1,38 +1,25 @@
-#!/usr/bin/env bash
+#!/bin/bash -eux
 
 # Script takes previously split data and generate examples used to train classifier.
-# Returns files in context like data format.
+# Returns files in context style data format.
 
-# Params
-SOURCE_DIR=splits
-TARGET_DIR=generated
-SCRIPTS_DIR=scripts
-CHANNELS='['BRAND_NAME', 'PRODUCT_NAME']'
-BRANDS_SAMPLE=5
+pushd "$(git rev-parse --show-toplevel)"
 
-# Generate
-declare -a types=("train" "valid" "test")
-for type in "${types[@]}"
-do
-    # Declaration
-    OUT_DIR=${TARGET_DIR}/${type}
-    POSITIVE_DIR=${OUT_DIR}/positive
-    NEGATIVE_DIR=${OUT_DIR}/negative
-    MULTIWORD_DIR=${OUT_DIR}/positive/multiword
-    SUBSTITUTED_DIR=${OUT_DIR}/negative/substituted
+DATA_IN="./data/splits"
+OUTPUT_PATH="./data/generated"
+SCRIPTS_DIR="./data/scripts"
 
-    mkdir -p ${MULTIWORD_DIR} ${SUBSTITUTED_DIR}
+dvc run \
+-d ${DATA_IN} \
+-d ${SCRIPTS_DIR}/generate_positive_from_corpora.py \
+-o ${OUTPUT_PATH} \
+${SCRIPTS_DIR}/generate_positive_from_corpora.py --data-in ${DATA_IN} \
+                                                 --output-path ${OUTPUT_PATH}
 
-    for list in ${SOURCE_DIR}/${type}/*.list
-    do
-        echo ${list}
-        name=$(echo ${list} | cut -d"/" -f3 | cut -d"." -f1)
-	
-	python3.6 ${SCRIPTS_DIR}/generate_positive_from_corpora.py --list_file ${list} --channels "${CHANNELS}" > ${POSITIVE_DIR}/${name}.context
-        sort -u -o ${POSITIVE_DIR}/${name}.context ${POSITIVE_DIR}/${name}.context
+popd
 
-        python3.6 ${SCRIPTS_DIR}/generate_negative_from_corpora.py --list_file ${list} --channels "${CHANNELS}" > ${NEGATIVE_DIR}/${name}.context
-        sort -u -o ${NEGATIVE_DIR}/${name}.context ${NEGATIVE_DIR}/${name}.context
-
-    done
-done
+#OUT_DIR=${OUTPUT_PATH}/${type}
+#NEGATIVE_DIR=${OUT_DIR}/negative
+#
+#python3.6 ${SCRIPTS_DIR}/generate_negative_from_corpora.py --list_file ${list} --channels "${CHANNELS}" > ${NEGATIVE_DIR}/${name}.context
+#sort -u -o ${NEGATIVE_DIR}/${name}.context ${NEGATIVE_DIR}/${name}.context
