@@ -6,7 +6,6 @@ TARGET_DIR=../relextr/model/dataset
 
 mkdir -p ${TARGET_DIR}
 
-
 # Merge
 declare -a types=("train" "valid" "test")
 for type in "${types[@]}"

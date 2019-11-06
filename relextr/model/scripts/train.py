@@ -11,7 +11,8 @@ from metrics import Metrics, save_metrics
 from relnet import RelNet
 from torch.autograd import Variable
 from torch.optim import Adagrad
-from utils import load_batches, labels2idx, get_set_size, is_better_fscore
+from .batches import BatchLoader
+from utils import labels2idx, get_set_size, is_better_fscore
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(f'Runing on: {device}.')
@@ -19,41 +20,20 @@ print(f'Runing on: {device}.')
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('-e', '--epochs', required=True, type=int, help="How many epochs should the model be trained on.")
-    parser.add_argument('-n', '--model_name', required=True, type=str, help="Save file name for a trained model.")
-    parser.add_argument('-b', '--batch_size', required=True, type=int, help="Batch size.")
-    parser.add_argument('-d', '--dataset_dir', required=True, type=str,
-                        help="Directory with train, validation, test dataset.")
-    parser.add_argument('-v', '--vectorizer', required=True, type=str, choices={'default', 'sent2vec', 'fasttext', 'elmoconv'}, help="Vectorizer method")
+    parser.add_argument('--data-in', required=True, type=str, help="Directory with train, validation and test dataset.")
+    parser.add_argument('--save-model-name', required=True, type=str, help="File name for a trained model.")
+    parser.add_argument('--batch-size', required=True, type=int, help="Batch size.")
+    parser.add_argument('--epochs', required=True, type=int, help="How many epochs should the model be trained on.")
+    parser.add_argument('--vectorizer', required=False, type=str, choices={'sent2vec', 'fasttext', 'elmoconv'}, help="Vectorizer method")
+    parser.add_argument('--vectors-model', required=False, type=str, help="Vectors model for vectorizer method path")
 
     argcomplete.autocomplete(parser)
     return parser.parse_args(argv)
 
 
-def init_mlflow(uri, experiment):
-    mlflow.set_tracking_uri(uri)
-    mlflow.set_experiment(experiment)
-    print(f'-- mlflow --'
-          f'\nserver: {mlflow.get_tracking_uri()}'
-          f'\nexperiment: {experiment}')
-
-
-def log_metrics(metrics, step, prefix):
-    mlflow.log_metrics({
-        f'{prefix}_loss': metrics.loss,
-        f'{prefix}_accuracy': metrics.accuracy,
-        f'{prefix}_precision_pos': metrics.precision[1],
-        f'{prefix}_precision_neg': metrics.precision[0],
-        f'{prefix}_recall_pos': metrics.recall[1],
-        f'{prefix}_recall_neg': metrics.recall[0],
-        f'{prefix}_fscore_pos': metrics.fscore[1],
-        f'{prefix}_fscore_neg': metrics.fscore[0]
-    }, step=step)
-
-
 def main(argv=None):
     init_mlflow(
-        uri='http://0.0.0.0:5000',
+        uri='http://0.0.0.0:5001',
         experiment='no_experiment'
     )
 
@@ -64,9 +44,10 @@ def main(argv=None):
     optimizer = Adagrad(network.parameters())
     loss_func = nn.CrossEntropyLoss()
 
-    train_batches = load_batches(f'{args.dataset_dir}/train.vectors', args.batch_size)
-    valid_batches = load_batches(f'{args.dataset_dir}/valid.vectors', args.batch_size)
-    test_batches = load_batches(f'{args.dataset_dir}/test.vectors', args.batch_size)
+    batch_loader = BatchLoader(args.batch_size)
+    train_batches = batch_loader.load(f'{args.dataset_dir}/train.vectors')
+    valid_batches = batch_loader.load(f'{args.dataset_dir}/valid.vectors')
+    test_batches = batch_loader.load(f'{args.dataset_dir}/test.vectors')
 
     # Log learning params
     mlflow.log_params({
@@ -74,7 +55,9 @@ def main(argv=None):
         'train_set_size': get_set_size(train_batches),
         'valid_set_size': get_set_size(valid_batches),
         'test_set_size': get_set_size(test_batches),
-        'epochs': args.epochs
+        'epochs': args.epochs,
+        'optimizer': optimizer.__class__.__name__,
+        'loss_function': loss_func.__class__.__name__
     })
 
     best_valid_fscore = (0.0, 0.0)
@@ -103,6 +86,27 @@ def main(argv=None):
     print(f'\n\nTest: {test_metrics}')
     save_metrics(test_metrics, 'metrics.txt')
     log_metrics(test_metrics, 0, 'test')
+
+
+def init_mlflow(uri, experiment):
+    mlflow.set_tracking_uri(uri)
+    mlflow.set_experiment(experiment)
+    print(f'-- mlflow --'
+          f'\nserver: {mlflow.get_tracking_uri()}'
+          f'\nexperiment: {experiment}')
+
+
+def log_metrics(metrics, step, prefix):
+    mlflow.log_metrics({
+        f'{prefix}_loss': metrics.loss,
+        f'{prefix}_accuracy': metrics.accuracy,
+        f'{prefix}_precision_pos': metrics.precision[1],
+        f'{prefix}_precision_neg': metrics.precision[0],
+        f'{prefix}_recall_pos': metrics.recall[1],
+        f'{prefix}_recall_neg': metrics.recall[0],
+        f'{prefix}_fscore_pos': metrics.fscore[1],
+        f'{prefix}_fscore_neg': metrics.fscore[0]
+    }, step=step)
 
 
 def train(network, optimizer, loss_function, batches, device):

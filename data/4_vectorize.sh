@@ -12,7 +12,6 @@ do
     mkdir -p ${TARGET_TMP}
     cat ${SOURCE_DIR}/${type}/positive/*.sampled > ${TARGET_TMP}/positive.context
     cat ${SOURCE_DIR}/${type}/negative/*.sampled > ${TARGET_TMP}/negative.context
-#    cat ${SOURCE_DIR}/${type}/negative/substituted/*.sampled >> ${TARGET_TMP}/negative.context
 done
 
 OPTIONS_FILE='/data2/piotrmilkowski/bilm-tf-data/e2000000/options.json'
