@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 import glob
 import math
@@ -14,11 +16,11 @@ def get_args(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-in', required=True, help='Directory with context format files.')
     parser.add_argument('--output-path', required=True, help='Directory to save sampled datasets.')
-    parser.add_argument('--train-size', nargs='2', type=int, required=True,
+    parser.add_argument('--train-size', nargs=2, type=int, required=True,
                         help='Train dataset batch sizes [positive, negative]')
-    parser.add_argument('--valid-size', nargs='2', type=int, required=True,
+    parser.add_argument('--valid-size', nargs=2, type=int, required=True,
                         help='Validation dataset batch sizes [positive, negative]')
-    parser.add_argument('--test-size', nargs='2', type=int, required=True,
+    parser.add_argument('--test-size', nargs=2, type=int, required=True,
                         help='Test dataset batch sizes [positive, negative]')
 
     argcomplete.autocomplete(parser)
@@ -29,7 +31,7 @@ def get_args(argv=None):
 def main(argv=None):
     args = get_args(argv)
 
-    for set_name, size in [('train', args.train_size), ('valid', args.train_size), ('test', args.train_size)]:
+    for set_name, size in [('train', args.train_size), ('valid',args.valid_size), ('test', args.test_size)]:
         source_dir = os.path.join(args.data_in, set_name)
         output_dir = os.path.join(args.output_path, set_name)
         pos_batch_size, neg_batch_size = size

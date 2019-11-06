@@ -1,0 +1,14 @@
+md5: 0e9f7a653e3c794ea7f749c55d5dc666
+cmd: ./data/scripts/sample_datasets.py --data-in ./data/generated --output-path ./data/sampled
+  --train-size 200 400 --valid-size 100 100 --test-size 100 100
+deps:
+- md5: 26c68488b3fb735c4eb91a0cc1968001.dir
+  path: data/generated
+- md5: a4ae7f621dc673545bdabf0e7f03a8ec
+  path: data/scripts/sample_datasets.py
+outs:
+- md5: 95bf5462dc9ca710998f318d2798ea5d.dir
+  path: data/sampled
+  cache: true
+  metric: false
+  persist: false
