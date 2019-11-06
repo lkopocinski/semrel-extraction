@@ -28,17 +28,11 @@ do
         echo ${list}
         name=$(echo ${list} | cut -d"/" -f3 | cut -d"." -f1)
 	
-	    python3.6 ${SCRIPTS_DIR}/generate_positive_from_corpora.py --list_file ${list} --channels "${CHANNELS}" > ${POSITIVE_DIR}/${name}.context
+	python3.6 ${SCRIPTS_DIR}/generate_positive_from_corpora.py --list_file ${list} --channels "${CHANNELS}" > ${POSITIVE_DIR}/${name}.context
         sort -u -o ${POSITIVE_DIR}/${name}.context ${POSITIVE_DIR}/${name}.context
 
         python3.6 ${SCRIPTS_DIR}/generate_negative_from_corpora.py --list_file ${list} --channels "${CHANNELS}" > ${NEGATIVE_DIR}/${name}.context
         sort -u -o ${NEGATIVE_DIR}/${name}.context ${NEGATIVE_DIR}/${name}.context
 
-        # Intermediate step
-        python3.6 ${SCRIPTS_DIR}/generate_positive_from_corpora.py --list_file ${list} --channels "${CHANNELS}" --multiword True > ${MULTIWORD_DIR}/${name}.context
-        sort -u -o ${MULTIWORD_DIR}/${name}.context ${MULTIWORD_DIR}/${name}.context
-
-        python3.6 ${SCRIPTS_DIR}/generate_negative_substitition.py --source_file ${MULTIWORD_DIR}/${name}.context --sample_size ${BRANDS_SAMPLE} > ${SUBSTITUTED_DIR}/${name}.context
-        sort -u -o ${SUBSTITUTED_DIR}/${name}.context  ${SUBSTITUTED_DIR}/${name}.context
     done
 done

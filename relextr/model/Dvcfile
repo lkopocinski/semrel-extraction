@@ -1,18 +1,18 @@
-md5: 10d9f68eaab7b13f3a1eea4847568af2
+md5: a459509c0aa2800981450f0afaff3115
 cmd: ./train.sh
 deps:
 - md5: f04b07f23485d8eb533eeafcbd0efd61.dir
   path: dataset
-- md5: 9313a69903bdf706a605ba5fcc17afd9
+- md5: 624f39635594eea7b78124922ee395af
   path: scripts/train.py
-- md5: ed3c2cb7059821bc3380a76bd277d23d
+- md5: 61811dd20edcca1e13f2f0affd67fb8f
   path: scripts/utils.py
-- md5: 04a11e11c4ee528ac65972cca78dea2b
+- md5: c8c24e9adeb38656ea0c5ef7531e0ece
   path: scripts/relnet.py
-- md5: 56939afb07214ece1357a74f86736e36
+- md5: 32c5e2e4c568b59e1ec3b688218e11fe
   path: train.sh
 outs:
-- md5: 4fb0ec601184845f9046f3e1e053ba5c
+- md5: 622cbbf52c5d0254a6f65c403b33013e
   path: metrics.txt
   cache: false
   metric: true
