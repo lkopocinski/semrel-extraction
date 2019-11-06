@@ -10,7 +10,7 @@ path = '../../korpusy/inforex_export_81/documents/'
 
 for file_ in os.listdir(path):
     if file_.endswith('.xml') and not file_.endswith('.rel.xml'):
-        doc = cclutils.read_ccl(path+file_)
+        doc = cclutils.read_ccl(path + file_)
         tokens = [(sent, token) for par in doc.paragraphs() for sent in par.sentences() for token in sent.tokens()]
         for ind, (sent, token) in enumerate(tokens):
             try:
