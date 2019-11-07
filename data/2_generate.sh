@@ -6,7 +6,7 @@
 pushd "$(git rev-parse --show-toplevel)"
 
 DATA_IN="./data/splits"
-OUTPUT_PATH="./data/generated"
+OUTPUT_PATH="./data/generations"
 SCRIPTS_DIR="./data/scripts"
 
 mkdir -p ${OUTPUT_PATH}
