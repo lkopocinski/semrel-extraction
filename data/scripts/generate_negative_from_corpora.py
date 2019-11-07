@@ -1,34 +1,58 @@
 #!/usr/bin/env python
 
 import argparse
+import os
 from itertools import permutations, product
+import glob
+from pathlib import Path
+from relation import Relation
 
+import argcomplete
 from utils import corpora_files, load_document, id_to_sent_dict, \
-    is_ner_relation, is_in_channel, get_relation_element, print_element, \
+    is_ner_relation, is_in_channel, get_relation_element, \
     get_nouns_idx, get_lemma
-
-try:
-    import argcomplete
-except ImportError:
-    argcomplete = None
 
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('-l', '--list_file', required=True,
-                        help='A file with paths to relation files.')
-    parser.add_argument('-c', '--channels', required=True,
-                        help='A relation channels to be considered while generating set.')
-    if argcomplete:
-        argcomplete.autocomplete(parser)
+    parser.add_argument('--data-in', required=True, help='Directory with split lists of files.')
+    parser.add_argument('--output-path', required=True, help='Directory to save generated datasets.')
+
+    argcomplete.autocomplete(parser)
 
     return parser.parse_args(argv)
 
 
 def main(argv=None):
     args = get_args(argv)
+    for set_name in ['train', 'valid', 'test']:
+        source_dir = os.path.join(args.data_in, set_name)
+        for list_file in glob.glob(f'{source_dir}/*list'):
+            file_path = os.path.join(args.output_path, 'negative')
+            file_name = f'{get_file_name(list_file)}.context'
+            lines = generate(list_file, ('BRAND_NAME', 'PRODUCT_NAME'))
+            save_lines(file_path, file_name, lines)
 
-    for corpora_file, relations_file in corpora_files(args.list_file):
+
+def save_lines(path, file_name, lines):
+    try:
+        if not os.path.exists(path):
+            os.makedirs(path)
+    except OSError:
+        print(f'List saving filed. Can not create {path} directory.')
+    else:
+        file_path = os.path.join(path, file_name)
+        with open(file_path, 'w', encoding='utf-8') as out_file:
+            for line in lines:
+                out_file.write(f'{line}\n')
+
+
+def get_file_name(file_path):
+    return Path(file_path).stem
+
+
+def generate(list_file, channels):
+    for corpora_file, relations_file in corpora_files(list_file):
         document = load_document(corpora_file, relations_file)
         sentences = id_to_sent_dict(document)
 
@@ -36,28 +60,28 @@ def main(argv=None):
         relidxs = {}
         for relation in document.relations():
             if is_ner_relation(relation):
-                if is_in_channel(relation, args.channels):
+                if is_in_channel(relation, channels):
                     f = relation.rel_from()
                     t = relation.rel_to()
                     f_sent_id = f.sentence_id()
                     t_sent_id = t.sentence_id()
 
-                    f_lemma, f_idxs, f_context, f_channel_name = get_relation_element(f, sentences)
-                    t_lemma, t_idxs, t_context, t_channel_name = get_relation_element(t, sentences)
-                    f_idxs = tuple(f_idxs)
-                    t_idxs = tuple(t_idxs)
+                    f_element = get_relation_element(f, sentences)
+                    t_element = get_relation_element(t, sentences)
+                    f_indices = tuple(f_element.indices)
+                    t_indices = tuple(t_element.indices)
 
-                    relations[((f_sent_id, f_idxs), (t_sent_id, t_idxs))] = (relation, f_context, t_context)
-                    relations[((t_sent_id, t_idxs), (f_sent_id, f_idxs))] = (relation, t_context, f_context)
+                    relations[((f_sent_id, f_indices), (t_sent_id, t_indices))] = (relation, f_element.context, t_element.context)
+                    relations[((t_sent_id, t_indices), (f_sent_id, f_indices))] = (relation, t_element.context, f_element.context)
 
-                    for f_idx in f_idxs:
-                        relidxs[(f_sent_id, f_idx)] = (f_idxs, f_channel_name)
-                    for t_idx in t_idxs:
-                        relidxs[(t_sent_id, t_idx)] = (t_idxs, t_channel_name)
+                    for f_idx in f_indices:
+                        relidxs[(f_sent_id, f_idx)] = (f_indices, f_element.channel)
+                    for t_idx in t_indices:
+                        relidxs[(t_sent_id, t_idx)] = (t_indices, t_element.channel)
 
         for rel, rel_value in relations.items():
             relation, f_context, t_context = rel_value
-            ((f_sent_id, f_idxs), (t_sent_id, t_idxs)) = rel
+            ((f_sent_id, f_indices), (t_sent_id, t_indices)) = rel
 
             f_nouns = get_nouns_idx(sentences[f_sent_id])
             t_nouns = get_nouns_idx(sentences[t_sent_id])
@@ -88,7 +112,9 @@ def main(argv=None):
 
                 f_lemma = get_lemma(sentences[f_sent_id], f_idx)
                 t_lemma = get_lemma(sentences[t_sent_id], t_idx)
-                print_element(f_lemma, t_lemma, _f_channel_name, _t_channel_name, f_idx, f_context, t_idx, t_context)
+                source = Relation.Element(f_lemma, _f_channel_name, [f_idx], f_context)
+                target = Relation.Element(t_lemma, _t_channel_name, [t_idx], t_context)
+                yield Relation(source, target)
 
 
 if __name__ == "__main__":
