@@ -6,7 +6,6 @@ import os
 from pathlib import Path
 
 import argcomplete
-
 from relation import Relation
 from utils import corpora_files, load_document, id_to_sent_dict, \
     is_ner_relation, is_in_channel, get_relation_element, \
@@ -31,10 +30,23 @@ def main(argv=None):
     for set_name in ['train', 'valid', 'test']:
         source_dir = os.path.join(args.data_in, set_name, 'positive')
         for list_file in glob.glob(f'{source_dir}/*.list'):
-            file_path = os.path.join(args.output_path, 'positive', get_file_name(list_file))
-            with open(file_path, 'w', encoding='utf-8') as out_file:
-                for example in generate(list_file, ('BRAND_NAME', 'PRODUCT_NAME')):
-                    out_file.write(f'{example}\n')
+            file_path = os.path.join(args.output_path, 'positive')
+            file_name = f'{get_file_name(file_path)}.context'
+            lines = generate(list_file, ('BRAND_NAME', 'PRODUCT_NAME'))
+            save_lines(file_path, file_name, lines)
+
+
+def save_lines(path, file_name, lines):
+    try:
+        if not os.path.exists(path):
+            os.makedirs(path)
+    except OSError:
+        print(f'List saving filed. Can not create {path} directory.')
+    else:
+        file_path = os.path.join(path, file_name)
+        with open(file_path, 'w', encoding='utf-8') as out_file:
+            for line in lines:
+                out_file.write(f'{line}\n')
 
 
 def get_file_name(file_path):
