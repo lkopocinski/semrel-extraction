@@ -7,8 +7,8 @@ from pathlib import Path
 
 import argcomplete
 
-from .relation import Relation
-from .utils import corpora_files, load_document, id_to_sent_dict, \
+from relation import Relation
+from utils import corpora_files, load_document, id_to_sent_dict, \
     is_ner_relation, is_in_channel, get_relation_element, \
     get_relation_element_multiword
 
