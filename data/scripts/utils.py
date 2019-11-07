@@ -1,4 +1,5 @@
 import os
+from relation import Relation
 
 from corpus_ccl import cclutils as ccl
 from corpus_ccl import corpus_object_utils as cou
@@ -108,7 +109,6 @@ def get_relation_element_multiword(rel, sentences):
     lemma = get_multiword_lemma(sent, indices[0])
     return Relation.Element(lemma, channel_name, [begin], context)
 
-from .relation import Relation
 
 def get_multiword_lemma(sent, idx):
     token = [token for token in sent.tokens()][idx]

@@ -9,6 +9,8 @@ DATA_IN="./data/splits"
 OUTPUT_PATH="./data/generated"
 SCRIPTS_DIR="./data/scripts"
 
+mkdir -p ${OUTPUT_PATH}
+
 dvc run \
 -d ${DATA_IN} \
 -d ${SCRIPTS_DIR}/generate_positive_from_corpora.py \
