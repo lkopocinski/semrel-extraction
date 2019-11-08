@@ -26,7 +26,7 @@ def main(argv=None):
     for set_name in ['train', 'valid', 'test']:
         source_dir = os.path.join(args.data_in, set_name)
 
-        for list_file in glob.glob(f'{source_dir}/*list'):
+        for list_file in glob.glob(f'{source_dir}/*.list'):
             file_name = f'{get_file_name(list_file)}.context'
 
             file_path = os.path.join(args.output_path, set_name, 'positive')

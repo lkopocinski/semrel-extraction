@@ -8,6 +8,8 @@ DATA_IN="./data/generated"
 OUTPUT_PATH="./data/sampled"
 SCRIPTS_DIR="./data/scripts"
 
+mkdir -p ${OUTPUT_PATH}
+
 dvc run \
 -d ${DATA_IN} \
 -d ${SCRIPTS_DIR}/sample_datasets.py \
