@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 
 import argparse
-import glob
-import os
 import random
 
 import argcomplete
+from utils import save_lines
+from pathlib import Path
 
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-in', required=True, help='Directory with corpora and relations files.')
-    parser.add_argument('--output-path', required=True, help='Directory to save generated splits.')
-    parser.add_argument('--directories', nargs='+', required=True, help='Directories names to process.')
+    parser.add_argument('--data-in', required=True, help='Directory with corpora.')
+    parser.add_argument('--output-path', required=True, help='Directory for saving generated splits.')
+    parser.add_argument('--directories', nargs='+', required=True, help='Directories names to be processed.')
 
     argcomplete.autocomplete(parser)
 
@@ -23,17 +23,15 @@ def main(argv=None):
     args = get_args(argv)
 
     for directory in args.directories:
-        path = os.path.join(args.data_in, directory)
-        if os.path.isdir(path):
-            train, valid, test = split(path)
-            save_list(f'{args.output_path}/train/', f'{directory}.list', train)
-            save_list(f'{args.output_path}/valid/', f'{directory}.list', valid)
-            save_list(f'{args.output_path}/test/', f'{directory}.list', test)
+        path = Path(f'{args.data_in}/{directory}')
+        if path.is_dir():
+            for set_type, set_files in zip(['train', 'valid', 'test'], split(path)):
+                file_path = Path(f'{args.output_path}/{set_type}/{directory}.list')
+                save_lines(file_path, set_files)
 
 
 def split(dir_path):
-    path = f'{dir_path}/*.rel.xml'
-    files = glob.glob(path)
+    files = list(dir_path.glob('*.rel.xml'))
     random.shuffle(files)
     return chunk(files)
 
@@ -43,19 +41,6 @@ def chunk(seq):
     t_len = int(3 * avg)
     v_len = int(avg)
     return [seq[0:t_len], seq[t_len:t_len + v_len], seq[t_len + v_len:]]
-
-
-def save_list(path, file_name, files_list):
-    try:
-        if not os.path.exists(path):
-            os.makedirs(path)
-    except OSError:
-        print(f'List saving filed. Can not create {path} directory.')
-    else:
-        file_path = os.path.join(path, file_name)
-        with open(file_path, 'w', encoding='utf-8') as out_file:
-            for line in files_list:
-                out_file.write(f'{line}\n')
 
 
 if __name__ == '__main__':

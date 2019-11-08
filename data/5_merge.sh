@@ -17,5 +17,3 @@ done
 
 #shuf ${SOURCE_DIR}/train/negative.hard.vectors | head -2000 >> ${TARGET_DIR}/train.vectors
 #shuf -o ${TARGET_DIR}/train.vectors ${TARGET_DIR}/train.vectors
-
-

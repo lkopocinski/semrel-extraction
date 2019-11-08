@@ -1,7 +1,7 @@
 #!/bin/bash -eux
 
 # Script takes files from provided corpora and splits them into train, valid, test
-# disjoint data sets list. It means each one of the splits contains different files.
+# disjoint data sets lists. It means each one of the splits contains different files.
 
 pushd "$(git rev-parse --show-toplevel)"
 
