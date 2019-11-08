@@ -13,11 +13,11 @@ mkdir -p ${OUTPUT_PATH}
 
 dvc run \
 -d ${DATA_IN} \
--d ${SCRIPTS_DIR}/generate_examples.py \
+-d ${SCRIPTS_DIR}/generate.py \
 -o ${OUTPUT_PATH} \
-${SCRIPTS_DIR}/generate_examples.py --data-in ${DATA_IN} \
+${SCRIPTS_DIR}/generate.py --data-in ${DATA_IN} \
                                     --output-path ${OUTPUT_PATH}
 
 popd
 
-#sort -u -o ${NEGATIVE_DIR}/${name}.context ${NEGATIVE_DIR}/${name}.context
+# TODO: sort -u -o *.context
