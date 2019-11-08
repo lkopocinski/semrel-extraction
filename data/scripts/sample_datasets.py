@@ -9,7 +9,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import argcomplete
-from .relation import Relation
+from model.relation import Relation
 
 
 def get_args(argv=None):
