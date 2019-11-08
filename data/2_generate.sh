@@ -11,19 +11,12 @@ SCRIPTS_DIR="./data/scripts"
 
 mkdir -p ${OUTPUT_PATH}
 
-#dvc run \
-#-d ${DATA_IN} \
-#-d ${SCRIPTS_DIR}/generate_positive_from_corpora.py \
-#-o ${OUTPUT_PATH} \
-#${SCRIPTS_DIR}/generate_positive_from_corpora.py --data-in ${DATA_IN} \
-#                                                 --output-path ${OUTPUT_PATH}
-
 dvc run \
 -d ${DATA_IN} \
--d ${SCRIPTS_DIR}/generate_negative_from_corpora.py \
+-d ${SCRIPTS_DIR}/generate_examples.py \
 -o ${OUTPUT_PATH} \
-${SCRIPTS_DIR}/generate_negative_from_corpora.py --data-in ${DATA_IN} \
-                                                 --output-path ${OUTPUT_PATH}
+${SCRIPTS_DIR}/generate_examples.py --data-in ${DATA_IN} \
+                                    --output-path ${OUTPUT_PATH}
 
 popd
 
