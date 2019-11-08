@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 
 import argparse
-import glob
-import os
 import random
 
 import argcomplete
 from utils import save_lines
+from pathlib import Path
 
 
 def get_args(argv=None):
@@ -24,15 +23,15 @@ def main(argv=None):
     args = get_args(argv)
 
     for directory in args.directories:
-        path = os.path.join(args.data_in, directory)
-        if os.path.isdir(path):
+        path = Path(f'{args.data_in}/{directory}')
+        if path.is_dir():
             for set_type, set_files in zip(['train', 'valid', 'test'], split(path)):
-                file_path = os.path.join(args.output_path, set_type, f'{directory}.list')
+                file_path = Path(f'{args.output_path}/{set_type}/{directory}.list')
                 save_lines(file_path, set_files)
 
 
 def split(dir_path):
-    files = glob.glob(f'{dir_path}/*.rel.xml')
+    files = list(dir_path.glob('*.rel.xml'))
     random.shuffle(files)
     return chunk(files)
 
