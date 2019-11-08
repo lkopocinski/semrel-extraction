@@ -68,21 +68,6 @@ def get_lemma(sent, idx):
     return [token.lexemes()[0].lemma_utf8() for token in sent.tokens()][idx]
 
 
-def print_element(
-        f_lemma, t_lemma,
-        f_channel_name, t_channel_name,
-        f_idxs, f_context,
-        t_idxs, t_context
-):
-    f_idx = f_idxs[0] if type(f_idxs) is not int else f_idxs
-    t_idx = t_idxs[0] if type(t_idxs) is not int else t_idxs
-    print(f'{f_lemma} : {t_lemma}\t{f_channel_name} : {t_channel_name}\t{f_idx}:{f_context}\t{t_idx}:{t_context}')
-
-
-def are_close(idx_f, idx_t):
-    return abs(idx_f - idx_t) <= 3
-
-
 def get_nouns_idx(sent):
     return [idx for idx, token in enumerate(sent.tokens()) if is_noun(token)]
 
@@ -134,25 +119,3 @@ def get_multiword_lemma(sent, idx):
                 except:
                     lemma = get_lemma(sent, idx)
     return lemma
-
-
-# New utils
-
-def save_lines(file_path, lines):
-    directory = file_path.parent
-    #directory = os.path.dirname(file_path)
-    try:
-        if not directory.exists():
-            directory.mkdir(parents=True, exist_ok=True)
-            # os.makedirs(directory)
-    except OSError:
-        print(f'Saving filed. Can not create {directory} directory.')
-    else:
-        with open(file_path, 'w', encoding='utf-8') as out_file:
-            for line in lines:
-                out_file.write(f'{line}\n')
-
-from pathlib import Path
-
-def get_file_name(file_path):
-    return Path(file_path).stem
