@@ -134,3 +134,25 @@ def get_multiword_lemma(sent, idx):
                 except:
                     lemma = get_lemma(sent, idx)
     return lemma
+
+
+# New utils
+
+def save_lines(file_path, lines):
+    directory = file_path.parent
+    #directory = os.path.dirname(file_path)
+    try:
+        if not directory.exists():
+            directory.mkdir(parents=True, exist_ok=True)
+            # os.makedirs(directory)
+    except OSError:
+        print(f'Saving filed. Can not create {directory} directory.')
+    else:
+        with open(file_path, 'w', encoding='utf-8') as out_file:
+            for line in lines:
+                out_file.write(f'{line}\n')
+
+from pathlib import Path
+
+def get_file_name(file_path):
+    return Path(file_path).stem
