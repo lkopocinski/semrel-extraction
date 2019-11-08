@@ -11,7 +11,7 @@ from generator import generate_positive, generate_negative
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-in', required=True, help='Directory with split lists of files.')
+    parser.add_argument('--data-in', required=True, help='Directory with lists of files split into datasets')
     parser.add_argument('--output-path', required=True, help='Directory to save generated datasets.')
     parser.add_argument('--multiword', type=bool, default=False, required=False,
                         help='Should generate in multiword mode or not')
@@ -23,6 +23,7 @@ def get_args(argv=None):
 
 def main(argv=None):
     args = get_args(argv)
+
     for set_name in ['train', 'valid', 'test']:
         source_dir = os.path.join(args.data_in, set_name)
 
@@ -36,10 +37,6 @@ def main(argv=None):
             file_path = os.path.join(args.output_path, set_name, 'negative')
             lines = generate_negative(list_file, ('BRAND_NAME', 'PRODUCT_NAME'))
             save_lines(file_path, file_name, lines)
-
-
-def get_file_name(file_path):
-    return Path(file_path).stem
 
 
 def save_lines(path, file_name, lines):
