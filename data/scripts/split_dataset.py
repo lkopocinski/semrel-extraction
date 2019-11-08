@@ -6,6 +6,7 @@ import os
 import random
 
 import argcomplete
+from utils import save_lines
 
 
 def get_args(argv=None):
@@ -25,16 +26,9 @@ def main(argv=None):
     for directory in args.directories:
         path = os.path.join(args.data_in, directory)
         if os.path.isdir(path):
-            train_list, valid_list, test_list = split(path)
-            save_lines(
-                file_path=os.path.join(args.output_path, 'train', f'{directory}.list'),
-                lines=train_list)
-            save_lines(
-                file_path=os.path.join(args.output_path, 'valid', f'{directory}.list'),
-                lines=valid_list)
-            save_lines(
-                file_path=os.path.join(args.output_path, 'test', f'{directory}.list'),
-                lines=test_list)
+            for set_type, set_files in zip(['train', 'valid', 'test'], split(path)):
+                file_path = os.path.join(args.output_path, set_type, f'{directory}.list')
+                save_lines(file_path, set_files)
 
 
 def split(dir_path):
@@ -48,19 +42,6 @@ def chunk(seq):
     t_len = int(3 * avg)
     v_len = int(avg)
     return [seq[0:t_len], seq[t_len:t_len + v_len], seq[t_len + v_len:]]
-
-
-def save_lines(file_path, lines):
-    directory = os.path.dirname(file_path)
-    try:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-    except OSError:
-        print(f'Saving filed. Can not create {directory} directory.')
-    else:
-        with open(file_path, 'w', encoding='utf-8') as out_file:
-            for line in lines:
-                out_file.write(f'{line}\n')
 
 
 if __name__ == '__main__':
