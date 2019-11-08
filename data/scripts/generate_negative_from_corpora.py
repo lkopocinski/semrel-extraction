@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import argparse
 import os
@@ -27,7 +27,7 @@ def main(argv=None):
     args = get_args(argv)
     for set_name in ['train', 'valid', 'test']:
         source_dir = os.path.join(args.data_in, set_name)
-        for list_file in glob.glob(f'{source_dir}/*list'):
+        for list_file in glob.glob(f'{source_dir}/*.list'):
             file_path = os.path.join(args.output_path, 'negative')
             file_name = f'{get_file_name(list_file)}.context'
             lines = generate(list_file, ('BRAND_NAME', 'PRODUCT_NAME'))
