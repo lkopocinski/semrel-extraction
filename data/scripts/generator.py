@@ -1,57 +1,36 @@
 #!/usr/bin/env python3
 
-import argparse
-import os
 from itertools import permutations, product
-import glob
-from pathlib import Path
-from relation import Relation
 
-import argcomplete
+from relation import Relation
 from utils import corpora_files, load_document, id_to_sent_dict, \
     is_ner_relation, is_in_channel, get_relation_element, \
-    get_nouns_idx, get_lemma
+    get_nouns_idx, get_lemma, get_relation_element_multiword
 
 
-def get_args(argv=None):
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--data-in', required=True, help='Directory with split lists of files.')
-    parser.add_argument('--output-path', required=True, help='Directory to save generated datasets.')
+def generate_positive(list_file, channels, multiword=False):
+    for corpora_file, relations_file in corpora_files(list_file):
+        document = load_document(corpora_file, relations_file)
+        sentences = id_to_sent_dict(document)
 
-    argcomplete.autocomplete(parser)
+        for relation in document.relations():
+            if is_ner_relation(relation):
+                if is_in_channel(relation, channels):
+                    f = relation.rel_from()
+                    t = relation.rel_to()
 
-    return parser.parse_args(argv)
+                    if multiword:
+                        f_element = get_relation_element_multiword(f, sentences)
+                        t_element = get_relation_element_multiword(t, sentences)
+                    else:
+                        f_element = get_relation_element(f, sentences)
+                        t_element = get_relation_element(t, sentences)
 
-
-def main(argv=None):
-    args = get_args(argv)
-    for set_name in ['train', 'valid', 'test']:
-        source_dir = os.path.join(args.data_in, set_name)
-        for list_file in glob.glob(f'{source_dir}/*.list'):
-            file_path = os.path.join(args.output_path, 'negative')
-            file_name = f'{get_file_name(list_file)}.context'
-            lines = generate(list_file, ('BRAND_NAME', 'PRODUCT_NAME'))
-            save_lines(file_path, file_name, lines)
-
-
-def save_lines(path, file_name, lines):
-    try:
-        if not os.path.exists(path):
-            os.makedirs(path)
-    except OSError:
-        print(f'List saving filed. Can not create {path} directory.')
-    else:
-        file_path = os.path.join(path, file_name)
-        with open(file_path, 'w', encoding='utf-8') as out_file:
-            for line in lines:
-                out_file.write(f'{line}\n')
+                    if f_element.start_idx != -1 and t_element.start_idx != -1:
+                        yield Relation(f_element, t_element)
 
 
-def get_file_name(file_path):
-    return Path(file_path).stem
-
-
-def generate(list_file, channels):
+def generate_negative(list_file, channels):
     for corpora_file, relations_file in corpora_files(list_file):
         document = load_document(corpora_file, relations_file)
         sentences = id_to_sent_dict(document)
@@ -71,8 +50,10 @@ def generate(list_file, channels):
                     f_indices = tuple(f_element.indices)
                     t_indices = tuple(t_element.indices)
 
-                    relations[((f_sent_id, f_indices), (t_sent_id, t_indices))] = (relation, f_element.context, t_element.context)
-                    relations[((t_sent_id, t_indices), (f_sent_id, f_indices))] = (relation, t_element.context, f_element.context)
+                    relations[((f_sent_id, f_indices), (t_sent_id, t_indices))] = (
+                        relation, f_element.context, t_element.context)
+                    relations[((t_sent_id, t_indices), (f_sent_id, f_indices))] = (
+                        relation, t_element.context, f_element.context)
 
                     for f_idx in f_indices:
                         relidxs[(f_sent_id, f_idx)] = (f_indices, f_element.channel)
@@ -115,7 +96,3 @@ def generate(list_file, channels):
                 source = Relation.Element(f_lemma, _f_channel_name, [f_idx], f_context)
                 target = Relation.Element(t_lemma, _t_channel_name, [t_idx], t_context)
                 yield Relation(source, target)
-
-
-if __name__ == "__main__":
-    main()
