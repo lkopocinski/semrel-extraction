@@ -79,7 +79,7 @@ def main(argv=None):
         if is_better_fscore(valid_metrics.fscore, best_valid_fscore):
             best_valid_fscore = valid_metrics.fscore
             torch.save(network.state_dict(), args.model_name)
-            mlflow.log_artifact(f'../{args.model_name}', '/artifacts/models/')
+            mlflow.log_artifact(f'../{args.model_name}', '/artifacts/model/')
 
     # Test
     test_metrics = test(args.model_name, test_batches, loss_func, device)

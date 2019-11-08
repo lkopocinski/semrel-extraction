@@ -2,10 +2,10 @@
 
 import argparse
 import random
+from pathlib import Path
 
 import argcomplete
-from utils import save_lines
-from pathlib import Path
+from utils.io import save_lines
 
 
 def get_args(argv=None):
@@ -23,9 +23,9 @@ def main(argv=None):
     args = get_args(argv)
 
     for directory in args.directories:
-        path = Path(f'{args.data_in}/{directory}')
-        if path.is_dir():
-            for set_type, set_files in zip(['train', 'valid', 'test'], split(path)):
+        source_path = Path(f'{args.data_in}/{directory}')
+        if source_path.is_dir():
+            for set_type, set_files in zip(['train', 'valid', 'test'], split(source_path)):
                 file_path = Path(f'{args.output_path}/{set_type}/{directory}.list')
                 save_lines(file_path, set_files)
 

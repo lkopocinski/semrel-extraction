@@ -13,9 +13,9 @@ mkdir -p ${OUTPUT_PATH}
 
 dvc run \
 -d ${DATA_IN} \
--d ${SCRIPTS_DIR}/split_dataset.py \
+-d ${SCRIPTS_DIR}/split.py \
 -o ${OUTPUT_PATH} \
-${SCRIPTS_DIR}/split_dataset.py --data-in ${DATA_IN} \
+${SCRIPTS_DIR}/split.py --data-in ${DATA_IN} \
                                 --output-path ${OUTPUT_PATH} \
                                 --directories 81 82 83
 
