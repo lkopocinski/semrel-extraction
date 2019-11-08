@@ -1,29 +1,20 @@
-#!/usr/bin/env bash
+#!/bin/bash -eux
 
-# Params
-SOURCE_DIR=sampled
-TARGET_DIR=vectors
-SCRIPTS_DIR=scripts
+# TODO: description
 
-declare -a types=("train" "valid" "test")
-for type in "${types[@]}"
-do
-    TARGET_TMP=${TARGET_DIR}/tmp/${type}
-    mkdir -p ${TARGET_TMP}
-    cat ${SOURCE_DIR}/${type}/positive/*.sampled > ${TARGET_TMP}/positive.context
-    cat ${SOURCE_DIR}/${type}/negative/*.sampled > ${TARGET_TMP}/negative.context
-done
+pushd "$(git rev-parse --show-toplevel)"
 
-OPTIONS_FILE='/data2/piotrmilkowski/bilm-tf-data/e2000000/options.json'
-WEIGHTS_FILE='/data2/piotrmilkowski/bilm-tf-data/e2000000/weights.hdf5'
+DATA_IN="./data/sampled"
+OUTPUT_PATH="./data/vectors"
+SCRIPTS_DIR="./data/scripts"
 
-for type in "${types[@]}"
-do
-    SOURCE_TMP=${TARGET_DIR}/tmp/${type}
-    FILE_POSITIVE=${SOURCE_TMP}/positive.context
-    FILE_NEGATIVE=${SOURCE_TMP}/negative.context
+dvc run \
+-d ${DATA_IN} \
+-d ${SCRIPTS_DIR}/create_vectors.py \
+-o ${OUTPUT_PATH} \
+${SCRIPTS_DIR}/create_vectors.py --data-in ${DATA_IN} \
+                                 --output-path ${OUTPUT_PATH} \
+                                 --options "./data/elmo/emb-options.json"
+                                 --weights "./data/elmo/emb-weights.hdf5"
 
-    mkdir -p ${TARGET_DIR}/${type}
-    python3.6 ${SCRIPTS_DIR}/create_vectors.py --source_file ${FILE_POSITIVE} --relation_type "in_relation" --options ${OPTIONS_FILE} --weights ${WEIGHTS_FILE} > ${TARGET_DIR}/${type}/positive.vectors
-    python3.6 ${SCRIPTS_DIR}/create_vectors.py --source_file ${FILE_NEGATIVE} --relation_type "no_relation" --options ${OPTIONS_FILE} --weights ${WEIGHTS_FILE} > ${TARGET_DIR}/${type}/negative.vectors
-done
+popd
