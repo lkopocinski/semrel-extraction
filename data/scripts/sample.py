@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-import glob
 import math
-import os
 import random
 from collections import defaultdict
 from pathlib import Path
@@ -15,7 +13,7 @@ from model.relation import Relation
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-in', required=True, help='Directory with context format files.')
-    parser.add_argument('--output-path', required=True, help='Directory to save sampled datasets.')
+    parser.add_argument('--output-path', required=True, help='Directory for saving sampled datasets.')
     parser.add_argument('--train-size', nargs=2, type=int, required=True,
                         help='Train dataset batch sizes [positive, negative]')
     parser.add_argument('--valid-size', nargs=2, type=int, required=True,
@@ -31,9 +29,9 @@ def get_args(argv=None):
 def main(argv=None):
     args = get_args(argv)
 
-    for set_name, size in [('train', args.train_size), ('valid', args.valid_size), ('test', args.test_size)]:
-        source_dir = os.path.join(args.data_in, set_name)
-        output_dir = os.path.join(args.output_path, set_name)
+    for set_name, size in zip(['train', 'valid', 'test'], [args.train_size, args.valid_size, args.test_size]):
+        source_dir = Path(f'{args.data_in}/{set_name}')
+        output_dir = Path(f'{args.output_path}/{set_name}')
         pos_batch_size, neg_batch_size = size
 
         for lines, file_name in select_positive(source_dir, pos_batch_size):
@@ -65,23 +63,6 @@ def select(path, size):
 def load_file(path):
     with open(path, 'r', encoding='utf-8') as in_file:
         return [line.strip() for line in in_file]
-
-
-def get_file_name(file_path):
-    return Path(file_path).stem
-
-
-def save_lines(path, file_name, lines):
-    try:
-        if not os.path.exists(path):
-            os.makedirs(path)
-    except OSError:
-        print(f'List saving filed. Can not create {path} directory.')
-    else:
-        file_path = os.path.join(path, file_name)
-        with open(file_path, 'w', encoding='utf-8') as out_file:
-            for line in lines:
-                out_file.write(f'{line}\n')
 
 
 def select_negative(source_path, size):
