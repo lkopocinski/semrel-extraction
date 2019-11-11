@@ -10,9 +10,9 @@ SCRIPTS_DIR="./data/scripts"
 
 dvc run \
 -d ${DATA_IN} \
--d ${SCRIPTS_DIR}/create_vectors.py \
+-d ${SCRIPTS_DIR}/vectorize.py \
 -o ${OUTPUT_PATH} \
-${SCRIPTS_DIR}/create_vectors.py --data-in ${DATA_IN} \
+${SCRIPTS_DIR}/vectorize.py --data-in ${DATA_IN} \
                                  --output-path ${OUTPUT_PATH} \
                                  --options "./data/elmo/emb-options.json" \
                                  --weights "./data/elmo/emb-weights.hdf5"

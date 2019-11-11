@@ -1,4 +1,5 @@
 from typing import List
+import numpy as np
 
 
 class Relation:
@@ -39,3 +40,11 @@ class Relation:
 
         def __str__(self):
             return f'{self.lemma}\t{self.channel}\t{self.start_idx}:{self.context}'
+
+
+class Vector:
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return np.array2string(self.value, separator=', ').replace('\n', '')

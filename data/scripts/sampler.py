@@ -3,7 +3,7 @@ import random
 from collections import defaultdict
 
 from utils.io import load_file
-from model.relation import Relation
+from model.models import Relation
 
 
 def select_positive(file_path, batch_size):

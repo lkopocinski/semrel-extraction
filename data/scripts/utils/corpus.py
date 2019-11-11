@@ -1,5 +1,5 @@
 import os
-from relation import Relation
+from models import Relation
 
 from corpus_ccl import cclutils as ccl
 from corpus_ccl import corpus_object_utils as cou
