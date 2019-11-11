@@ -16,7 +16,7 @@ dvc run \
 -d ${SCRIPTS_DIR}/split.py \
 -o ${OUTPUT_PATH} \
 ${SCRIPTS_DIR}/split.py --data-in ${DATA_IN} \
-                                --output-path ${OUTPUT_PATH} \
-                                --directories 81 82 83
+                        --output-path ${OUTPUT_PATH} \
+                        --directories 81 82 83
 
 popd

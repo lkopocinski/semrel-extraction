@@ -140,11 +140,6 @@ RUN mkdir crfpp && \
 #    cd /home/install && \
 #    rm -rf wcrft2
 
-#pip install dvc
-#pip install dvc[s3]
-#pip install mlflow
-
-#mkdir -p home/semrel-extraction
 
 RUN locale-gen en_US.UTF-8
 ENV LANG C.UTF-8
@@ -156,6 +151,8 @@ RUN git clone https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction.git &
     git checkout --track origin/develop	
 
 RUN pip install dvc
+RUN pip install dvc[s3]
 RUN pip install mlflow
+RUN pip install argcomplete
 
 ENTRYPOINT ["/bin/bash"]
