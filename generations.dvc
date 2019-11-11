@@ -1,13 +1,12 @@
-md5: a467b80531ecebfd2b2ff556af51d2b7
-cmd: ./data/scripts/generate_negative_from_corpora.py --data-in ./data/splits --output-path
-  ./data/generations
+md5: 87daf1876ecea6fdf318a4f88ce6e5d5
+cmd: ./data/scripts/generate.py --data-in ./data/splits --output-path ./data/generations
 deps:
-- md5: b0dd8ecc9ad0491d2de477046a540097.dir
+- md5: 467b6c36af2ca383c0f8a657fb31e10a.dir
   path: data/splits
-- md5: d74f66331fa4ce17ca55e291eca2df90
-  path: data/scripts/generate_negative_from_corpora.py
+- md5: 5f5f5df26d7a6c346516162f8ab48dea
+  path: data/scripts/generate.py
 outs:
-- md5: d5e3c238fac03ecd88eea462add3ea47.dir
+- md5: 4c3f3daeece0e0dfd156173ef7c0fc38.dir
   path: data/generations
   cache: true
   metric: false
