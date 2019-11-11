@@ -11,7 +11,7 @@ from metrics import Metrics, save_metrics
 from relnet import RelNet
 from torch.autograd import Variable
 from torch.optim import Adagrad
-from .batches import BatchLoader
+from batches import BatchLoader
 from utils import labels2idx, get_set_size, is_better_fscore
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')

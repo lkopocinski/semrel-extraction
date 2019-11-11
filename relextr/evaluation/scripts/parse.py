@@ -7,7 +7,7 @@ from corpus_ccl import cclutils
 
 from relextr.evaluation.base import Parser
 from relextr.evaluation.base import Predictor
-from relextr.evaluation.scripts.embutils import ElmoEmb
+
 from relextr.model.scripts import RelNet
 
 try:
