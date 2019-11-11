@@ -14,7 +14,7 @@ dvc run \
 -o ${OUTPUT_PATH} \
 ${SCRIPTS_DIR}/create_vectors.py --data-in ${DATA_IN} \
                                  --output-path ${OUTPUT_PATH} \
-                                 --options "./data/elmo/emb-options.json"
+                                 --options "./data/elmo/emb-options.json" \
                                  --weights "./data/elmo/emb-weights.hdf5"
 
 popd
