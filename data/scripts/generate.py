@@ -6,7 +6,7 @@ from pathlib import Path
 import argcomplete
 from generator import generate_positive, generate_negative
 
-from .utils.io import save_lines
+from utils.io import save_lines
 
 
 def get_args(argv=None):

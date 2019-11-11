@@ -1,13 +1,13 @@
-md5: 5e45a92547f24d5b804663250ee6220d
-cmd: ./data/scripts/split_dataset.py --data-in ./data/corpora --output-path ./data/splits
+md5: 7a54cbc38c79b4539efd5bb049825480
+cmd: ./data/scripts/split.py --data-in ./data/corpora --output-path ./data/splits
   --directories 81 82 83
 deps:
 - md5: ef9c80afd81913b3fc80c82083d5b76a.dir
   path: data/corpora
-- md5: efeba793eae7abdd831329ff55866e50
-  path: data/scripts/split_dataset.py
+- md5: 68f5bffd346e70a6b8af0a2e1cf48e8f
+  path: data/scripts/split.py
 outs:
-- md5: d8a20592767a1d12b63481429507e58c.dir
+- md5: 467b6c36af2ca383c0f8a657fb31e10a.dir
   path: data/splits
   cache: true
   metric: false

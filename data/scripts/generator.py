@@ -2,7 +2,7 @@
 
 from itertools import permutations, product
 
-from relation import Relation
+from model.relation import Relation
 from utils.corpus import corpora_files, load_document, id_to_sent_dict, \
     is_ner_relation, is_in_channel, get_relation_element, \
     get_nouns_idx, get_lemma, get_relation_element_multiword
