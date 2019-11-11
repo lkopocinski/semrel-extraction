@@ -12,7 +12,7 @@ from .utils.io import save_lines
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-in', required=True, help='Directory with lists of files split into datasets.')
-    parser.add_argument('--output-path', required=True, help='Directory to save generated datasets.')
+    parser.add_argument('--output-path', required=True, help='Directory Directory for saving generated datasets.')
 
     argcomplete.autocomplete(parser)
 
