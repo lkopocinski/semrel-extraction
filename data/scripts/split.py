@@ -26,8 +26,8 @@ def main(argv=None):
         source_path = Path(f'{args.data_in}/{directory}')
         if source_path.is_dir():
             for set_type, set_files in zip(['train', 'valid', 'test'], split(source_path)):
-                file_path = Path(f'{args.output_path}/{set_type}/{directory}.list')
-                save_lines(file_path, set_files)
+                out_file_path = Path(f'{args.output_path}/{set_type}/{directory}.list')
+                save_lines(out_file_path, set_files)
 
 
 def split(dir_path):
