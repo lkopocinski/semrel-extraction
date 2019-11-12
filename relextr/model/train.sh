@@ -5,13 +5,13 @@
 pushd "$(git rev-parse --show-toplevel)"
 
 DATA_IN="./relextr/model/dataset"
-SCRIPTS_DIR="./relextr/model/dataset/scripts"
+SCRIPTS_DIR="./relextr/model/scripts"
 
 EPOCHS_QUANTITY=30
 BATCH_SIZE=10
 
 SENT2VEC_MODEL="./data/sent2vec/kgr10.bin"
-FASTTEXT_MODEL="./data/fasttext/kgr10.bin"
+FASTTEXT_MODEL="./data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin"
 
 dvc run \
 -d ${DATA_IN} \
@@ -27,6 +27,8 @@ CUDA_VISIBLE_DEVICES=5,6 ${SCRIPTS_DIR}/train.py --data-in ${DATA_IN} \
                                                  --batch-size 10 \
                                                  --epochs 30 \
                                                  --vectorizer 'default' \
-                                                 --vectors-model ''
+                                                 --vectors-model '' \
+                                                 --tracking-uri 'http://0.0.0.0:5001' \
+                                                 --experiment-name 'no_experiment'
 
 popd

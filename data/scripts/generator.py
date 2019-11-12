@@ -26,7 +26,7 @@ def generate_positive(list_file, channels, multiword=False):
                         f_element = get_relation_element(f, sentences)
                         t_element = get_relation_element(t, sentences)
 
-                    if f_element.start_idx != -1 and t_element.start_idx != -1:
+                    if f_element and t_element:
                         yield Relation(f_element, t_element)
 
 

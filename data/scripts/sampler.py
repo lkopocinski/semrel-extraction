@@ -6,14 +6,14 @@ from utils.io import load_file
 from model.models import Relation
 
 
-def select_positive(file_path, batch_size):
+def sample_positive(file_path, batch_size):
     lines = load_file(file_path)
     if len(lines) > batch_size:
         lines = random.sample(lines, batch_size)
     yield lines
 
 
-def select_negative(file_path, batch_size):
+def sample_negative(file_path, batch_size):
     size = math.floor(batch_size / 3)
     lines = load_file(file_path)
 

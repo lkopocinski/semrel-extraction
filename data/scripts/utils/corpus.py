@@ -44,7 +44,7 @@ def get_relation_element(rel, sentences):
     indices = find_token_indices(sent, rel.annotation_number(), channel_name)
 
     if not indices:
-        return -1, None
+        return None
 
     context = get_context(sent)
     lemma = get_lemma(sent, indices[0])
@@ -82,7 +82,7 @@ def get_relation_element_multiword(rel, sentences):
     indices = find_token_indices(sent, rel.annotation_number(), channel_name)
 
     if not indices:
-        return -1, None
+        return None
 
     begin = indices[0]
     end = indices[-1]

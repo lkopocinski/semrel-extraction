@@ -1,6 +1,6 @@
 #!/bin/bash -eux
 
-# TODO: description
+# Script randomly selects elements according to the given amount of set.
 
 pushd "$(git rev-parse --show-toplevel)"
 
