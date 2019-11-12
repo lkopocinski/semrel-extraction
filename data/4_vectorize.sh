@@ -1,6 +1,6 @@
 #!/bin/bash -eux
 
-# TODO: description
+# Script creates context vectors for the elements of each data set
 
 pushd "$(git rev-parse --show-toplevel)"
 

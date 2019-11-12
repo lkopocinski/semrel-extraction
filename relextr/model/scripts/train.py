@@ -25,19 +25,19 @@ def get_args(argv=None):
     parser.add_argument('--batch-size', required=True, type=int, help="Batch size.")
     parser.add_argument('--epochs', required=True, type=int, help="How many epochs should the model be trained on.")
     parser.add_argument('--vectorizer', required=False, type=str, choices={'sent2vec', 'fasttext', 'elmoconv'}, help="Vectorizer method")
-    parser.add_argument('--vectors-model', required=False, type=str, help="Vectors model for vectorizer method path")
+    parser.add_argument('--vectors-model', required=False, type=str, help="Vectors model for vectorizer method path.")
+    parser.add_argument('--tracking-uri', required=True, type=str, help="Mlflow tracking server uri.")
+    parser.add_argument('--experiment-name', required=True, type=str, help="Mlflow tracking experiment name.")
 
     argcomplete.autocomplete(parser)
+
     return parser.parse_args(argv)
 
 
 def main(argv=None):
-    init_mlflow(
-        uri='http://0.0.0.0:5001',
-        experiment='no_experiment'
-    )
-
     args = get_args(argv)
+
+    init_mlflow(args.tracking_uri, args.experiment_name)
 
     network = RelNet()
     network.to(device)

@@ -6,7 +6,7 @@ from pathlib import Path
 import argcomplete
 
 from utils.io import save_lines
-from sampler import select_positive, select_negative
+from sampler import sample_positive, sample_negative
 
 
 def get_args(argv=None):
@@ -29,12 +29,12 @@ def main(argv=None):
     args = get_args(argv)
 
     for set_name, size in zip(['train', 'valid', 'test'], [args.train_size, args.valid_size, args.test_size]):
-        for label_type, selector, batch_size in zip(['positive', 'negative'], [select_positive, select_negative], size):
+        for label_type, sample, batch_size in zip(['positive', 'negative'], [sample_positive, sample_negative], size):
             source_path = Path(f'{args.data_in}/{set_name}/{label_type}')
             if source_path.is_dir():
                 for file_path in source_path.glob('*.context'):
                     out_file_path = Path(f'{args.output_path}/{set_name}/{label_type}/{file_path.stem}.sampled')
-                    lines = selector(file_path, batch_size)
+                    lines = sample(file_path, batch_size)
                     save_lines(out_file_path, lines)
 
 
