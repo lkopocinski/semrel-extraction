@@ -1,0 +1,7 @@
+md5: c5865e909088f0502b4c36d885b949cf
+outs:
+- md5: fb51e13b5399750c1c3798a3946a2280.dir
+  path: fasttext
+  cache: true
+  metric: false
+  persist: false
