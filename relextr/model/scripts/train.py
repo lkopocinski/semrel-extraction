@@ -7,12 +7,13 @@ import argcomplete
 import mlflow
 import torch
 import torch.nn as nn
+from batches import BatchLoader
 from metrics import Metrics, save_metrics
 from relnet import RelNet
 from torch.autograd import Variable
 from torch.optim import Adagrad
-from batches import BatchLoader
-from utils import labels2idx, get_set_size, is_better_fscore
+
+from utils import labels2idx, is_better_fscore
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(f'Runing on: {device}.')
@@ -24,7 +25,8 @@ def get_args(argv=None):
     parser.add_argument('--save-model-name', required=True, type=str, help="File name for a trained model.")
     parser.add_argument('--batch-size', required=True, type=int, help="Batch size.")
     parser.add_argument('--epochs', required=True, type=int, help="How many epochs should the model be trained on.")
-    parser.add_argument('--vectorizer', required=False, type=str, choices={'sent2vec', 'fasttext', 'elmoconv'}, help="Vectorizer method")
+    parser.add_argument('--vectorizer', required=False, type=str, choices={'sent2vec', 'fasttext', 'elmoconv'},
+                        help="Vectorizer method")
     parser.add_argument('--vectors-model', required=False, type=str, help="Vectors model for vectorizer method path.")
     parser.add_argument('--tracking-uri', required=True, type=str, help="Mlflow tracking server uri.")
     parser.add_argument('--experiment-name', required=True, type=str, help="Mlflow tracking experiment name.")
@@ -39,22 +41,23 @@ def main(argv=None):
 
     init_mlflow(args.tracking_uri, args.experiment_name)
 
-    network = RelNet()
+    batch_loader = BatchLoader(args.batch_size)
+    train_set = batch_loader.load(f'{args.dataset_dir}/train.vectors')
+    valid_set = batch_loader.load(f'{args.dataset_dir}/valid.vectors')
+    test_set = batch_loader.load(f'{args.dataset_dir}/test.vectors')
+
+    network = RelNet(in_dim=train_set.vector_size)
     network.to(device)
     optimizer = Adagrad(network.parameters())
     loss_func = nn.CrossEntropyLoss()
 
-    batch_loader = BatchLoader(args.batch_size)
-    train_batches = batch_loader.load(f'{args.dataset_dir}/train.vectors')
-    valid_batches = batch_loader.load(f'{args.dataset_dir}/valid.vectors')
-    test_batches = batch_loader.load(f'{args.dataset_dir}/test.vectors')
-
     # Log learning params
     mlflow.log_params({
         'batch_size': args.batch_size,
-        'train_set_size': get_set_size(train_batches),
-        'valid_set_size': get_set_size(valid_batches),
-        'test_set_size': get_set_size(test_batches),
+        'train_set_size': train_set.size,
+        'valid_set_size': valid_set.size,
+        'test_set_size': test_set.size,
+        'vector_size': train_set.vector_size,
         'epochs': args.epochs,
         'optimizer': optimizer.__class__.__name__,
         'loss_function': loss_func.__class__.__name__
@@ -66,12 +69,12 @@ def main(argv=None):
         print(f'\nEpoch: {epoch} / {args.epochs}')
 
         # Train
-        train_metrics = train(network, optimizer, loss_func, train_batches, device)
+        train_metrics = train(network, optimizer, loss_func, train_set.batches, device)
         print(f'Train:\n{train_metrics}')
         log_metrics(train_metrics, epoch, 'train')
 
         # Validate
-        valid_metrics = evaluate(network, valid_batches, loss_func, device)
+        valid_metrics = evaluate(network, valid_set.batches, loss_func, device)
         print(f'Valid:\n{valid_metrics}')
         log_metrics(valid_metrics, epoch, 'valid')
 
@@ -79,10 +82,10 @@ def main(argv=None):
         if is_better_fscore(valid_metrics.fscore, best_valid_fscore):
             best_valid_fscore = valid_metrics.fscore
             torch.save(network.state_dict(), args.model_name)
-            mlflow.log_artifact(f'../{args.model_name}', '/artifacts/model/')
+            mlflow.log_artifact(f'./{args.model_name}', '/artifacts/model/')
 
     # Test
-    test_metrics = test(args.model_name, test_batches, loss_func, device)
+    test_metrics = test(args.model_name, test_set.batches, test_set.vector_size, loss_func, device)
     print(f'\n\nTest: {test_metrics}')
     save_metrics(test_metrics, 'metrics.txt')
     log_metrics(test_metrics, 0, 'test')
@@ -149,8 +152,8 @@ def evaluate(network, batches, loss_function, device):
     return metrics
 
 
-def test(model_path, batches, loss_function, device):
-    network = RelNet()
+def test(model_path, batches, in_dim, loss_function, device):
+    network = RelNet(in_dim)
     network.load(model_path)
     network.to(device)
     return evaluate(network, batches, loss_function, device)

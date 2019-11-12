@@ -10,7 +10,7 @@ def sample_positive(file_path, batch_size):
     lines = load_file(file_path)
     if len(lines) > batch_size:
         lines = random.sample(lines, batch_size)
-    yield lines
+    return lines
 
 
 def sample_negative(file_path, batch_size):
@@ -33,4 +33,4 @@ def sample_negative(file_path, batch_size):
             lines = random.sample(lines, size)
         out_lines.extend(lines)
 
-    yield out_lines
+    return out_lines
