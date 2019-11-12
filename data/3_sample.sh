@@ -4,7 +4,7 @@
 
 pushd "$(git rev-parse --show-toplevel)"
 
-DATA_IN="./data/generated"
+DATA_IN="./data/generations"
 OUTPUT_PATH="./data/sampled"
 SCRIPTS_DIR="./data/scripts"
 

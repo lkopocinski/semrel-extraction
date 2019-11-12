@@ -1,0 +1,14 @@
+md5: 24fde8c5a67b9ba772e6805d30bdf2c2
+cmd: ./data/scripts/vectorize.py --data-in ./data/sampled --output-path ./data/vectors
+  --options ./data/elmo/emb-options.json --weights ./data/elmo/emb-weights.hdf5
+deps:
+- md5: fe1567df753e433e2a0624ce849f2ad4.dir
+  path: data/sampled
+- md5: 8f16a49276666692ae8032f2eb22eab8
+  path: data/scripts/vectorize.py
+outs:
+- md5: 6102989e93e659d9cab783e0f762fe82.dir
+  path: data/vectors
+  cache: true
+  metric: false
+  persist: false
