@@ -1,11 +1,20 @@
-#!/usr/bin/env bash
+#!/bin/bash -eux
 
-# Params
-DATASET_DIR=dataset
-SCRIPTS_DIR=scripts
-BATCH_SIZE=20
-MODEL_NAME='relextr_model.pt'
+# Script runs test training session
+
+pushd "$(git rev-parse --show-toplevel)"
+
+DATA_IN="./relextr/model/dataset"
+SCRIPTS_DIR="./relextr/model/scripts"
+
 SENT2VEC_MODEL="./data/sent2vec/kgr10.bin"
+FASTTEXT_MODEL="./data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin"
 
-# Execution
-CUDA_VISIBLE_DEVICES=5,6 python3.6 ${SCRIPTS_DIR}/test.py --batch_size ${BATCH_SIZE} --dataset_dir ${DATASET_DIR} --model_name ${MODEL_NAME} --sent2vec ${SENT_2_VEC_MODEL}
+
+dvc run \
+-d -d ${DATA_IN} \
+-d ${SCRIPTS_DIR}/test.py \
+CUDA_VISIBLE_DEVICES=5,6 ${SCRIPTS_DIR}/test.py --data-in ${DATA_IN} \
+                                                --
+
+--batch_size 20 --dataset_dir ${DATA_IN} --model_name ${MODEL_NAME} --sent2vec ${SENT_2_VEC_MODEL}

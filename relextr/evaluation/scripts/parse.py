@@ -10,10 +10,8 @@ from relextr.evaluation.base import Predictor
 
 from relextr.model.scripts import RelNet
 
-try:
-    import argcomplete
-except ImportError:
-    argcomplete = None
+
+import argcomplete
 
 
 def get_args(argv=None):
@@ -25,8 +23,8 @@ def get_args(argv=None):
                              "neural model (`--net_model` parametere.")
     parser.add_argument('-b', '--batch', required=True,
                         help="A path to the list of CCL files to process")
-    if argcomplete:
-        argcomplete.autocomplete(parser)
+
+    argcomplete.autocomplete(parser)
 
     return parser.parse_args(argv)
 
