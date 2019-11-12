@@ -1,19 +1,19 @@
-#!/usr/bin/env bash
+#!/bin/bash -eux
 
-# Params
-SOURCE_DIR=vectors
-TARGET_DIR=../relextr/model/dataset
+# Script concatenates vector files into one shuffled file
 
-mkdir -p ${TARGET_DIR}
+pushd "$(git rev-parse --show-toplevel)"
 
-# Merge
-declare -a types=("train" "valid" "test")
-for type in "${types[@]}"
-do
-    cat ${SOURCE_DIR}/${type}/negative.vectors > ${TARGET_DIR}/${type}.vectors
-    cat ${SOURCE_DIR}/${type}/positive.vectors >> ${TARGET_DIR}/${type}.vectors
-    shuf -o ${TARGET_DIR}/${type}.vectors ${TARGET_DIR}/${type}.vectors
-done
+DATA_IN="./data/vectors"
+OUTPUT_PATH="./relextr/model/dataset"
+SCRIPTS_DIR="./data/scripts"
 
-#shuf ${SOURCE_DIR}/train/negative.hard.vectors | head -2000 >> ${TARGET_DIR}/train.vectors
-#shuf -o ${TARGET_DIR}/train.vectors ${TARGET_DIR}/train.vectors
+mkdir -p ${OUTPUT_PATH}
+
+dvc run \
+-d ${DATA_IN} \
+-d ${SCRIPTS_DIR}/merge.sh \
+-o ${OUTPUT_PATH} \
+${SCRIPTS_DIR}/merge.sh ${DATA_IN} ${OUTPUT_PATH}
+
+popd

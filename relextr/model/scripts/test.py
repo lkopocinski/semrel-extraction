@@ -7,10 +7,11 @@ import argcomplete
 import mlflow
 import torch
 import torch.nn as nn
+from batches import BatchLoader
 from metrics import Metrics, save_metrics
 from relnet import RelNet
 from torch.autograd import Variable
-from utils import load_batches, labels2idx, get_set_size
+from utils import labels2idx, is_better_fscore
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(f'Runing on: {device}.')
@@ -18,13 +19,17 @@ print(f'Runing on: {device}.')
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('-n', '--model_name', required=True, type=str, help="Load pre-trained model.")
-    parser.add_argument('-b', '--batch_size', required=True, type=int, help="Batch size.")
-    parser.add_argument('-d', '--dataset_dir', required=True, type=str, help="Directory with test dataset.")
-    parser.add_argument('-s', '--sent2vec', required=False, type=str, help="Sent2vec word embeddings model path.")
-    parser.add_argument('-f', '--fasttext', required=False, type=str, help="Fasttext word embeddings model path.")
+    parser.add_argument('--data-in', required=True, type=str, help="Directory with test dataset.")
+    parser.add_argument('--model-name', required=True, type=str, help="Load pre-trained model.")
+    parser.add_argument('--batch-size', required=True, type=int, help="Batch size.")
+    parser.add_argument('--vectorizer', required=False, type=str, choices={'sent2vec', 'fasttext', 'elmoconv'},
+                        help="Vectorizer method")
+    parser.add_argument('--vectors-model', required=False, type=str, help="Vectors model for vectorizer method path.")
+    parser.add_argument('--tracking-uri', required=True, type=str, help="Mlflow tracking server uri.")
+    parser.add_argument('--experiment-name', required=True, type=str, help="Mlflow tracking experiment name.")
 
     argcomplete.autocomplete(parser)
+
     return parser.parse_args(argv)
 
 
@@ -39,30 +44,34 @@ def init_mlflow(uri, experiment, tag):
 
 
 def main(argv=None):
-    init_mlflow(
-        uri='http://0.0.0.0:5000',
-        experiment='no_experiment',
-        tag=('key', 'value')
-    )
-
     args = get_args(argv)
 
-    loss_func = nn.CrossEntropyLoss()
+    init_mlflow(args.tracking_uri, args.experiment_name, tag=('key', 'value'))
 
-    test_batches = load_batches(f'{args.dataset_dir}/test.vectors_', args.batch_size)
+    batch_loader = BatchLoader(args.batch_size)
+    test_set = batch_loader.load(f'{args.dataset_dir}/test.vectors_')
 
-    # Log learning params
-    mlflow.log_param('batch_size', args.batch_size)
-    mlflow.log_param('test_set_size', get_set_size(test_batches))
-
-    network = RelNet()
+    network = RelNet(in_dim=test_set.vector_size)
     network.load(args.model_name)
     network.to(device)
+    loss_func = nn.CrossEntropyLoss()
 
-    metrics = evaluate(network, test_batches, loss_func, device)
+    # Log learning params
+    mlflow.log_params({
+        'batch_size': args.batch_size,
+        'test_set_size': test_set.size,
+        'vector_size': test_set.vector_size,
+        'epochs': args.epochs,
+        'loss_function': loss_func.__class__.__name__
+    })
+
+    metrics = evaluate(network, test_set.batches, loss_func, device)
     print(f'\n\nTest: {metrics}')
-    save_metrics(metrics, 'metrics.txt')
+    save_metrics(metrics, 'metrics_test.txt')
+    log_metrics(metrics)
 
+
+def log_metrics(metrics):
     mlflow.log_metrics({
         f'loss': metrics.loss,
         f'accuracy': metrics.accuracy,

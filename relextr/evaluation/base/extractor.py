@@ -1,6 +1,6 @@
 import abc
-from itertools import product
 from collections import deque
+from itertools import product
 
 from corpus_ccl import cclutils as ccl
 from corpus_ccl import corpus_object_utils as cou
@@ -19,7 +19,6 @@ class Parser(object):
 
 
 class ContextType(object):
-
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, name='default'):
@@ -31,7 +30,6 @@ class ContextType(object):
 
 
 class ExtractorType(object):
-
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, name='default', tagset='nkjp'):
