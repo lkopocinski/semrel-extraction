@@ -9,7 +9,7 @@ import numpy as np
 
 from utils.io import save_lines
 from utils.embedd import ElmoEmb
-from models import Relation
+from model.models import Relation
 
 np.set_printoptions(threshold=sys.maxsize)
 

@@ -21,5 +21,5 @@ class ElmoEmb(object):
         character_ids = batch_to_ids([element.context])
         embeddings = self._model(character_ids)
         v = embeddings['elmo_representations'][0].data.numpy()
-        value = v[:, element.index, :].flatten()
+        value = v[:, element.start_idx, :].flatten()
         return Vector(value)
