@@ -1,4 +1,4 @@
-md5: 7a54cbc38c79b4539efd5bb049825480
+md5: cba479f7d7e88501470703334c227658
 cmd: ./data/scripts/split.py --data-in ./data/corpora --output-path ./data/splits
   --directories 81 82 83
 deps:
@@ -7,7 +7,7 @@ deps:
 - md5: 68f5bffd346e70a6b8af0a2e1cf48e8f
   path: data/scripts/split.py
 outs:
-- md5: 467b6c36af2ca383c0f8a657fb31e10a.dir
+- md5: 2ca044bc3d24feaad214f6b135a6f21e.dir
   path: data/splits
   cache: true
   metric: false
