@@ -20,10 +20,10 @@ dvc run \
 -d ${SCRIPTS_DIR}/utils/batches.py \
 -M metrics.txt \
 -f train.dvc \
-CUDA_VISIBLE_DEVICES=5,6 ${SCRIPTS_DIR}/train.py --data-in ${DATA_IN} \
+CUDA_VISIBLE_DEVICES=7,8,9,10 ${SCRIPTS_DIR}/train.py --data-in ${DATA_IN} \
                                                  --save-model-name 'relextr_model.pt' \
                                                  --batch-size 10 \
-                                                 --epochs 30 \
+                                                 --epochs 10 \
                                                  --tracking-uri 'http://10.17.50.132:8080' \
                                                  --experiment-name 'no_experiment'
                                                  #--vectorizer '' \
