@@ -14,7 +14,19 @@ FASTTEXT_MODEL="./data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin"
 dvc run \
 -d -d ${DATA_IN} \
 -d ${SCRIPTS_DIR}/test.py \
-CUDA_VISIBLE_DEVICES=5,6 ${SCRIPTS_DIR}/test.py --data-in ${DATA_IN} \
-                                                --
+-d ${SCRIPTS_DIR}/relnet.py \
+-d ${SCRIPTS_DIR}/utils/engines.py \
+-d ${SCRIPTS_DIR}/utils/utils.py \
+-d ${SCRIPTS_DIR}/utils/metrics.py \
+-d ${SCRIPTS_DIR}/utils/batches.py \
+-M metrics_test.txt \
+-f test.dvc \
+CUDA_VISIBLE_DEVICES=7,8,9,10 ${SCRIPTS_DIR}/test.py --data-in ${DATA_IN} \
+                                                     --model-name 'relextr_model.pt' \
+                                                     --batch-size 20 \
+                                                     --tracking-uri 'http://10.17.50.132:8080' \
+                                                     --experiment-name 'fasttext' \
+                                                     --vectorizer 'fasttext' \
+                                                     --vectors-model ${FASTTEXT_MODEL} \
 
---batch_size 20 --dataset_dir ${DATA_IN} --model_name ${MODEL_NAME} --sent2vec ${SENT_2_VEC_MODEL}
+popd
