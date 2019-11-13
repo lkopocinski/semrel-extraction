@@ -38,7 +38,7 @@ def get_args(argv=None):
 def main(argv=None):
     args = get_args(argv)
 
-    init_mlflow(args.tracking_uri, args.experiment_name, tag=('test', 'filtered'))
+    init_mlflow(args.tracking_uri, args.experiment_name, tag=('files', '81, 82,83'))
 
     engine = VectorizerFactory.get_vectorizer(args.vectorizer, args.vectors_model)
 
@@ -55,7 +55,6 @@ def main(argv=None):
         'batch_size': args.batch_size,
         'test_set_size': test_set.size,
         'vector_size': test_set.vector_size,
-        'epochs': args.epochs,
         'loss_function': loss_func.__class__.__name__
     })
 
