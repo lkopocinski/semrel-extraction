@@ -18,6 +18,7 @@ dvc run \
 -d ${SCRIPTS_DIR}/utils/utils.py \
 -d ${SCRIPTS_DIR}/utils/metrics.py \
 -d ${SCRIPTS_DIR}/utils/batches.py \
+-O relextr_model.pt \
 -M metrics.txt \
 -f train.dvc \
 CUDA_VISIBLE_DEVICES=7,8,9,10 ${SCRIPTS_DIR}/train.py --data-in ${DATA_IN} \
