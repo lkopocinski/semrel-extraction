@@ -88,7 +88,7 @@ def main(argv=None):
             mlflow.log_artifact(f'./{args.save_model_name}')
 
     # Test
-    test_metrics = test(args.model_name, test_set.batches, test_set.vector_size, loss_func, device)
+    test_metrics = test(args.save_model_name, test_set.batches, test_set.vector_size, loss_func, device)
     print(f'\n\nTest: {test_metrics}')
     save_metrics(test_metrics, 'metrics.txt')
     log_metrics(test_metrics, 0, 'test')
