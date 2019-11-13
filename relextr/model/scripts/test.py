@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import argparse
@@ -7,11 +7,13 @@ import argcomplete
 import mlflow
 import torch
 import torch.nn as nn
-from batches import BatchLoader
-from metrics import Metrics, save_metrics
-from relnet import RelNet
 from torch.autograd import Variable
-from utils import labels2idx, is_better_fscore
+
+from relnet import RelNet
+from utils.batches import BatchLoader
+from utils.engines import VectorizerFactory
+from utils.metrics import Metrics, save_metrics
+from utils.utils import labels2idx
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(f'Runing on: {device}.')
@@ -33,23 +35,15 @@ def get_args(argv=None):
     return parser.parse_args(argv)
 
 
-def init_mlflow(uri, experiment, tag):
-    mlflow.set_tracking_uri(uri)
-    mlflow.set_experiment(experiment)
-    mlflow.set_tag(key=tag[0], value=tag[1])
-    print(f'-- mlflow --'
-          f'\nserver: {mlflow.get_tracking_uri()}'
-          f'\nexperiment: {experiment}'
-          f'\ntag: {tag[0]} - {tag[1]}')
-
-
 def main(argv=None):
     args = get_args(argv)
 
-    init_mlflow(args.tracking_uri, args.experiment_name, tag=('key', 'value'))
+    init_mlflow(args.tracking_uri, args.experiment_name, tag=('test', 'filtered'))
 
-    batch_loader = BatchLoader(args.batch_size)
-    test_set = batch_loader.load(f'{args.dataset_dir}/test.vectors_')
+    engine = VectorizerFactory.get_vectorizer(args.vectorizer, args.vectors_model)
+
+    batch_loader = BatchLoader(args.batch_size, engine)
+    test_set = batch_loader.load(f'{args.data_in}/test.vectors_')
 
     network = RelNet(in_dim=test_set.vector_size)
     network.load(args.model_name)
@@ -69,6 +63,16 @@ def main(argv=None):
     print(f'\n\nTest: {metrics}')
     save_metrics(metrics, 'metrics_test.txt')
     log_metrics(metrics)
+
+
+def init_mlflow(uri, experiment, tag):
+    mlflow.set_tracking_uri(uri)
+    mlflow.set_experiment(experiment)
+    mlflow.set_tag(key=tag[0], value=tag[1])
+    print(f'-- mlflow --'
+          f'\nserver: {mlflow.get_tracking_uri()}'
+          f'\nexperiment: {experiment}'
+          f'\ntag: {tag[0]} - {tag[1]}')
 
 
 def log_metrics(metrics):
