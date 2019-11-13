@@ -15,8 +15,8 @@ from torch.optim import Adagrad
 
 from utils.utils import labels2idx, is_better_fscore
 
-import os
-#os.environ["CUDA_VISIBLE_DEVICES"]="7"
+#import os
+#os.environ["CUDA_VISIBLE_DEVICES"]="5,6"
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(f'Runing on: {device}.')
@@ -42,7 +42,7 @@ def get_args(argv=None):
 def main(argv=None):
     args = get_args(argv)
 
-    init_mlflow(args.tracking_uri, args.experiment_name)
+    init_mlflow(args.tracking_uri, args.experiment_name, ('files', '81, 82, 83'))
 
     batch_loader = BatchLoader(args.batch_size)
     train_set = batch_loader.load(f'{args.data_in}/train.vectors')
@@ -94,12 +94,14 @@ def main(argv=None):
     log_metrics(test_metrics, 0, 'test')
 
 
-def init_mlflow(uri, experiment):
+def init_mlflow(uri, experiment, tag):
     mlflow.set_tracking_uri(uri)
     mlflow.set_experiment(experiment)
+    mlflow.set_tag(key=tag[0], value=tag[1])
     print(f'-- mlflow --'
           f'\nserver: {mlflow.get_tracking_uri()}'
-          f'\nexperiment: {experiment}')
+          f'\nexperiment: {experiment}'
+          f'\ntag: {tag[0]} - {tag[1]}')
 
 
 def log_metrics(metrics, step, prefix):
