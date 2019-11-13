@@ -44,6 +44,7 @@ def main(argv=None):
 
     batch_loader = BatchLoader(args.batch_size, engine)
     test_set = batch_loader.load(f'{args.data_in}/test.vectors_')
+    print(test_set.vector_size)
 
     network = RelNet(in_dim=test_set.vector_size)
     network.load(args.model_name)
