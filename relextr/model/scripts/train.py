@@ -41,7 +41,7 @@ def main(argv=None):
     args = get_args(argv)
 
     init_mlflow(args.tracking_uri, args.experiment_name, ('files', '81, 82, 83'))
-
+    print(args.vectorizer)
     engine = VectorizerFactory.get_vectorizer(args.vectorizer, args.vectors_model)
 
     batch_loader = BatchLoader(args.batch_size, engine)

@@ -1,15 +1,15 @@
-md5: 7f363a304c35a5a8a52f03179248d20f
+md5: d7ed4bf1777e2e3403a24287ff0b2bd5
 cmd: CUDA_VISIBLE_DEVICES=7,8,9,10 ./relextr/model/scripts/train.py --data-in ./relextr/model/dataset
   --save-model-name relextr_model.pt --batch-size 10 --epochs 10 --tracking-uri http://10.17.50.132:8080
-  --experiment-name no_experiment
+  --experiment-name no_experiment --vectorizer elmoconv
 deps:
 - md5: 575bb57291c6baeb0071036682b15eee.dir
   path: relextr/model/dataset
-- md5: d574c02cea15d64f4fad6bab050bd42d
+- md5: 5cacdf5b0e646c0f66eab4208c39af99
   path: relextr/model/scripts/train.py
 - md5: c8c24e9adeb38656ea0c5ef7531e0ece
   path: relextr/model/scripts/relnet.py
-- md5: c63be13d112add25e6a6b28ae3e08b20
+- md5: 9ad138517b81c751a01a552daec0f601
   path: relextr/model/scripts/utils/engines.py
 - md5: 447002876ec26a168585e39afc076238
   path: relextr/model/scripts/utils/utils.py
@@ -18,7 +18,7 @@ deps:
 - md5: f36f0ca8580b615aafb481a82d2a3db7
   path: relextr/model/scripts/utils/batches.py
 outs:
-- md5: 46c4e8c1c3a1abd03570c628e8888cbb
+- md5: d24231f3d21ff8717d4d18e7aa3562e3
   path: metrics.txt
   cache: false
   metric: true
