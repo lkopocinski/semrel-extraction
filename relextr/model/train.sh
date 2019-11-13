@@ -23,10 +23,10 @@ dvc run \
 CUDA_VISIBLE_DEVICES=7,8,9,10 ${SCRIPTS_DIR}/train.py --data-in ${DATA_IN} \
                                                  --save-model-name 'relextr_model.pt' \
                                                  --batch-size 10 \
-                                                 --epochs 10 \
+                                                 --epochs 30 \
                                                  --tracking-uri 'http://10.17.50.132:8080' \
-                                                 --experiment-name 'no_experiment' \
-                                                 --vectorizer 'sent2vec' \
-                                                 --vectors-model ${SENT2VEC_MODEL} \
+                                                 --experiment-name 'fasttext' \
+                                                 --vectorizer 'fasttext' \
+                                                 --vectors-model ${FASTTEXT_MODEL} \
 
 popd
