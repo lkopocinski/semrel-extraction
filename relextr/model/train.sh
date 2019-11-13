@@ -26,7 +26,7 @@ CUDA_VISIBLE_DEVICES=7,8,9,10 ${SCRIPTS_DIR}/train.py --data-in ${DATA_IN} \
                                                  --epochs 10 \
                                                  --tracking-uri 'http://10.17.50.132:8080' \
                                                  --experiment-name 'no_experiment' \
-                                                 --vectorizer 'elmoconv'
-#                                                 --vectors-model '' \
+                                                 --vectorizer 'sent2vec' \
+                                                 --vectors-model ${SENT2VEC_MODEL} \
 
 popd
