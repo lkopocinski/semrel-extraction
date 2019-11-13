@@ -1,0 +1,25 @@
+md5: 2f3f2f1fe5c9bee7a50fa084e7f20051
+cmd: CUDA_VISIBLE_DEVICES=7,8,9,10 ./relextr/model/scripts/test.py --data-in ./relextr/model/dataset
+  --model-name relextr_model.pt --batch-size 20 --tracking-uri http://10.17.50.132:8080
+  --experiment-name plain
+deps:
+- md5: 5fa11f8eeedd6e44b6fa4f2c9380ab84.dir
+  path: relextr/model/dataset
+- md5: 4afd480b1af0ab169fbcddb68589e7bf
+  path: relextr/model/scripts/test.py
+- md5: c8c24e9adeb38656ea0c5ef7531e0ece
+  path: relextr/model/scripts/relnet.py
+- md5: 177bfdd323d50d4acb030a260e8c9df7
+  path: relextr/model/scripts/utils/engines.py
+- md5: 447002876ec26a168585e39afc076238
+  path: relextr/model/scripts/utils/utils.py
+- md5: b67d53ea211ad7a33258b7c7d21e180c
+  path: relextr/model/scripts/utils/metrics.py
+- md5: f36f0ca8580b615aafb481a82d2a3db7
+  path: relextr/model/scripts/utils/batches.py
+outs:
+- md5: 0abd78ca9efdbdc5b9621c4e60ca1c2a
+  path: metrics_test.txt
+  cache: false
+  metric: true
+  persist: false
