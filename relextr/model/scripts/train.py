@@ -13,10 +13,8 @@ from relnet import RelNet
 from torch.autograd import Variable
 from torch.optim import Adagrad
 
+from utils.engines import VectorizerFactory
 from utils.utils import labels2idx, is_better_fscore
-
-#import os
-#os.environ["CUDA_VISIBLE_DEVICES"]="5,6"
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(f'Runing on: {device}.')
@@ -44,7 +42,9 @@ def main(argv=None):
 
     init_mlflow(args.tracking_uri, args.experiment_name, ('files', '81, 82, 83'))
 
-    batch_loader = BatchLoader(args.batch_size)
+    engine = VectorizerFactory.get_vectorizer(args.vectorizer, args.vectors_model)
+
+    batch_loader = BatchLoader(args.batch_size, engine)
     train_set = batch_loader.load(f'{args.data_in}/train.vectors')
     valid_set = batch_loader.load(f'{args.data_in}/valid.vectors')
     test_set = batch_loader.load(f'{args.data_in}/test.vectors')

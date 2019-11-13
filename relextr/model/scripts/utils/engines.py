@@ -7,7 +7,8 @@ from wordfreq import zipf_frequency
 
 
 class VectorizerFactory:
-    def get_vectorizer(self, format, model_path):
+    @staticmethod
+    def get_vectorizer(format, model_path):
         if format == 'sent2vec':
             return Sent2VecVectorizer(model_path)
         elif format == 'fasttext':
