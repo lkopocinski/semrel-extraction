@@ -24,9 +24,9 @@ CUDA_VISIBLE_DEVICES=5,6 ${SCRIPTS_DIR}/train.py --data-in ${DATA_IN} \
                                                  --save-model-name 'relextr_model.pt' \
                                                  --batch-size 10 \
                                                  --epochs 30 \
-                                                 --vectorizer 'default' \
-                                                 --vectors-model '' \
-                                                 --tracking-uri 'http://0.0.0.0:5001' \
+                                                 --tracking-uri 'http://10.17.50.132:8080' \
                                                  --experiment-name 'no_experiment'
+                                                 #--vectorizer '' \
+                                                 #--vectors-model '' \
 
 popd

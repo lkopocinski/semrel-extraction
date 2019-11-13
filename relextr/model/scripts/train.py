@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import argparse
@@ -7,13 +7,16 @@ import argcomplete
 import mlflow
 import torch
 import torch.nn as nn
-from batches import BatchLoader
-from metrics import Metrics, save_metrics
+from utils.batches import BatchLoader
+from utils.metrics import Metrics, save_metrics
 from relnet import RelNet
 from torch.autograd import Variable
 from torch.optim import Adagrad
 
-from utils import labels2idx, is_better_fscore
+from utils.utils import labels2idx, is_better_fscore
+
+import os
+#os.environ["CUDA_VISIBLE_DEVICES"]="7"
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(f'Runing on: {device}.')
@@ -42,9 +45,9 @@ def main(argv=None):
     init_mlflow(args.tracking_uri, args.experiment_name)
 
     batch_loader = BatchLoader(args.batch_size)
-    train_set = batch_loader.load(f'{args.dataset_dir}/train.vectors')
-    valid_set = batch_loader.load(f'{args.dataset_dir}/valid.vectors')
-    test_set = batch_loader.load(f'{args.dataset_dir}/test.vectors')
+    train_set = batch_loader.load(f'{args.data_in}/train.vectors')
+    valid_set = batch_loader.load(f'{args.data_in}/valid.vectors')
+    test_set = batch_loader.load(f'{args.data_in}/test.vectors')
 
     network = RelNet(in_dim=train_set.vector_size)
     network.to(device)
@@ -81,8 +84,8 @@ def main(argv=None):
         # Fscore stopping
         if is_better_fscore(valid_metrics.fscore, best_valid_fscore):
             best_valid_fscore = valid_metrics.fscore
-            torch.save(network.state_dict(), args.model_name)
-            mlflow.log_artifact(f'./{args.model_name}', '/artifacts/model/')
+            torch.save(network.state_dict(), args.save_model_name)
+            mlflow.log_artifact(f'./{args.save_model_name}')
 
     # Test
     test_metrics = test(args.model_name, test_set.batches, test_set.vector_size, loss_func, device)

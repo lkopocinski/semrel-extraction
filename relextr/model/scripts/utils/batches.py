@@ -2,13 +2,13 @@ from functools import reduce
 
 import numpy as np
 
-from utils import Relation
+from model.models import Relation
 
 
 class Dataset:
 
     def __init__(self):
-        self.batches = None
+        self.batches = []
 
     def add(self, batch):
         self.batches.append(batch)
