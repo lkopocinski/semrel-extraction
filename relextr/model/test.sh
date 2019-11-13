@@ -25,8 +25,8 @@ CUDA_VISIBLE_DEVICES=7,8,9,10 ${SCRIPTS_DIR}/test.py --data-in ${DATA_IN} \
                                                      --model-name 'relextr_model.pt' \
                                                      --batch-size 20 \
                                                      --tracking-uri 'http://10.17.50.132:8080' \
-                                                     --experiment-name 'fasttext' \
-                                                     --vectorizer 'fasttext' \
-                                                     --vectors-model ${FASTTEXT_MODEL} \
+                                                     --experiment-name 'sent2vec' \
+                                                     --vectorizer 'sent2vec' \
+                                                     --vectors-model ${SENT2VEC_MODEL} \
 
 popd
