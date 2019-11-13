@@ -1,7 +1,7 @@
-md5: 1761fdf75d4c32120095e530db9ca381
+md5: f1fd1f9cfdaa09a76ecd54b63e092484
 cmd: CUDA_VISIBLE_DEVICES=7,8,9,10 ./relextr/model/scripts/test.py --data-in ./relextr/model/dataset
   --model-name relextr_model.pt --batch-size 20 --tracking-uri http://10.17.50.132:8080
-  --experiment-name sent2vec --vectorizer sent2vec --vectors-model ./data/sent2vec/kgr10.bin
+  --experiment-name elmoconv --vectorizer elmoconv --vectors-model " "
 deps:
 - md5: 5fa11f8eeedd6e44b6fa4f2c9380ab84.dir
   path: relextr/model/dataset
@@ -18,7 +18,7 @@ deps:
 - md5: f36f0ca8580b615aafb481a82d2a3db7
   path: relextr/model/scripts/utils/batches.py
 outs:
-- md5: 73d171130ec7090be3490adcc234ceda
+- md5: b6c6a5ccca26ca17d29d6d217d12d00e
   path: metrics_test.txt
   cache: false
   metric: true
