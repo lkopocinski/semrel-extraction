@@ -1,7 +1,7 @@
-md5: 891e5b80293eeb56bbf98760020fe60a
+md5: 9927d80c843e27ff5eb77c329b1dd446
 cmd: CUDA_VISIBLE_DEVICES=7,8,9,10 ./relextr/model/scripts/train.py --data-in ./relextr/model/dataset
   --save-model-name relextr_model.pt --batch-size 10 --epochs 30 --tracking-uri http://10.17.50.132:8080
-  --experiment-name fasttext --vectorizer fasttext --vectors-model ./data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin
+  --experiment-name sent2vec --vectorizer sent2vec --vectors-model ./data/sent2vec/kgr10.bin
 deps:
 - md5: 5fa11f8eeedd6e44b6fa4f2c9380ab84.dir
   path: relextr/model/dataset
@@ -18,12 +18,12 @@ deps:
 - md5: f36f0ca8580b615aafb481a82d2a3db7
   path: relextr/model/scripts/utils/batches.py
 outs:
-- md5: 0d76d6558660e024a00c8cddc47178d3
+- md5: 604a9d3d97ee5c3a22de954798d9455a
   path: relextr_model.pt
   cache: false
   metric: false
   persist: false
-- md5: abbccf5025b5ac3aaf77f600abebbb44
+- md5: d6979774647ff5dbc91fa3699e8888e0
   path: metrics.txt
   cache: false
   metric: true
