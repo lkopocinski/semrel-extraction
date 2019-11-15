@@ -4,6 +4,8 @@ pushd "$(git rev-parse --show-toplevel)"
 
 DATA_IN=$1
 OUTPUT_PATH=$2
+ONE_DOMAIN_OUT=$3
+
 
 mkdir -p ${OUTPUT_PATH}
 

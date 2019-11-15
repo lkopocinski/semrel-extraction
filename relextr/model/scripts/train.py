@@ -6,6 +6,7 @@ import argparse
 import argcomplete
 import mlflow
 import torch
+import yaml
 import torch.nn as nn
 from torch.autograd import Variable
 from torch.optim import Adagrad
@@ -23,28 +24,30 @@ print(f'Runing on: {device}.')
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-in', required=True, type=str, help="Directory with train, validation and test dataset.")
-    parser.add_argument('--save-model-name', required=True, type=str, help="File name for a trained model.")
-    parser.add_argument('--batch-size', required=True, type=int, help="Batch size.")
-    parser.add_argument('--epochs', required=True, type=int, help="How many epochs should the model be trained on.")
-    parser.add_argument('--vectorizer', required=False, type=str, choices={'sent2vec', 'fasttext', 'elmoconv'},
-                        help="Vectorizer method")
-    parser.add_argument('--vectors-model', required=False, type=str, help="Vectors model for vectorizer method path.")
-    parser.add_argument('--tracking-uri', required=True, type=str, help="Mlflow tracking server uri.")
-    parser.add_argument('--experiment-name', required=True, type=str, help="Mlflow tracking experiment name.")
+    parser.add_argument('--config', required=True, type=str, help="File name for a trained model.")
 
     argcomplete.autocomplete(parser)
 
     return parser.parse_args(argv)
 
 
+def parse_config(path):
+    with open(path, 'r') as stream:
+        try:
+            return yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+
+
 def main(argv=None):
     args = get_args(argv)
+    config = parse_config(args.config)
+    print(config)
+    init_mlflow(config['mlflow'])
 
-    init_mlflow(args.tracking_uri, args.experiment_name, ('domain_out', '83'))
+    engine = VectorizerFactory.get_vectorizer(config['vectorizer']['type'], config['vectorizer']['model'])
 
-    engine = VectorizerFactory.get_vectorizer(args.vectorizer, args.vectors_model)
-
-    batch_loader = BatchLoader(args.batch_size, engine)
+    batch_loader = BatchLoader(config['batch_size'], engine)
     train_set = batch_loader.load(f'{args.data_in}/train.vectors')
     valid_set = batch_loader.load(f'{args.data_in}/valid.vectors')
     test_set = batch_loader.load(f'{args.data_in}/test.vectors')
@@ -68,7 +71,7 @@ def main(argv=None):
 
     best_valid_fscore = (0.0, 0.0)
 
-    for epoch in range(args.epochs):
+    for epoch in range(config['epochs']):
         print(f'\nEpoch: {epoch} / {args.epochs}')
 
         # Train
@@ -84,8 +87,8 @@ def main(argv=None):
         # Fscore stopping
         if is_better_fscore(valid_metrics.fscore, best_valid_fscore):
             best_valid_fscore = valid_metrics.fscore
-            torch.save(network.state_dict(), args.save_model_name)
-            mlflow.log_artifact(f'./{args.save_model_name}')
+            torch.save(network.state_dict(), config["model"]["name"])
+            mlflow.log_artifact(f'./{config["model"]["name"]}')
 
     # Test
     test_metrics = test(args.save_model_name, test_set.batches, test_set.vector_size, loss_func, device)
@@ -94,14 +97,15 @@ def main(argv=None):
     log_metrics(test_metrics, 0, 'test')
 
 
-def init_mlflow(uri, experiment, tag):
-    mlflow.set_tracking_uri(uri)
-    mlflow.set_experiment(experiment)
-    mlflow.set_tag(key=tag[0], value=tag[1])
-    print(f'-- mlflow --'
+def init_mlflow(config):
+    mlflow.set_tracking_uri(config['tracking_uri'])
+    mlflow.set_experiment(config['experiment_name'])
+    mlflow.set_tags(config['tags'])
+
+    print(f'\n-- mlflow --'
           f'\nserver: {mlflow.get_tracking_uri()}'
-          f'\nexperiment: {experiment}'
-          f'\ntag: {tag[0]} - {tag[1]}')
+          f'\nexperiment: {config["experiment_name"]}'
+          f'\ntag: {config["tags"]}')
 
 
 def log_metrics(metrics, step, prefix):
