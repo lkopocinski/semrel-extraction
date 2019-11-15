@@ -6,8 +6,8 @@ import argparse
 import argcomplete
 import mlflow
 import torch
-import yaml
 import torch.nn as nn
+import yaml
 from torch.autograd import Variable
 from torch.optim import Adagrad
 
@@ -16,10 +16,6 @@ from utils.batches import BatchLoader
 from utils.engines import VectorizerFactory
 from utils.metrics import Metrics, save_metrics
 from utils.utils import labels2idx, is_better_fscore
-
-print("\n\n\n----------")
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-print(f'Runing on: {device}.')
 
 
 def get_args(argv=None):
@@ -32,21 +28,16 @@ def get_args(argv=None):
     return parser.parse_args(argv)
 
 
-def parse_config(path):
-    with open(path, 'r', encoding='utf-8') as stream:
-        try:
-            return yaml.safe_load(stream)
-        except yaml.YAMLError as exc:
-            print(exc)
-
-
 def main(argv=None):
+    device = get_device()
     args = get_args(argv)
     config = parse_config(args.config)
-    print(config)
     init_mlflow(config['mlflow'])
 
-    engine = VectorizerFactory.get_vectorizer(config['vectorizer']['type'], config['vectorizer']['model'])
+    engine = VectorizerFactory.get_vectorizer(
+        format=config['vectorizer']['type'],
+        model_path=config['vectorizer']['model']
+    )
 
     batch_loader = BatchLoader(config['batch_size'], engine)
     train_set = batch_loader.load(f'{args.data_in}/train.vectors')
@@ -60,12 +51,12 @@ def main(argv=None):
 
     # Log learning params
     mlflow.log_params({
-        'batch_size': args.batch_size,
+        'batch_size': config['batch_size'],
         'train_set_size': train_set.size,
         'valid_set_size': valid_set.size,
         'test_set_size': test_set.size,
         'vector_size': train_set.vector_size,
-        'epochs': args.epochs,
+        'epochs': config['epochs'],
         'optimizer': optimizer.__class__.__name__,
         'loss_function': loss_func.__class__.__name__
     })
@@ -73,7 +64,7 @@ def main(argv=None):
     best_valid_fscore = (0.0, 0.0)
 
     for epoch in range(config['epochs']):
-        print(f'\nEpoch: {epoch} / {args.epochs}')
+        print(f'\nEpoch: {epoch} / {config["epochs"]}')
 
         # Train
         train_metrics = train(network, optimizer, loss_func, train_set.batches, device)
@@ -92,10 +83,24 @@ def main(argv=None):
             mlflow.log_artifact(f'./{config["model"]["name"]}')
 
     # Test
-    test_metrics = test(args.save_model_name, test_set.batches, test_set.vector_size, loss_func, device)
+    test_metrics = test(config['model']['name'], test_set.batches, test_set.vector_size, loss_func, device)
     print(f'\n\nTest: {test_metrics}')
     save_metrics(test_metrics, 'metrics.txt')
     log_metrics(test_metrics, 0, 'test')
+
+
+def get_device():
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    print(f'Runing on: {device}.')
+    return device
+
+
+def parse_config(path):
+    with open(path, 'r', encoding='utf-8') as stream:
+        try:
+            return yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
 
 
 def init_mlflow(config):

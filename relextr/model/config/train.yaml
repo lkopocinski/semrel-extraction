@@ -8,7 +8,8 @@ mlflow:
   tracking_uri: 'http://10.17.50.132:8080'
   experiment_name: 'elmoconv'
   tags:
-    domain_out: 83
+    files: 81, 82, 83
+#    domain_out: 83
 
 vectorizer:
   type: 'elmoconv'
