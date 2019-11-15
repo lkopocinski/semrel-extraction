@@ -16,8 +16,8 @@ mkdir -p ${OUTPUT_PATH}
 #done
 
 
-domain_out=83
-declare -a domains=("81" "82")
+domain_out=82
+declare -a domains=("83" "81")
 for domain in "${domains[@]}"
 do
 	cat ${DATA_IN}/train/positive/${domain}.vectors >> ${OUTPUT_PATH}/train.vectors

@@ -38,7 +38,7 @@ def get_args(argv=None):
 def main(argv=None):
     args = get_args(argv)
 
-    init_mlflow(args.tracking_uri, args.experiment_name, tag=('files', '81, 82,83'))
+    init_mlflow(args.tracking_uri, args.experiment_name, tag=('domain_out',  '82'))
 
     engine = VectorizerFactory.get_vectorizer(args.vectorizer, args.vectors_model)
 
