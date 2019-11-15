@@ -6,7 +6,7 @@ A project focused on mining semantic relations.
 +-- .dvc : contains config for Data Version Control   
 +-- data : contains all dataset, transformed data, vector models and data preparation pipeline scripts  
 |           nr_*.sh are scripts with DVC pipeline command  
-|   +-- scripts : scripts used to prepare data, called by .sh pipeline scripts  
+|&nbsp;&nbsp;&nbsp;&nbsp;+-- scripts : scripts used to prepare data, called by .sh pipeline scripts  
 +-- docker : contains Docker file for entire project environment (not finished)  
 +-- relextr : contains training and testing scripts  
 |               train.sh, test.sh - last scripts in DVC pipeline  
