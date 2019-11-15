@@ -6,9 +6,7 @@ pushd "$(git rev-parse --show-toplevel)"
 
 DATA_IN="./relextr/model/dataset"
 SCRIPTS_DIR="./relextr/model/scripts"
-
-SENT2VEC_MODEL="./data/sent2vec/kgr10.bin"
-FASTTEXT_MODEL="./data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin"
+CONFIG="./relextr/model/config/train.yaml"
 
 dvc run \
 -d ${DATA_IN} \
@@ -18,16 +16,10 @@ dvc run \
 -d ${SCRIPTS_DIR}/utils/utils.py \
 -d ${SCRIPTS_DIR}/utils/metrics.py \
 -d ${SCRIPTS_DIR}/utils/batches.py \
--O relextr_model.pt \
+-d ${CONFIG} \
 -M metrics.txt \
 -f train.dvc \
 CUDA_VISIBLE_DEVICES=7,8,9,10 ${SCRIPTS_DIR}/train.py --data-in ${DATA_IN} \
-                                                 --save-model-name 'relextr_model.pt' \
-                                                 --batch-size 10 \
-                                                 --epochs 100 \
-                                                 --tracking-uri 'http://10.17.50.132:8080' \
-                                                 --experiment-name 'elmoconv' \
-                                                 --vectorizer 'elmoconv' \
-                                                 --vectors-model ' ' \
+                                                      --config ${CONFIG}
 
 popd
