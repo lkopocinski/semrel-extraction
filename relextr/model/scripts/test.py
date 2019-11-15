@@ -45,7 +45,7 @@ def main(argv=None):
     test_set = batch_loader.load(f'{args.data_in}/test.vectors')
 
     network = RelNet(in_dim=test_set.vector_size)
-    network.load(args.model_name)
+    network.load(config['model']['name'])
     network.to(device)
     loss_func = nn.CrossEntropyLoss()
 
