@@ -1,7 +1,7 @@
 # Semrel Extraction
 A project focused on mining semantic relations.
 
-### Package tree
+## Package tree
 
 +-- .dvc : contains config for Data Version Control   
 +-- data : contains all dataset, transformed data, vector models and data preparation pipeline scripts nr_*.sh are scripts with DVC pipeline command  
@@ -12,5 +12,35 @@ A project focused on mining semantic relations.
 |&nbsp;&nbsp;&nbsp;&nbsp;+-- model : contains code with neural network architecture, train, test scripts and utils for them  
 |&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;+-- config : contains config used as parametrization for train and test scripts, change in this file will impact dvc pipeline  
 |&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;+-- scripts : scripts  
-|&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;+-- model :  POJO classes
+|&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;+-- model :  POJO classes  
 |&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;+-- utils : batches.py - batch loader, engines.py - implementation of different type of vectorizers, metrics.py - metrics holder  
+
+## Frameworks
+To mage the project with ease consider familiarize with [DVC](https://dvc.org/doc) and [mlflow](https://mlflow.org/docs/latest/index.html) frameworks.  
+
+## FAQ
+
+#### Where is data stored?
+Data is verisioned by DVC which works like a git. All data is stored on the remote storage (https://minio.clarin-pl.eu/minio/semrel/) in semrel bucket.
+To retrieve data execute:  
+
+$ git checkout [branch_name]  
+$ git dvc checkout  
+
+DVC will download all data related to actual commit.  
+
+#### How to train and test a model?
+Make changes in config [train.yaml, test.yaml] or any other dependent script. Do not forget to pass apropriate experiment_name. Then in main repository directory execute:  
+
+$ dvc repro train.dvc  
+$ dvc repro test.dvc  
+
+Result will be automaticaly uploaded to mlflow server and visible at http://10.17.50.132:8080/  
+
+#### Do I need to setup anything on my machine?
+Yes, to make mlflow work properly set environment variable:  
+export MLFLOW_S3_ENDPOINT_URL=https://minio.clarin-pl.eu
+
+echo "[default]" > ~/.aws/credentials
+echo "aws_access_key_id = access_key" >> ~/.aws/credentials
+echo "aws_secret_access_key = secret_key" >> ~/.aws/credentials
