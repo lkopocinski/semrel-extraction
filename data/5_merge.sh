@@ -14,6 +14,6 @@ dvc run \
 -d ${DATA_IN} \
 -d ${SCRIPTS_DIR}/merge.sh \
 -o ${OUTPUT_PATH} \
-${SCRIPTS_DIR}/merge.sh ${DATA_IN} ${OUTPUT_PATH}
+${SCRIPTS_DIR}/merge.sh ${DATA_IN} ${OUTPUT_PATH} "domain_out"
 
 popd
