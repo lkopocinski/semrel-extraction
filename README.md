@@ -38,9 +38,12 @@ $ dvc repro test.dvc
 Result will be automaticaly uploaded to mlflow server and visible at http://10.17.50.132:8080/  
 
 #### Do I need to setup anything on my machine?
-Yes, to make mlflow work properly set environment variable:  
+Yes, to make mlflow log artifacts properly set environment variable:  
 export MLFLOW_S3_ENDPOINT_URL=https://minio.clarin-pl.eu
 
-echo "[default]" > ~/.aws/credentials
-echo "aws_access_key_id = access_key" >> ~/.aws/credentials
-echo "aws_secret_access_key = secret_key" >> ~/.aws/credentials
+and add config file:
+
+echo "[default]" > ~/.aws/credentials  
+echo "aws_access_key_id = access_key" >> ~/.aws/credentials  
+echo "aws_secret_access_key = secret_key" >> ~/.aws/credentials  
+
