@@ -21,7 +21,7 @@ from utils.utils import labels2idx, is_better_fscore
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-in', required=True, type=str, help="Directory with train, validation and test dataset.")
-    parser.add_argument('--config', required=True, type=str, help="File name for a trained model.")
+    parser.add_argument('--config', required=True, type=str, help="Config file path")
 
     argcomplete.autocomplete(parser)
 
@@ -34,12 +34,12 @@ def main(argv=None):
     config = parse_config(args.config)
     init_mlflow(config['mlflow'])
 
-    engine = VectorizerFactory.get_vectorizer(
+    vectorizer = VectorizerFactory.get_vectorizer(
         format=config['vectorizer']['type'],
         model_path=config['vectorizer']['model']
     )
 
-    batch_loader = BatchLoader(config['batch_size'], engine)
+    batch_loader = BatchLoader(config['batch_size'], vectorizer)
     train_set = batch_loader.load(f'{args.data_in}/train.vectors')
     valid_set = batch_loader.load(f'{args.data_in}/valid.vectors')
     test_set = batch_loader.load(f'{args.data_in}/test.vectors')
