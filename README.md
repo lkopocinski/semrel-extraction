@@ -21,7 +21,7 @@ To mage the project with ease consider familiarize with [DVC](https://dvc.org/do
 ## FAQ
 
 #### Where is data stored?
-Data is verisioned by DVC which works like a git. All data is stored on the remote storage (https://minio.clarin-pl.eu/minio/semrel/) in semrel bucket.
+Data is verisioned by DVC which works like a git. All data is stored on the remote storage (https://minio.clarin-pl.eu/minio/semrel/) in dvc folder.
 To retrieve data execute:  
 
 $ git checkout [branch_name]  
