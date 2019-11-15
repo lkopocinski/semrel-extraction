@@ -6,6 +6,7 @@ import argparse
 import argcomplete
 import mlflow
 import torch
+import yaml
 import torch.nn as nn
 from torch.autograd import Variable
 
@@ -22,13 +23,7 @@ print(f'Runing on: {device}.')
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-in', required=True, type=str, help="Directory with test dataset.")
-    parser.add_argument('--model-name', required=True, type=str, help="Load pre-trained model.")
-    parser.add_argument('--batch-size', required=True, type=int, help="Batch size.")
-    parser.add_argument('--vectorizer', required=False, type=str, choices={'sent2vec', 'fasttext', 'elmoconv'},
-                        help="Vectorizer method")
-    parser.add_argument('--vectors-model', required=False, type=str, help="Vectors model for vectorizer method path.")
-    parser.add_argument('--tracking-uri', required=True, type=str, help="Mlflow tracking server uri.")
-    parser.add_argument('--experiment-name', required=True, type=str, help="Mlflow tracking experiment name.")
+    parser.add_argument('--config', required=True, type=str, help="Config file path.")
 
     argcomplete.autocomplete(parser)
 
@@ -36,15 +31,18 @@ def get_args(argv=None):
 
 
 def main(argv=None):
+    device = get_device()
     args = get_args(argv)
+    config = parse_config(args.config)
+    init_mlflow(config['mlflow'])
 
-    init_mlflow(args.tracking_uri, args.experiment_name, tag=('domain_out',  '82'))
+    vectorizer = VectorizerFactory.get_vectorizer(
+        format=config['vectorizer']['type'],
+        model_path=config['vectorizer']['model']
+    )
 
-    engine = VectorizerFactory.get_vectorizer(args.vectorizer, args.vectors_model)
-
-    batch_loader = BatchLoader(args.batch_size, engine)
-    test_set = batch_loader.load(f'{args.data_in}/test.vectors_')
-    print(test_set.vector_size)
+    batch_loader = BatchLoader(config['batch_size'], vectorizer)
+    test_set = batch_loader.load(f'{args.data_in}/test.vectors')
 
     network = RelNet(in_dim=test_set.vector_size)
     network.load(args.model_name)
@@ -53,7 +51,7 @@ def main(argv=None):
 
     # Log learning params
     mlflow.log_params({
-        'batch_size': args.batch_size,
+        'batch_size': config['batch_size'],
         'test_set_size': test_set.size,
         'vector_size': test_set.vector_size,
         'loss_function': loss_func.__class__.__name__
@@ -65,14 +63,29 @@ def main(argv=None):
     log_metrics(metrics)
 
 
-def init_mlflow(uri, experiment, tag):
-    mlflow.set_tracking_uri(uri)
-    mlflow.set_experiment(experiment)
-    mlflow.set_tag(key=tag[0], value=tag[1])
-    print(f'-- mlflow --'
+def get_device():
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    print(f'Runing on: {device}.')
+    return device
+
+
+def parse_config(path):
+    with open(path, 'r', encoding='utf-8') as stream:
+        try:
+            return yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+
+
+def init_mlflow(config):
+    mlflow.set_tracking_uri(config['tracking_uri'])
+    mlflow.set_experiment(config['experiment_name'])
+    mlflow.set_tags(config['tags'])
+
+    print(f'\n-- mlflow --'
           f'\nserver: {mlflow.get_tracking_uri()}'
-          f'\nexperiment: {experiment}'
-          f'\ntag: {tag[0]} - {tag[1]}')
+          f'\nexperiment: {config["experiment_name"]}'
+          f'\ntag: {config["tags"]}')
 
 
 def log_metrics(metrics):
