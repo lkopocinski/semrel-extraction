@@ -1,12 +1,12 @@
 batch_size: 10
-epochs: 100
+epochs: 10
 
 model:
   name: 'relextr_model.pt'
 
 mlflow:
   tracking_uri: 'http://10.17.50.132:8080'
-  experiment_name: 'elmoconv'
+  experiment_name: 'no_exp'
   tags:
     files: 81, 82, 83
 #    domain_out: 83
