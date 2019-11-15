@@ -35,7 +35,8 @@ Make changes in config [train.yaml, test.yaml] or any other dependent script. Do
 $ dvc repro train.dvc  
 $ dvc repro test.dvc  
 
-Result will be automaticaly uploaded to mlflow server and visible at http://10.17.50.132:8080/  
+Result will be automaticaly uploaded to mlflow server and visible at http://10.17.50.132:8080/ 
+Please commit files after each successful run as *.dvc metrics and model will change.  
 
 #### Do I need to setup anything on my machine?
 Yes, to make mlflow log artifacts properly set environment variable:  
