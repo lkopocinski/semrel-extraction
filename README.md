@@ -39,11 +39,11 @@ Result will be automaticaly uploaded to mlflow server and visible at http://10.1
 Please commit files after each successful run as *.dvc metrics and model will change.  
 
 #### Do I need to setup anything on my machine?
-Yes, to make mlflow log artifacts properly set environment variable:  
-export MLFLOW_S3_ENDPOINT_URL=https://minio.clarin-pl.eu  
-otherwise mlflow try to ping orginal Amazon S3 storage.  
+Yes, to make mlflow log artifacts properly set environment variable otherwise mlflow try to ping orginal Amazon S3 storage.  
 
-and add config file:
+export MLFLOW_S3_ENDPOINT_URL=https://minio.clarin-pl.eu  
+
+add also config file:
 
 echo "[default]" > ~/.aws/credentials  
 echo "aws_access_key_id = access_key" >> ~/.aws/credentials  
