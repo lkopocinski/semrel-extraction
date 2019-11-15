@@ -18,6 +18,7 @@ dvc run \
 -d ${SCRIPTS_DIR}/utils/utils.py \
 -d ${SCRIPTS_DIR}/utils/metrics.py \
 -d ${SCRIPTS_DIR}/utils/batches.py \
+-d ./relextr/model/train.sh \
 -O relextr_model.pt \
 -M metrics.txt \
 -f train.dvc \
