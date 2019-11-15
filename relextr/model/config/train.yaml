@@ -1,0 +1,17 @@
+batch_size: 10
+epochs: 100
+
+model:
+  name: 'relextr_model.pt'
+
+mlflow:
+  tracking_uri: 'http://10.17.50.132:8080'
+  experiment_name: 'elmoconv'
+  - tags:
+      domain_out: 83
+
+vectorizer:
+  type: 'elmoconv'
+  model: ''
+#  model: './data/sent2vec/kgr10.bin'
+#  model: './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
