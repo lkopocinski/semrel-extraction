@@ -30,7 +30,7 @@ $ git dvc checkout
 DVC will download all data related to actual commit.  
 
 #### How to train and test a model?
-Make changes in config [train.yaml, test.yaml] or any other dependent script. Do not forget to pass apropriate experiment_name. Then in main repository directory execute:  
+Make changes in config [train.yaml, test.yaml] or any other dependent script. Do not forget to pass apropriate experiment_name and tags. Then in main repository directory execute:  
 
 $ dvc repro train.dvc  
 $ dvc repro test.dvc  
