@@ -47,7 +47,7 @@ RUN wget -O - http://download.sgjp.pl/apt/sgjp.gpg.key|sudo apt-key add - && \
     apt install -y *morfeusz2*
 
 WORKDIR /home/install
-RUN mksdir morfeusz/ && cd morfeusz/ && \
+RUN mkdir morfeusz/ && cd morfeusz/ && \
     wget http://tools.clarin-pl.eu/share/morfeusz-SGJP-linux64-20130413.tar.bz2 && \
     tar -jxvf morfeusz-SGJP-linux64-20130413.tar.bz2 && \
     mv libmorfeusz* /usr/local/lib/ && \
@@ -89,7 +89,6 @@ RUN git clone http://nlp.pwr.edu.pl/toki.git && \
 WORKDIR /home/install
 RUN git clone https://gitlab.clarin-pl.eu/analysers/maca.git && \
     cd maca && \
-    git checkout --track origin/lkopocinski-add-cmake-cpp11-support && \
     mkdir bin && \
     cd bin && \
     cmake .. && \
@@ -128,17 +127,17 @@ RUN mkdir crfpp && \
     rm -rf crfpp
 
 # Wcrft2
-#WORKDIR /home/install
-#RUN git clone http://nlp.pwr.edu.pl/wcrft2.git && \
-#    cd wcrft2/ && \
-#    mkdir bin && \
-#    cd bin/ && \
-#    cmake .. && \
-#    make -j && \
-#    make install && \
-#    ldconfig && \
-#    cd /home/install && \
-#    rm -rf wcrft2
+WORKDIR /home/install
+RUN git clone http://nlp.pwr.edu.pl/wcrft2.git && \
+    cd wcrft2/ && \
+    mkdir bin && \
+    cd bin/ && \
+    cmake .. && \
+    make -j && \
+    make install && \
+    ldconfig && \
+    cd /home/install && \
+    rm -rf wcrft2
 
 
 RUN locale-gen en_US.UTF-8

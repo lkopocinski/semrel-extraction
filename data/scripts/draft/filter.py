@@ -9,8 +9,6 @@ with open('../../../relextr/model/dataset/valid.vectors') as in_file:
             elif by_tab[7] == 'BRAND_NAME':
                 brands.add(by_tab[6])
 
-print('\n', brands)
-brands = set()
 
 with open('../../../relextr/model/dataset/train.vectors') as in_file:
     for line in in_file:
