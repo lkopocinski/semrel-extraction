@@ -17,6 +17,7 @@ from utils.engines import VectorizerFactory
 from utils.metrics import Metrics, save_metrics
 from utils.utils import labels2idx, is_better_fscore
 
+print("\n\n\n----------")
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(f'Runing on: {device}.')
 
@@ -32,7 +33,7 @@ def get_args(argv=None):
 
 
 def parse_config(path):
-    with open(path, 'r') as stream:
+    with open(path, 'r', encoding='utf-8') as stream:
         try:
             return yaml.safe_load(stream)
         except yaml.YAMLError as exc:
