@@ -24,7 +24,7 @@ dvc run \
 CUDA_VISIBLE_DEVICES=7,8,9,10 ${SCRIPTS_DIR}/train.py --data-in ${DATA_IN} \
                                                  --save-model-name 'relextr_model.pt' \
                                                  --batch-size 10 \
-                                                 --epochs 30 \
+                                                 --epochs 100 \
                                                  --tracking-uri 'http://10.17.50.132:8080' \
                                                  --experiment-name 'elmoconv' \
                                                  --vectorizer 'elmoconv' \
