@@ -112,33 +112,6 @@ RUN git clone http://nlp.pwr.edu.pl/wccl.git && \
     cd /home/install && \
     rm -rf wccl
 
-# Crfpp
-WORKDIR /home/install
-RUN mkdir crfpp && \
-    cd crfpp/ && \
-    wget http://tools.clarin-pl.eu/share/CRF++-0.58.tar.gz && \
-    tar -xvzf CRF++-0.58.tar.gz && \
-    cd CRF++-0.58 && \
-    ./configure && \
-    make -j && \
-    make install && \
-    ldconfig && \
-    cd /home/install && \
-    rm -rf crfpp
-
-# Wcrft2
-WORKDIR /home/install
-RUN git clone http://nlp.pwr.edu.pl/wcrft2.git && \
-    cd wcrft2/ && \
-    mkdir bin && \
-    cd bin/ && \
-    cmake .. && \
-    make -j && \
-    make install && \
-    ldconfig && \
-    cd /home/install && \
-    rm -rf wcrft2
-
 
 RUN locale-gen en_US.UTF-8
 ENV LANG C.UTF-8
