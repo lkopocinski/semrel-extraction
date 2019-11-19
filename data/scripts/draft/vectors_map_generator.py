@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
 from pathlib import Path
 
-from utils.corpus import corpora_files, load_document
+from corpus_ccl import cclutils
 
 
 def get_args(argv=None):
@@ -12,15 +13,24 @@ def get_args(argv=None):
     return parser.parse_args(argv)
 
 
+def load_documents(fileindex):
+    with open(fileindex, 'r', encoding='utf-8') as f:
+        for line in f:
+            filepath = line.strip()
+            if not os.path.exists(filepath):
+                continue
+            cclpath = filepath.replace('rel.xml', '.xml')
+            relpath = filepath
+            yield cclutils.read_ccl_and_rel_ccl(cclpath, relpath)
+
+
 def get_doc_id(document):
     ccl_path, rel_path = document.path().split(';')
     return Path(ccl_path).stem
 
 
 def create_map(list_file):
-    for corpora_file, relations_file in corpora_files(list_file):
-        document = load_document(corpora_file, relations_file)
-
+    for document in load_documents(list_file):
         for paragraph in document.paragraphs():
             for sentence in paragraph.sentences():
                 id_doc = get_doc_id(document)
