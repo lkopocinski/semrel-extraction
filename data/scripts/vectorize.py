@@ -52,7 +52,7 @@ def create_vectors(elmo, elmo_conv, path, relation_type):
             vector_conv_from = elmo_conv.embedd(relation.source)
             vector_conv_to = elmo_conv.embedd(relation.dest)
 
-            yield f'{relation_type}\t{vector_from}\t{vector_to}\t{relation.source}\t{relation.dest}\t{vector_conv_from}\t{vector_conv_to}'
+            yield f'{relation_type}\t{vector_from}\t{vector_to}\t{relation.source}\t{relation.dest}\t{vector_conv_from}\t{vector_conv_to}\t{relation.source.ne}\t{relation.dest.ne}'
 
 
 if __name__ == "__main__":

@@ -90,3 +90,9 @@ class ElmoConvolutionEngine(Vectorizer):
 
     def make_vectors(self, relation):
         return relation.source.conv_vector, relation.dest.conv_vector
+
+
+class NamedEntityEngine(Vectorizer):
+
+    def make_vectors(self, relation):
+        return float(relation.source.ne), float(relation.dest.ne)
