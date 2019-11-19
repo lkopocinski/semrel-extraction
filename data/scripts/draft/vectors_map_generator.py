@@ -19,8 +19,8 @@ def load_documents(fileindex):
             filepath = line.strip()
             if not os.path.exists(filepath):
                 continue
-            cclpath = filepath.replace('rel.xml', '.xml')
-            relpath = filepath
+            cclpath = filepath
+            relpath = filepath.replace('.xml', '.rel.xml')
             yield cclutils.read_ccl_and_rel_ccl(cclpath, relpath)
 
 
