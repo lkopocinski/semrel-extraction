@@ -49,6 +49,7 @@ def get_relation_element(rel, sentences):
     context = get_context(sent)
     lemma = get_lemma(sent, indices[0])
     ne = is_ne(sent, indices[0])
+
     return Relation.Element(lemma, channel_name, indices, context, ne)
 
 
@@ -70,7 +71,8 @@ def get_lemma(sent, idx):
 
 
 def is_ne(sent, idx):
-    return int([tou.get_attribute(token, 'NE', default=0) for token in sent.tokens()][idx]) != 0
+    val = int([tou.get_attribute(token, 'NE', default=0) for token in sent.tokens()][idx])
+    return 1.0 if val > 0 else 0.0
 
 
 def get_nouns_idx(sent):

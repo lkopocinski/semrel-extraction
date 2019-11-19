@@ -56,9 +56,9 @@ def generate_negative(list_file, channels):
                         relation, t_element.context, f_element.context)
 
                     for f_idx in f_indices:
-                        relidxs[(f_sent_id, f_idx)] = (f_indices, f_element.channel)
+                        relidxs[(f_sent_id, f_idx)] = (f_indices, f_element.channel, f_element.ne)
                     for t_idx in t_indices:
-                        relidxs[(t_sent_id, t_idx)] = (t_indices, t_element.channel)
+                        relidxs[(t_sent_id, t_idx)] = (t_indices, t_element.channel, t_element.ne)
 
         for rel, rel_value in relations.items():
             relation, f_context, t_context = rel_value
@@ -74,17 +74,19 @@ def generate_negative(list_file, channels):
 
             for f_idx, t_idx in generator:
                 try:
-                    _f_idxs, _f_channel_name = relidxs[(f_sent_id, f_idx)]
+                    _f_idxs, _f_channel_name, _f_ne = relidxs[(f_sent_id, f_idx)]
                 except KeyError:
                     _f_idxs = None
                     _f_channel_name = ''
+                    _f_ne = 0
                     pass
 
                 try:
-                    _t_idxs, _t_channel_name = relidxs[(t_sent_id, t_idx)]
+                    _t_idxs, _t_channel_name, _t_ne = relidxs[(t_sent_id, t_idx)]
                 except KeyError:
                     _t_idxs = None
                     _t_channel_name = ''
+                    _t_ne = 0
                     pass
 
                 if _t_idxs and _f_idxs:
@@ -93,6 +95,6 @@ def generate_negative(list_file, channels):
 
                 f_lemma = get_lemma(sentences[f_sent_id], f_idx)
                 t_lemma = get_lemma(sentences[t_sent_id], t_idx)
-                source = Relation.Element(f_lemma, _f_channel_name, [f_idx], f_context)
-                target = Relation.Element(t_lemma, _t_channel_name, [t_idx], t_context)
+                source = Relation.Element(f_lemma, _f_channel_name, [f_idx], f_context, _f_ne)
+                target = Relation.Element(t_lemma, _t_channel_name, [t_idx], t_context, _t_ne)
                 yield Relation(source, target)

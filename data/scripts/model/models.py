@@ -19,8 +19,8 @@ class Relation:
         index_dest, context_dest = row[3].split(':', 1)
         ne_source, ne_dest = row[4].split(':', 1)
 
-        source = cls.Element(lemma_source, channel_source, [int(index_source)], eval(context_source), ne_source)
-        dest = cls.Element(lemma_dest, channel_dest, [int(index_dest)], eval(context_dest), ne_dest)
+        source = cls.Element(lemma_source, channel_source, [int(index_source)], eval(context_source), int(ne_source))
+        dest = cls.Element(lemma_dest, channel_dest, [int(index_dest)], eval(context_dest), int(ne_dest))
         return cls(source, dest)
 
     def __str__(self):
@@ -28,10 +28,10 @@ class Relation:
             f'\t{self.source.channel} : {self.dest.channel}' \
             f'\t{self.source.start_idx}:{self.source.context}' \
             f'\t{self.dest.start_idx}:{self.dest.context}' \
-            f'\t{self.dest.ne}:{self.dest.ne}'
+            f'\t{self.source.ne}:{self.dest.ne}'
 
     class Element:
-        def __init__(self, lemma: str, channel: str, indices: List[int], context: List[str], ne: bool):
+        def __init__(self, lemma: str, channel: str, indices: List[int], context: List[str], ne: int):
             self.lemma = lemma
             self.channel = channel
             self.indices = indices
