@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 
 import argparse
-import collections
 import os
+import sys
 from pathlib import Path
 
+import numpy as np
+from allennlp.modules.elmo import Elmo, batch_to_ids
 from corpus_ccl import cclutils
 
-from utils.embedd import ElmoEmb
-
-EmbeddArgs = collections.namedtuple('EmbeddArgs', 'start_idx context')
+np.set_printoptions(threshold=sys.maxsize)
 
 
 def get_args(argv=None):
@@ -36,6 +36,14 @@ def get_doc_id(document):
     return Path(ccl_path).stem
 
 
+def embedd(idx, context, elmo):
+    character_ids = batch_to_ids([context])
+    embeddings = elmo(character_ids)
+    v = embeddings['elmo_representations'][0].data.numpy()
+    value = v[:, idx, :].flatten()
+    return np.array2string(value, separator=', ').replace('\n', '')
+
+
 def create_map(list_file, elmo):
     for document in load_documents(list_file):
         for paragraph in document.paragraphs():
@@ -46,13 +54,13 @@ def create_map(list_file, elmo):
 
                 for id_tok, token in enumerate(sentence.tokens()):
                     orth = token.orth_utf8()
-                    vector = elmo.embedd(EmbeddArgs(id_tok, context))
+                    vector = embedd(id_tok, context, elmo)
                     print(f'{id_doc}\t{id_sent}\t{id_tok}\t{orth}\t{vector}')
 
 
 def main(argv=None):
     args = get_args(argv)
-    elmo = ElmoEmb(args.options, args.weights)
+    elmo = Elmo(args.options, args.weights, 1, dropout=0)
     create_map(args.indexfiles, elmo)
 
 
