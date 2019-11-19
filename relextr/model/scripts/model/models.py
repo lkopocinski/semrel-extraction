@@ -20,6 +20,7 @@ class Relation:
         index_from, context_from = by_tab[5].split(':', 1)
         index_to, context_to = by_tab[8].split(':', 1)
         conv_vector_from, conv_vector_to = np.array(eval(by_tab[9])), np.array(eval(by_tab[10]))
+        ne_from, ne_to = eval(by_tab[11]), eval(by_tab[12])
 
         context_from = eval(context_from)
         context_to = eval(context_to)
@@ -27,8 +28,8 @@ class Relation:
         index_from = int(index_from)
         index_to = int(index_to)
 
-        self._from = self.Element(vector_from, lemma_from, channel_from, index_from, context_from, conv_vector_from)
-        self._to = self.Element(vector_to, lemma_to, channel_to, index_to, context_to, conv_vector_to)
+        self._from = self.Element(vector_from, lemma_from, channel_from, index_from, context_from, conv_vector_from, ne_from)
+        self._to = self.Element(vector_to, lemma_to, channel_to, index_to, context_to, conv_vector_to, ne_to)
 
     @property
     def source(self):
@@ -39,10 +40,11 @@ class Relation:
         return self._to
 
     class Element:
-        def __init__(self, vector, lemma, channel, index, context, conv_vector):
+        def __init__(self, vector, lemma, channel, index, context, conv_vector, ne):
             self.vector = vector
             self.lemma = lemma
             self.channel = channel
             self.index = index
             self.context = context
             self.conv_vector = conv_vector
+            self.ne = ne
