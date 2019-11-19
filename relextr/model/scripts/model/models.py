@@ -1,6 +1,7 @@
 import numpy as np
 
-class Relation:
+
+class RelationVec:
 
     def __init__(self, line):
         self.line = line

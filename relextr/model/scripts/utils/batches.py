@@ -2,7 +2,7 @@ from functools import reduce
 
 import numpy as np
 
-from model.models import Relation
+from relextr.model.scripts.model.models import RelationVec
 
 
 class Dataset:
@@ -34,7 +34,7 @@ class BatchLoader:
             batch = []
             for idx, line in enumerate(in_file, 1):
                 try:
-                    relation = Relation(line)
+                    relation = RelationVec(line)
                     vectors = [relation.source.vector, relation.dest.vector]
 
                     if self.vectors_engine:

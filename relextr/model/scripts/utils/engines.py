@@ -18,6 +18,8 @@ class VectorizerFactory:
             return FastTextVectorizer(model_path)
         elif format == 'elmoconv':
             return ElmoConvolutionEngine()
+        elif format == 'ner':
+            return NamedEntityEngine()
         else:
             raise ValueError(format)
 
