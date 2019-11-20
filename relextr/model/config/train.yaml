@@ -9,8 +9,13 @@ mlflow:
   experiment_name: 'ner'
   tags:
     files: 81, 82, 83
+    method: plain
 #    domain_out: 83
 
+vectorizer:
+  type: ''
+  model: ''
+#
 #vectorizer:
 #  type: 'sent2vec'
 #  model: './data/sent2vec/kgr10.bin'
@@ -23,6 +28,6 @@ mlflow:
 #  type: 'elmoconv'
 #  model: ''
 
-vectorizer:
-  type: 'ner'
-  model: ''
+#vectorizer:
+#  type: 'ner'
+#  model: ''
