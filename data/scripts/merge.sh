@@ -10,8 +10,8 @@ mkdir -p ${OUTPUT_PATH}
 
 if [[ ${MODE} == "one_out" ]]; then
 
-    domain_out=83
-    for domain in 81 82
+    domain_out=82
+    for domain in 81 83
     do
         cat ${DATA_IN}/train/positive/${domain}.vectors >> ${OUTPUT_PATH}/train.vectors
         cat ${DATA_IN}/valid/positive/${domain}.vectors >> ${OUTPUT_PATH}/valid.vectors
