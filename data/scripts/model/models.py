@@ -19,8 +19,10 @@ class Relation:
         index_dest, context_dest = row[3].split(':', 1)
         ne_source, ne_dest = row[4].split(':', 1)
 
-        source = cls.Element(lemma_source, channel_source, [int(index_source)], eval(context_source), int(ne_source))
-        dest = cls.Element(lemma_dest, channel_dest, [int(index_dest)], eval(context_dest), int(ne_dest))
+        source = cls.Element(lemma_source, channel_source, [int(index_source)],
+                             eval(context_source), float(ne_source))
+        dest = cls.Element(lemma_dest, channel_dest, [int(index_dest)],
+                           eval(context_dest), float(ne_dest))
         return cls(source, dest)
 
     def __str__(self):

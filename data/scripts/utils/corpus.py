@@ -10,7 +10,7 @@ def corpora_files(paths_file):
     with open(paths_file, 'r', encoding='utf-8') as in_file:
         for line in in_file:
             filepath = line.strip()
-            if filepath.endswith('rel.xml'):
+            if filepath.endswith('ne.rel.xml'):
                 rel_file = filepath
                 corpus_file = filepath.replace('.rel', '')
                 if os.path.isfile(corpus_file):
@@ -71,7 +71,8 @@ def get_lemma(sent, idx):
 
 
 def is_ne(sent, idx):
-    val = int([tou.get_attribute(token, 'NE', default=0) for token in sent.tokens()][idx])
+    val = int([tou.get_annotation(sent, token, 'NE', i, default=0) for i, token
+               in enumerate(sent.tokens())][idx])
     return 1.0 if val > 0 else 0.0
 
 
