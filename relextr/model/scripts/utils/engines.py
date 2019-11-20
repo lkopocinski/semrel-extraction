@@ -97,4 +97,4 @@ class ElmoConvolutionEngine(Vectorizer):
 class NamedEntityEngine(Vectorizer):
 
     def make_vectors(self, relation):
-        return float(relation.source.ne), float(relation.dest.ne)
+        return [float(relation.source.ne)], [float(relation.dest.ne)]
