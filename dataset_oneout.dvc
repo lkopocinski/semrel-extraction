@@ -1,0 +1,13 @@
+md5: 1607475e4412768ba8107ca7e1a3effc
+cmd: ./data/scripts/merge.sh ./data/vectors ./relextr/model/dataset_oneout one_out
+deps:
+- md5: 51f4011ad0e58ebb39e47c0265de4923.dir
+  path: data/vectors
+- md5: 7949f974240e38a27b5b8a4fb959502e
+  path: data/scripts/merge.sh
+outs:
+- md5: f8a760a276a9f0b7c2165f4dee2a4fa2.dir
+  path: relextr/model/dataset_oneout
+  cache: true
+  metric: false
+  persist: false
