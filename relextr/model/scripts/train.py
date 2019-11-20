@@ -82,6 +82,11 @@ def main(argv=None):
             torch.save(network.state_dict(), config["model"]["name"])
             mlflow.log_artifact(f'./{config["model"]["name"]}')
 
+        test_metrics = evaluate(network, test_set.batches, loss_func, device)
+        print(f'Test:\n{test_metrics}')
+        log_metrics(valid_metrics, epoch, 'test_')
+
+
     # Test
     test_metrics = test(config['model']['name'], test_set.batches, test_set.vector_size, loss_func, device)
     print(f'\n\nTest: {test_metrics}')
