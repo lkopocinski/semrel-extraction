@@ -9,12 +9,12 @@ mlflow:
   experiment_name: 'ner'
   tags:
     files: 81, 82, 83
-    method: plain
+    method: ner
     domain_out: 81
 
-vectorizer:
-  type: ''
-  model: ''
+    #vectorizer:
+    #  type: ''
+    #  model: ''
 #
 #vectorizer:
 #  type: 'sent2vec'
@@ -28,6 +28,6 @@ vectorizer:
 #  type: 'elmoconv'
 #  model: ''
 
-#vectorizer:
-#  type: 'ner'
-#  model: ''
+vectorizer:
+  type: 'ner'
+  model: ''

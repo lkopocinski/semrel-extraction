@@ -19,14 +19,18 @@ if [[ ${MODE} == "one_out" ]]; then
 
         cat ${DATA_IN}/train/negative/${domain}.vectors >> ${OUTPUT_PATH}/train.vectors
         cat ${DATA_IN}/valid/negative/${domain}.vectors >> ${OUTPUT_PATH}/valid.vectors
-        cat ${DATA_IN}/test/negative/${domain}.vectors >> ${OUTPUT_PATH}/valid.vectors
+        cat ${DATA_IN}/test/negative/${domain}.vectors >> ${OUTPUT_PATH}/valid.vectors		
     done
-
+    
     for type in "train" "valid" "test"
     do
         cat ${DATA_IN}/${type}/positive/${domain_out}.vectors >> ${OUTPUT_PATH}/test.vectors
         cat ${DATA_IN}/${type}/negative/${domain_out}.vectors >> ${OUTPUT_PATH}/test.vectors
     done
+
+    shuf -o ${OUTPUT_PATH}/train.vectors ${OUTPUT_PATH}/train.vectors
+    shuf -o ${OUTPUT_PATH}/valid.vectors ${OUTPUT_PATH}/valid.vectors
+    shuf -o ${OUTPUT_PATH}/valid.vectors ${OUTPUT_PATH}/test.vectors
 
 else
 
