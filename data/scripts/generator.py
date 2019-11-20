@@ -78,7 +78,7 @@ def generate_negative(list_file, channels):
                 except KeyError:
                     _f_idxs = None
                     _f_channel_name = ''
-                    _f_ne = 0
+                    _f_ne = 0.0
                     pass
 
                 try:
@@ -86,7 +86,7 @@ def generate_negative(list_file, channels):
                 except KeyError:
                     _t_idxs = None
                     _t_channel_name = ''
-                    _t_ne = 0
+                    _t_ne = 0.0
                     pass
 
                 if _t_idxs and _f_idxs:

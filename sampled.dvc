@@ -1,13 +1,13 @@
-md5: f3ee5451ffc08a80d6042f5e4e086029
+md5: 68c51811d5163c961d3011b6254eb05c
 cmd: ./data/scripts/sample.py --data-in ./data/generations --output-path ./data/sampled
   --train-size 200 400 --valid-size 100 100 --test-size 100 100
 deps:
-- md5: 9bfc4f9a7ab4583c22cf117268cf173f.dir
+- md5: df53cefc715fa70ff2b0e6f346bebd32.dir
   path: data/generations
 - md5: 3222124d6f193f3b7762a57454409cee
   path: data/scripts/sample.py
 outs:
-- md5: fe1567df753e433e2a0624ce849f2ad4.dir
+- md5: 26194c1a5e9861366ef306e78424f768.dir
   path: data/sampled
   cache: true
   metric: false
