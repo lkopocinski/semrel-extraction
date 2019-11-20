@@ -47,7 +47,8 @@ class BatchLoader:
                     if (idx % self.batch_size) == 0:
                         dataset.add(batch)
                         batch = []
-                except Exception:
+                except Exception as e:
+                    print(e)
                     continue
 
             if batch:

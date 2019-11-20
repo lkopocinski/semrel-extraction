@@ -1,12 +1,12 @@
-batch_size: 10
-epochs: 10
+batch_size: 20
+epochs: 30
 
 model:
   name: 'relextr_model.pt'
 
 mlflow:
   tracking_uri: 'http://10.17.50.132:8080'
-  experiment_name: 'no_exp'
+  experiment_name: 'ner'
   tags:
     files: 81, 82, 83
 #    domain_out: 83
@@ -19,6 +19,10 @@ mlflow:
 #  type: 'fasttext'
 #  model: './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
 
+#vectorizer:
+#  type: 'elmoconv'
+#  model: ''
+
 vectorizer:
-  type: 'elmoconv'
+  type: 'ner'
   model: ''
