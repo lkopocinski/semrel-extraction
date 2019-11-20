@@ -9,7 +9,7 @@ mlflow:
   experiment_name: 'ner'
   tags:
     files: 81, 82, 83
-    method: elmoconv
+    method: elmoconv, ner
     domain_out: 83
 
 vectorizers:
