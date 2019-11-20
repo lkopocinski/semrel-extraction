@@ -9,12 +9,12 @@ mlflow:
   experiment_name: 'ner'
   tags:
     files: 81, 82, 83
-    method: plain
+    method: elmoconv
     domain_out: 83
 
-vectorizer:
-  type: ''
-  model: ''
+#vectorizer:
+#  type: ''
+#  model: ''
 #
 #vectorizer:
 #  type: 'sent2vec'
@@ -24,10 +24,10 @@ vectorizer:
 #  type: 'fasttext'
 #  model: './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
 
-#vectorizer:
-#  type: 'elmoconv'
-#  model: ''
+vectorizer:
+  type: 'elmoconv'
+  model: ''
 
-#vectorizer:
-#  type: 'ner'
-#  model: ''
+  #vectorizer:
+  #type: 'ner'
+  #model: ''
