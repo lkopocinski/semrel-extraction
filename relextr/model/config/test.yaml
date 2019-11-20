@@ -10,14 +10,14 @@ mlflow:
     files: 81, 82, 83
 #    domain_out: 83
 
-#vectorizer:
-#  type: 'sent2vec'
-#  model: './data/sent2vec/kgr10.bin'
-#
-#vectorizer:
-#  type: 'fasttext'
-#  model: './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
-
-vectorizer:
-  type: 'elmoconv'
-  model: ''
+vectorizers:
+#  - type: ''
+#    model: ''
+#  - type: 'sent2vec'
+#    model: './data/sent2vec/kgr10.bin'
+#  - type: 'fasttext'
+#    model: './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
+  - type: 'elmoconv'
+    model: ''
+  - type: 'ner'
+    model: ''

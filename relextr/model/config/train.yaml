@@ -12,22 +12,14 @@ mlflow:
     method: elmoconv
     domain_out: 83
 
-#vectorizer:
-#  type: ''
-#  model: ''
-#
-#vectorizer:
-#  type: 'sent2vec'
-#  model: './data/sent2vec/kgr10.bin'
-#
-#vectorizer:
-#  type: 'fasttext'
-#  model: './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
-
-vectorizer:
-  type: 'elmoconv'
-  model: ''
-
-  #vectorizer:
-  #type: 'ner'
-  #model: ''
+vectorizers:
+#  - type: ''
+#    model: ''
+#  - type: 'sent2vec'
+#    model: './data/sent2vec/kgr10.bin'
+#  - type: 'fasttext'
+#    model: './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
+  - type: 'elmoconv'
+    model: ''
+  - type: 'ner'
+    model: ''
