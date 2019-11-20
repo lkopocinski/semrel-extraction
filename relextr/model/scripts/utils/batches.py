@@ -24,9 +24,9 @@ class Dataset:
 
 class BatchLoader:
 
-    def __init__(self, batch_size, vectors_engine=None):
+    def __init__(self, batch_size, vectors_engines=None):
         self.batch_size = batch_size
-        self.vectors_engine = vectors_engine
+        self.vectors_engines = vectors_engines
 
     def load(self, datapath):
         with open(datapath, encoding="utf-8") as in_file:
@@ -37,8 +37,8 @@ class BatchLoader:
                     relation = RelationVec(line)
                     vectors = [relation.source.vector, relation.dest.vector]
 
-                    if self.vectors_engine:
-                        vc1, vc2 = self.vectors_engine.make_vectors(relation)
+                    for engine in self.vectors_engines:
+                        vc1, vc2 = engine.make_vectors(relation)
                         vectors.append(vc1)
                         vectors.append(vc2)
 

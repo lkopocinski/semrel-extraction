@@ -34,12 +34,10 @@ def main(argv=None):
     config = parse_config(args.config)
     init_mlflow(config['mlflow'])
 
-    vectorizer = VectorizerFactory.get_vectorizer(
-        format=config['vectorizer']['type'],
-        model_path=config['vectorizer']['model']
-    )
+    vectorizers = [VectorizerFactory.get_vectorizer(vectorizer['type'], vectorizer['model']) for vectorizer in
+                   config['vectorizers']]
 
-    batch_loader = BatchLoader(config['batch_size'], vectorizer)
+    batch_loader = BatchLoader(config['batch_size'], vectorizers)
     train_set = batch_loader.load(f'{args.data_in}/train.vectors')
     valid_set = batch_loader.load(f'{args.data_in}/valid.vectors')
     test_set = batch_loader.load(f'{args.data_in}/test.vectors')
