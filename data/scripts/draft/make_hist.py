@@ -1,7 +1,9 @@
 from pathlib import Path
 
 import pandas as pd
-import math
+
+from utils.corpus import corpora_files, load_document, id_to_sent_dict, \
+    is_ner_relation, is_in_channel, get_relation_element
 
 root_path = '../../generations'
 paths = ['test', 'train', 'valid']
@@ -87,6 +89,35 @@ def distance_hist():
         hist = pd.Series(to_save)
         hist = hist.value_counts()
         hist.to_csv(f'{nr}.hist', sep='\t', header=False)
+
+
+def distance_hist(list_file, channels, nr):
+    for corpora_file, relations_file in corpora_files(list_file):
+        document = load_document(corpora_file, relations_file)
+        sentences = id_to_sent_dict(document)
+
+        to_save = []
+        for relation in document.relations():
+            if is_ner_relation(relation):
+                if is_in_channel(relation, channels):
+                    f = relation.rel_from()
+                    t = relation.rel_to()
+
+                    f_element = get_relation_element(f, sentences)
+                    t_element = get_relation_element(t, sentences)
+
+                if f_element and t_element:
+                    rel = Relation(f_element, t_element)
+                    if rel.source.context == rel.dest.context:
+                        if rel.dest.start_idx > rel.source.start_idx:
+                            dist = rel.dest.start_idx - (rel.source.start_idx + (len(rel.source.indices) - 1))
+                        else:
+                            dist = rel.source.start_idx - (rel.dest.start_idx + (len(rel.dest.indices) - 1))
+                        to_save.append(dist)
+
+                hist = pd.Series(to_save)
+                hist = hist.value_counts()
+                hist.to_csv(f'{nr}.hist', sep='\t', header=False)
 
 
 if __name__ == '__main__':
