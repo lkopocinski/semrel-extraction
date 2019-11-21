@@ -78,7 +78,10 @@ def distance_hist():
                 for line in f:
                     rel = Relation.from_line(line)
                     if rel.source.context == rel.dest.context:
-                        dist = abs(rel.source.start_idx - rel.dest.start_idx)
+                        if rel.dest.start_idx > rel.source.start_idx:
+                            dist = rel.dest.start_idx - (rel.source.start_idx + (len(rel.source.indices) - 1))
+                        else:
+                            dist = rel.source.start_idx - (rel.dest.start_idx + (len(rel.dest.indices) - 1))
                         to_save.append(dist)
 
         hist = pd.Series(to_save)
