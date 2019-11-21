@@ -113,7 +113,7 @@ def distance_hist(list_file, channels, nr):
                             if rel.dest.start_idx > rel.source.start_idx:
                                 shift = (len(rel.source.indices) - 1) if len(rel.source.indices) > 1 else 0
                                 dist = rel.dest.start_idx - (rel.source.start_idx + shift)
-                            if rel.source.start_idx > rel.dest.start_idx:
+                            elif rel.source.start_idx > rel.dest.start_idx:
                                 shift = (len(rel.dest.indices) - 1) if len(rel.dest.indices) > 1 else 0
                                 dist = rel.source.start_idx - (rel.dest.start_idx + shift)
                             else:
