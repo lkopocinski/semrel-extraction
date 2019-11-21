@@ -165,10 +165,11 @@ def same_brand(list_file, channels, nr):
 
 
 def appear_in_text(list_file, channels, nr):
-    brand_dict = defaultdict(int)
     sizes = []
 
     for corpora_file, relations_file in corpora_files(list_file):
+        brand_dict = defaultdict(int)
+
         document = load_document(corpora_file, relations_file)
         sentences = id_to_sent_dict(document)
 
@@ -177,7 +178,7 @@ def appear_in_text(list_file, channels, nr):
             for sentence in par.sentences():
                 for token in sentence.tokens():
                     if tou.get_annotation(sentence, token, "BRAND_NAME", default=0) == 0 and tou.get_annotation(sentence, token, "BRAND_NAME_IMP", default=0) == 0:
-                        token_orths.append(token.orth_utf8)
+                        token_orths.append(token.orth_utf8())
 
         for relation in document.relations():
             if is_ner_relation(relation):
@@ -198,9 +199,9 @@ def appear_in_text(list_file, channels, nr):
                                 if t_element.context[idx] in token_orths:
                                     brand_dict[t_element.context[idx]] += 1
 
-        brand_dict = set(brand_dict.keys())
-        size = len(brand_dict)
-        print(size, brand_dict)
+        brands = set(brand_dict.keys())
+        size = len(brands)
+        print(Path(corpora_file).stem.replace('.ne', ''), size, brands)
         sizes.append(size)
 
     hist = pd.Series(sizes)
@@ -210,4 +211,4 @@ def appear_in_text(list_file, channels, nr):
 
 
 if __name__ == '__main__':
-    appear_in_text('83.files', ["BRAND_NAME", "PRODUCT_NAME"], 83)
+    appear_in_text('81.files', ["BRAND_NAME", "PRODUCT_NAME"], 81)
