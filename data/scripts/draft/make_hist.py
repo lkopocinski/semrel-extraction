@@ -4,6 +4,7 @@ import pandas as pd
 from collections import defaultdict
 from data.scripts.utils.corpus import corpora_files, load_document, id_to_sent_dict, \
     is_ner_relation, is_in_channel, get_relation_element
+from corpus_ccl import token_utils as tou
 
 root_path = '../../generations'
 paths = ['test', 'train', 'valid']
@@ -128,7 +129,6 @@ def distance_hist(list_file, channels, nr):
     hist.to_csv(f'{nr}.dist.hist', sep='\t', header=False)
 
 
-
 def same_brand(list_file, channels, nr):
     brand_dict = defaultdict(int)
     sizes = []
@@ -163,5 +163,50 @@ def same_brand(list_file, channels, nr):
     hist.to_csv(f'{nr}.dist.hist', sep='\t', header=False)
 
 
+def appear_in_text(list_file, channels, nr):
+    brand_dict = defaultdict(int)
+    sizes = []
+
+    for corpora_file, relations_file in corpora_files(list_file):
+        document = load_document(corpora_file, relations_file)
+        sentences = id_to_sent_dict(document)
+
+        token_orths = []
+        for par in document.paragraphs():
+            for sentence in par.sentences():
+                for token in sentence.tokens():
+                    if tou.get_annotation(sentence, token, "BRAND_NAME", default=0) == 0 and tou.get_annotation(sentence, token, "BRAND_NAME_IMP", default=0) == 0:
+                        token_orths.append(token.orth_utf8)
+
+        for relation in document.relations():
+            if is_ner_relation(relation):
+                if is_in_channel(relation, channels):
+                    f = relation.rel_from()
+                    t = relation.rel_to()
+
+                    f_element = get_relation_element(f, sentences)
+                    t_element = get_relation_element(t, sentences)
+
+                    if f_element and t_element:
+                        if f_element.channel == "BRAND_NAME":
+                            for idx in f_element.indices:
+                                if f_element.context[idx] in token_orths:
+                                    brand_dict[f_element.context[idx]] += 1
+                        elif t_element.channel == "BRAND_NAME":
+                            for idx in t_element.indices:
+                                if t_element.context[idx] in token_orths:
+                                    brand_dict[t_element.context[idx]] += 1
+
+        brand_dict = set(brand_dict.keys())
+        size = len(brand_dict)
+        print(size, brand_dict)
+        sizes.append(size)
+
+    hist = pd.Series(sizes)
+    hist = hist.value_counts()
+    hist = hist.sort_index()
+    hist.to_csv(f'{nr}.inclusiv.hist', sep='\t', header=False)
+
+
 if __name__ == '__main__':
-    distance_hist('83.files', ["BRAND_NAME", "PRODUCT_NAME"], 83)
+    appear_in_text('83.files', ["BRAND_NAME", "PRODUCT_NAME"], 83)
