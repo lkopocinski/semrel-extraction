@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List
 import pandas as pd
-
+from collections import defaultdict
 from data.scripts.utils.corpus import corpora_files, load_document, id_to_sent_dict, \
     is_ner_relation, is_in_channel, get_relation_element
 
@@ -123,6 +123,41 @@ def distance_hist(list_file, channels, nr):
                             to_save.append(dist)
 
     hist = pd.Series(to_save)
+    hist = hist.value_counts()
+    hist = hist.sort_index()
+    hist.to_csv(f'{nr}.dist.hist', sep='\t', header=False)
+
+
+
+def same_brand(list_file, channels, nr):
+    brand_dict = defaultdict(int)
+    sizes = []
+
+    for corpora_file, relations_file in corpora_files(list_file):
+        document = load_document(corpora_file, relations_file)
+        sentences = id_to_sent_dict(document)
+
+        for relation in document.relations():
+            if is_ner_relation(relation):
+                if is_in_channel(relation, channels):
+                    f = relation.rel_from()
+                    t = relation.rel_to()
+
+                    f_element = get_relation_element(f, sentences)
+                    t_element = get_relation_element(t, sentences)
+
+                    if f_element and t_element:
+                        if f_element.channel == "BRAND_NAME":
+                            brand_dict[f_element.lemma] += 1
+                        elif t_element.channel == "BRAND_NAME":
+                            brand_dict[t_element.lemma] += 1
+
+        brand_dict = set(brand_dict.keys())
+        size = len(brand_dict)
+        print(size, brand_dict)
+        sizes.append(size)
+
+    hist = pd.Series(sizes)
     hist = hist.value_counts()
     hist = hist.sort_index()
     hist.to_csv(f'{nr}.dist.hist', sep='\t', header=False)
