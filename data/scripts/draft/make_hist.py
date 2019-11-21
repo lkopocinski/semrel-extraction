@@ -1,5 +1,5 @@
 from pathlib import Path
-
+from typing import List
 import pandas as pd
 import math
 
@@ -81,9 +81,10 @@ def distance_hist():
                         dist = abs(rel.source.start_idx - rel.dest.start_idx)
                         to_save.append(dist)
 
-    hist = pd.Series(to_save)
-    hist = hist.value_counts()
-    hist.to_csv(f'{nr}.hist', sep='\t', header=False)
+        hist = pd.Series(to_save)
+        hist = hist.value_counts()
+        hist = hist.sort_index()
+        hist.to_csv(f'{nr}.hist', sep='\t', header=False)
 
 
 if __name__ == '__main__':
