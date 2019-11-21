@@ -130,10 +130,11 @@ def distance_hist(list_file, channels, nr):
 
 
 def same_brand(list_file, channels, nr):
-    brand_dict = defaultdict(int)
     sizes = []
 
     for corpora_file, relations_file in corpora_files(list_file):
+        brand_dict = defaultdict(int)
+
         document = load_document(corpora_file, relations_file)
         sentences = id_to_sent_dict(document)
 
@@ -152,16 +153,16 @@ def same_brand(list_file, channels, nr):
                         elif t_element.channel == "BRAND_NAME":
                             brand_dict[t_element.lemma] += 1
 
-        brand_dict = set(brand_dict.keys())
-        size = len(brand_dict)
-        print(size, brand_dict)
+        brands = set(brand_dict.keys())
+        size = len(brands)
+        print(Path(corpora_file).stem.replace('.ne', ''), size, brands)
         sizes.append(size)
 
     hist = pd.Series(sizes)
     hist = hist.value_counts()
     hist = hist.sort_index()
-    hist.to_csv(f'{nr}.dist.hist', sep='\t', header=False)
+    hist.to_csv(f'{nr}.multi.brands.hist', sep='\t', header=False)
 
 
 if __name__ == '__main__':
-    distance_hist('83.files', ["BRAND_NAME", "PRODUCT_NAME"], 83)
+    same_brand('81.files', ["BRAND_NAME", "PRODUCT_NAME"], 81)
