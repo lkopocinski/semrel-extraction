@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import List
 import pandas as pd
 
-from utils.corpus import corpora_files, load_document, id_to_sent_dict, \
+from data.scripts.utils.corpus import corpora_files, load_document, id_to_sent_dict, \
     is_ner_relation, is_in_channel, get_relation_element
 
 root_path = '../../generations'
@@ -93,11 +93,11 @@ def distance_hist():
 
 
 def distance_hist(list_file, channels, nr):
+    to_save = []
     for corpora_file, relations_file in corpora_files(list_file):
         document = load_document(corpora_file, relations_file)
         sentences = id_to_sent_dict(document)
 
-        to_save = []
         for relation in document.relations():
             if is_ner_relation(relation):
                 if is_in_channel(relation, channels):
@@ -107,19 +107,24 @@ def distance_hist(list_file, channels, nr):
                     f_element = get_relation_element(f, sentences)
                     t_element = get_relation_element(t, sentences)
 
-                if f_element and t_element:
-                    rel = Relation(f_element, t_element)
-                    if rel.source.context == rel.dest.context:
-                        if rel.dest.start_idx > rel.source.start_idx:
-                            dist = rel.dest.start_idx - (rel.source.start_idx + (len(rel.source.indices) - 1))
-                        else:
-                            dist = rel.source.start_idx - (rel.dest.start_idx + (len(rel.dest.indices) - 1))
-                        to_save.append(dist)
+                    if f_element and t_element:
+                        rel = Relation(f_element, t_element)
+                        if rel.source.context == rel.dest.context:
+                            if rel.dest.start_idx > rel.source.start_idx:
+                                shift = (len(rel.source.indices) - 1) if len(rel.source.indices) > 1 else 0
+                                dist = rel.dest.start_idx - (rel.source.start_idx + shift)
+                            if rel.source.start_idx > rel.dest.start_idx:
+                                shift = (len(rel.dest.indices) - 1) if len(rel.dest.indices) > 1 else 0
+                                dist = rel.source.start_idx - (rel.dest.start_idx + shift)
+                            else:
+                                dist = 0
+                            to_save.append(dist)
 
-                hist = pd.Series(to_save)
-                hist = hist.value_counts()
-                hist.to_csv(f'{nr}.hist', sep='\t', header=False)
+    hist = pd.Series(to_save)
+    hist = hist.value_counts()
+    hist = hist.sort_index()
+    hist.to_csv(f'{nr}.dist.hist', sep='\t', header=False)
 
 
 if __name__ == '__main__':
-    distance_hist()
+    distance_hist('83.files', ["BRAND_NAME", "PRODUCT_NAME"], 83)
