@@ -1,48 +1,36 @@
-import itertools
 import json
-import glob
+from collections import defaultdict
+from pathlib import Path
+
+PATH = Path('/home/lukaszkopocinski/Lukasz/SentiOne/korpusyneroweiaspektowe/')
 
 
-PATH = '/home/lukaszkopocinski/Lukasz/SentiOne/korpusyneroweiaspektowe/*.json'
-for file in glob.glob(PATH):
-    print(f'\n\n\n{file}')
-    with open(file) as json_file:
-        data = json.load(json_file)
-        for key, value in data.items():
-            b = set()
-            p = set()
-            bi = set()
-            pi = set()
+def corpus_files(path: Path):
+    for file in path.glob('ner_*_export.json'):
+        print(f'\n --- {file.stem} ---')
+        with file.open('r', encoding='utf-8') as json_file:
+            yield json.load(json_file)
 
-            for item in value['ner']:
-                s = item['source']
+
+def main():
+    for data in corpus_files(PATH):
+        brand_dict = defaultdict(int)
+        for id, content in data.items():
+            id = content['id']
+            text = content['text']
+            relations = content['ner']
+
+            for rel in relations:
+                s = rel['source']
                 if s['type'] == 'BRAND_NAME':
-                    b.add(s['text'])
-                elif s['type'] == 'PRODUCT_NAME':
-                    p.add(s['text'])
-                elif s['type'] == 'BRAND_NAME_IMP':
-                    bi.add(s['text'])
-                elif s['type'] == 'PRODUCT_NAME_IMP':
-                    pi.add(s['text'])
+                    brand_dict[s['text']] += 1
 
-                t = item['target']
+                t = rel['target']
                 if t['type'] == 'BRAND_NAME':
-                    b.add(t['text'])
-                elif t['type'] == 'PRODUCT_NAME':
-                    p.add(t['text'])
-                elif t['type'] == 'BRAND_NAME_IMP':
-                    bi.add(t['text'])
-                elif t['type'] == 'PRODUCT_NAME_IMP':
-                    pi.add(t['text'])
-
-            for brand, product in itertools.product(b, p):
-                if brand in product or product in brand:
-                    print(f'\n{key}')
-                    print(f'BRAND_NAME : {b}')
-                    print(f'PRODUCT_NAME : {p}')
-                    print(f'BRAND_NAME_IMP : {bi}')
-                    print(f'PRODUCT_NAME_IMP : {pi}')
-                    print(f'{brand} : {product}')
+                    brand_dict[t['text']] += 1
+        brands = set(brand_dict.keys())
+        print(brands)
 
 
-
+if __name__ == '__main__':
+    main()
