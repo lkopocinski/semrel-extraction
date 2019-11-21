@@ -1,10 +1,12 @@
+from collections import defaultdict
 from pathlib import Path
 from typing import List
+
 import pandas as pd
-from collections import defaultdict
+from corpus_ccl import token_utils as tou
+
 from data.scripts.utils.corpus import corpora_files, load_document, id_to_sent_dict, \
     is_ner_relation, is_in_channel, get_relation_element
-from corpus_ccl import token_utils as tou
 
 root_path = '../../generations'
 paths = ['test', 'train', 'valid']
@@ -35,10 +37,10 @@ class Relation:
 
     def __str__(self):
         return f'{self.source.lemma} : {self.dest.lemma}' \
-            f'\t{self.source.channel} : {self.dest.channel}' \
-            f'\t{self.source.start_idx}:{self.source.context}' \
-            f'\t{self.dest.start_idx}:{self.dest.context}' \
-            f'\t{self.source.ne}:{self.dest.ne}'
+               f'\t{self.source.channel} : {self.dest.channel}' \
+               f'\t{self.source.start_idx}:{self.source.context}' \
+               f'\t{self.dest.start_idx}:{self.dest.context}' \
+               f'\t{self.source.ne}:{self.dest.ne}'
 
     class Element:
         def __init__(self, lemma: str, channel: str, indices: List[int], context: List[str], ne: int):
@@ -177,8 +179,10 @@ def appear_in_text(list_file, channels, nr):
         for par in document.paragraphs():
             for sentence in par.sentences():
                 for token in sentence.tokens():
-                    if tou.get_annotation(sentence, token, "BRAND_NAME", default=0) == 0 and tou.get_annotation(sentence, token, "BRAND_NAME_IMP", default=0) == 0:
-                        token_orths.append(token.orth_utf8())
+                    if tou.get_annotation(sentence, token, "BRAND_NAME", default=0) == 0 and tou.get_annotation(
+                            sentence, token, "BRAND_NAME_IMP", default=0) == 0:
+                        ann_number = tou.get_annotation(sentence, token, "PRODUCT_NAME", default=0)
+                        token_orths.append((ann_number, token.orth_utf8()))
 
         for relation in document.relations():
             if is_ner_relation(relation):
@@ -190,14 +194,18 @@ def appear_in_text(list_file, channels, nr):
                     t_element = get_relation_element(t, sentences)
 
                     if f_element and t_element:
-                        if f_element.channel == "BRAND_NAME":
-                            for idx in f_element.indices:
-                                if f_element.context[idx] in token_orths:
-                                    brand_dict[f_element.context[idx]] += 1
-                        elif t_element.channel == "BRAND_NAME":
-                            for idx in t_element.indices:
-                                if t_element.context[idx] in token_orths:
-                                    brand_dict[t_element.context[idx]] += 1
+                        if f_element.channel == "PRODUCT_NAME":
+                            for nr, orth in token_orths:
+                                if f.annotation_number() != nr:
+                                    for idx in f_element.indices:
+                                        if f_element.context[idx] == orth:
+                                            brand_dict[f_element.context[idx]] += 1
+                        if t_element.channel == "PRODUCT_NAME":
+                            for nr, orth in token_orths:
+                                if t.annotation_number() != nr:
+                                    for idx in t_element.indices:
+                                        if t_element.context[idx] == orth:
+                                            brand_dict[t_element.context[idx]] += 1
 
         brands = set(brand_dict.keys())
         size = len(brands)
