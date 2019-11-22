@@ -178,11 +178,11 @@ def appear_in_text(list_file, channels, nr):
         token_orths = []
         for par in document.paragraphs():
             for sentence in par.sentences():
-                for token in sentence.tokens():
+                for idx, token in enumerate(sentence.tokens()):
                     if tou.get_annotation(sentence, token, "BRAND_NAME", default=0) == 0 and tou.get_annotation(
                             sentence, token, "BRAND_NAME_IMP", default=0) == 0:
                         ann_number = tou.get_annotation(sentence, token, "PRODUCT_NAME", default=0)
-                        token_orths.append((ann_number, token.orth_utf8()))
+                        token_orths.append((sentence.id(), idx, token.orth_utf8()))
 
         for relation in document.relations():
             if is_ner_relation(relation):
@@ -195,21 +195,29 @@ def appear_in_text(list_file, channels, nr):
 
                     if f_element and t_element:
                         if f_element.channel == "PRODUCT_NAME":
-                            for nr, orth in token_orths:
-                                if f.annotation_number() != nr:
+                            for sent_id, idx, orth in token_orths:
+                                if f.sentence_id() == sent_id and idx in f_element.indices:
+                                    continue
+                                else:
                                     for idx in f_element.indices:
                                         if f_element.context[idx] == orth:
                                             brand_dict[f_element.context[idx]] += 1
-                        if t_element.channel == "PRODUCT_NAME":
-                            for nr, orth in token_orths:
-                                if t.annotation_number() != nr:
+                        elif t_element.channel == "PRODUCT_NAME":
+                            for sent_id, idx, orth in token_orths:
+                                if t.sentence_id() == sent_id and idx in t_element.indices:
+                                    continue
+                                else:
                                     for idx in t_element.indices:
                                         if t_element.context[idx] == orth:
                                             brand_dict[t_element.context[idx]] += 1
 
         brands = set(brand_dict.keys())
         size = len(brands)
-        print(Path(corpora_file).stem.replace('.ne', ''), size, brands)
+        if size != 0:
+            s, i, o = zip(*token_orths)
+            print("\n\n")
+            print(Path(corpora_file).stem.replace('.ne', ''), size, brands)
+            print("\n", " ".join(o))
         sizes.append(size)
 
     hist = pd.Series(sizes)
@@ -219,4 +227,4 @@ def appear_in_text(list_file, channels, nr):
 
 
 if __name__ == '__main__':
-    appear_in_text('81.files', ["BRAND_NAME", "PRODUCT_NAME"], 81)
+    appear_in_text('83.files', ["BRAND_NAME", "PRODUCT_NAME"], 83)
