@@ -2,6 +2,7 @@ import abc
 
 import numpy as np
 import sent2vec
+from gensim.models import KeyedVectors
 from gensim.models.fasttext import load_facebook_model
 from wordfreq import zipf_frequency
 
@@ -85,6 +86,29 @@ class FastTextVectorizer(Vectorizer):
     def make_vectors(self, relation):
         lemma_f_vec = self.make_embedding(relation.source.lemma)
         lemma_t_vec = self.make_embedding(relation.dest.lemma)
+        return lemma_f_vec, lemma_t_vec
+
+
+class RetrofitVectorizer(Vectorizer):
+
+    def __init__(self, model_path):
+        self.ft_vec = KeyedVectors.load_word2vec_format(model_path[0])
+        self.ft_bin = load_facebook_model(model_path[1])
+
+    def make_embedding(self, term):
+        try:
+            return self.ft_vec[term]
+        except KeyError:
+            print("Term not found in retrofit model: ", term)
+            return self.ft_bin[term]
+
+    def make_vectors(self, relation):
+        term_source = relation.source.context[relation.source.index]
+        term_dest = relation.dest.context[relation.dest.index]
+
+        lemma_f_vec = self.make_embedding(term_source)
+        lemma_t_vec = self.make_embedding(term_dest)
+
         return lemma_f_vec, lemma_t_vec
 
 
