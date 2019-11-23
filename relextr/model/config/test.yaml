@@ -6,8 +6,9 @@ model:
 mlflow:
   tracking_uri: 'http://10.17.50.132:8080'
   experiment_name: 'LREC'
-    tags:
-      files: 81, 82, 83
+  tags:
+    files: 81, 82, 83
+    type: lexical_split
 
 dataset: lexical_split
 domain_out: 'no'
