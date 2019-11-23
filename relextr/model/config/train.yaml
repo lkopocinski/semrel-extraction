@@ -26,5 +26,5 @@ vectorizers:
 #      - './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
   - type: 'elmoconv'
     model: ''
-#  - type: 'ner'
-#    model: ''
+  - type: 'ner'
+    model: ''
