@@ -34,12 +34,12 @@ def main(argv=None):
     device = get_device()
     args = get_args(argv)
     config = parse_config(args.config)
-    init_mlflow(config['mlflow'])
+    init_mlflow(config)
 
     vectorizers = [VectorizerFactory.get_vectorizer(vectorizer['type'], vectorizer['model']) for vectorizer in config['vectorizers']]
 
     batch_loader = BatchLoader(config['batch_size'], vectorizers)
-    test_set = batch_loader.load(f'{args.data_in}/test.vectors')
+    test_set = batch_loader.load(f'{args.data_in}/{config["dataset"]}/test.vectors')
 
     network = RelNet(in_dim=test_set.vector_size)
     network.load(config['model']['name'])
@@ -75,14 +75,16 @@ def parse_config(path):
 
 
 def init_mlflow(config):
-    mlflow.set_tracking_uri(config['tracking_uri'])
-    mlflow.set_experiment(config['experiment_name'])
-    mlflow.set_tags(config['tags'])
+    conf = config['mlflow']
+    mlflow.set_tracking_uri(conf['tracking_uri'])
+    mlflow.set_experiment(conf['experiment_name'])
+    mlflow.set_tags(conf['tags'])
+    mlflow.set_tag('method', [vec['type'] for vec in conf['vectorizers']])
 
     print(f'\n-- mlflow --'
           f'\nserver: {mlflow.get_tracking_uri()}'
-          f'\nexperiment: {config["experiment_name"]}'
-          f'\ntag: {config["tags"]}')
+          f'\nexperiment: {conf["experiment_name"]}'
+          f'\ntag: {conf["tags"]}')
 
 
 def log_metrics(metrics):
