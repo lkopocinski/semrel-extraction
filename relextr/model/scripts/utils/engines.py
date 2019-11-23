@@ -10,7 +10,7 @@ from wordfreq import zipf_frequency
 class VectorizerFactory:
     @staticmethod
     def get_vectorizer(format, model_path):
-        if format == '':
+        if format == 'plain':
             return None
 
         if format == 'sent2vec':

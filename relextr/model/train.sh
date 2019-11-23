@@ -17,6 +17,7 @@ dvc run \
 -d ${SCRIPTS_DIR}/utils/metrics.py \
 -d ${SCRIPTS_DIR}/utils/batches.py \
 -d ${CONFIG} \
+-M metrics.txt \
 -f train.dvc \
 CUDA_VISIBLE_DEVICES=0 ${SCRIPTS_DIR}/train.py --data-in ${DATA_IN} \
                                                       --config ${CONFIG}

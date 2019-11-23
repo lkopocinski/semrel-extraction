@@ -5,21 +5,25 @@ model:
 
 mlflow:
   tracking_uri: 'http://10.17.50.132:8080'
-  experiment_name: 'no_exp'
-  tags:
-    files: 81, 82, 83
-#    domain_out: 83
+  experiment_name: 'LREC'
+    tags:
+      files: 81, 82, 83
+
+dataset: lexical_split
+domain_out: 'no'
 
 vectorizers:
-#  - type: ''
-#    model: ''
+  - type: 'plain'
+    model: ''
 #  - type: 'sent2vec'
 #    model: './data/sent2vec/kgr10.bin'
 #  - type: 'fasttext'
 #    model: './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
-  - type: 'retrofit'
-    model: './data/fasttext/kgr10.plain.lemma.sg.dim300.neg10.retrofit-v2.vec'
-  - type: 'elmoconv'
-    model: ''
-  - type: 'ner'
-    model: ''
+#  - type: 'retrofit'
+#    model:
+#      - './data/fasttext/kgr10.plain.skipgram.dim300.neg10.retrofit-v3.vec'
+#      - './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
+#  - type: 'elmoconv'
+#    model: ''
+#  - type: 'ner'
+#    model: ''
