@@ -6,11 +6,11 @@ model:
 
 mlflow:
   tracking_uri: 'http://10.17.50.132:8080'
-  experiment_name: 'ner'
+  experiment_name: 'retrofit'
   tags:
     files: 81, 82, 83
-    method: elmoconv, ner
-    domain_out: 83
+    method: retrofit
+#    domain_out: 83
 
 vectorizers:
 #  - type: ''
@@ -21,7 +21,7 @@ vectorizers:
 #    model: './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
   - type: 'retrofit'
     model:
-      - './data/fasttext/kgr10.plain.skipgram.dim300.neg10.retrofit.vec'
+      - './data/fasttext/kgr10.plain.skipgram.dim300.neg10.retrofit-v3.vec'
       - './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
 #  - type: 'elmoconv'
 #    model: ''
