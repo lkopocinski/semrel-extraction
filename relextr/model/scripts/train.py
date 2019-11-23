@@ -111,6 +111,7 @@ def init_mlflow(config):
     mlflow.set_experiment(conf['experiment_name'])
     mlflow.set_tags(conf['tags'])
     mlflow.set_tag('method', [vec['type'] for vec in config['vectorizers']])
+    mlflow.set_tag('domain_out', config['domain_out'])
 
     print(f'\n-- mlflow --'
           f'\nserver: {mlflow.get_tracking_uri()}'

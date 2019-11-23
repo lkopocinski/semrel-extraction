@@ -14,16 +14,16 @@ dataset: lexical_split
 domain_out: 'no'
 
 vectorizers:
-  - type: 'plain'
-    model: ''
+#  - type: 'plain'
+#    model: ''
 #  - type: 'sent2vec'
 #    model: './data/sent2vec/kgr10.bin'
 #  - type: 'fasttext'
 #    model: './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
-#  - type: 'retrofit'
-#    model:
-#      - './data/fasttext/kgr10.plain.skipgram.dim300.neg10.retrofit-v3.vec'
-#      - './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
+  - type: 'retrofit'
+    model:
+      - './data/fasttext/kgr10.plain.skipgram.dim300.neg10.retrofit-v3.vec'
+      - './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
 #  - type: 'elmoconv'
 #    model: ''
 #  - type: 'ner'
