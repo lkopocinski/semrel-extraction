@@ -1,4 +1,4 @@
-md5: 5cf636ab1e38df7b2fd01c47447942e0
+md5: d939f4eec2bbd0809e7be3d459916a99
 cmd: ./data/scripts/merge.sh ./data/vectors ./relextr/model/dataset
 deps:
 - md5: 51f4011ad0e58ebb39e47c0265de4923.dir
@@ -6,7 +6,7 @@ deps:
 - md5: c1c45aa713fbe7e5ac7801016ffe48d6
   path: data/scripts/merge.sh
 outs:
-- md5: 02e80e040be21f41d283b5edf7f1105b.dir
+- md5: e21c17aa25871f229aa1b3c05ead5464.dir
   path: relextr/model/dataset
   cache: true
   metric: false
