@@ -38,9 +38,10 @@ class BatchLoader:
                     vectors = [relation.source.vector, relation.dest.vector]
 
                     for engine in self.vectors_engines:
-                        vc1, vc2 = engine.make_vectors(relation)
-                        vectors.append(vc1)
-                        vectors.append(vc2)
+                        if engine:
+                            vc1, vc2 = engine.make_vectors(relation)
+                            vectors.append(vc1)
+                            vectors.append(vc2)
 
                     batch.append((relation.label, np.concatenate(vectors)))
 

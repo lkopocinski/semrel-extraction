@@ -1,6 +1,6 @@
-md5: c5865e909088f0502b4c36d885b949cf
+md5: c75fc4fa390984d6e349d3c841d08a22
 outs:
-- md5: fb51e13b5399750c1c3798a3946a2280.dir
+- md5: 52110c3c5d9ab46a5db4cb790b58ea27.dir
   path: fasttext
   cache: true
   metric: false
