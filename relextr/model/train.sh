@@ -4,7 +4,7 @@
 
 pushd "$(git rev-parse --show-toplevel)"
 
-DATA_IN="./relextr/model/dataset_oneout"
+DATA_IN="./relextr/model/dataset"
 SCRIPTS_DIR="./relextr/model/scripts"
 CONFIG="./relextr/model/config/train.yaml"
 
@@ -17,8 +17,8 @@ dvc run \
 -d ${SCRIPTS_DIR}/utils/metrics.py \
 -d ${SCRIPTS_DIR}/utils/batches.py \
 -d ${CONFIG} \
--f train_oneout.dvc \
-CUDA_VISIBLE_DEVICES=7,8,9,10 ${SCRIPTS_DIR}/train.py --data-in ${DATA_IN} \
+-f train.dvc \
+CUDA_VISIBLE_DEVICES=0 ${SCRIPTS_DIR}/train.py --data-in ${DATA_IN} \
                                                       --config ${CONFIG}
 
 popd

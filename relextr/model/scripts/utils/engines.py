@@ -21,6 +21,8 @@ class VectorizerFactory:
             return ElmoConvolutionEngine()
         elif format == 'ner':
             return NamedEntityEngine()
+        elif format == 'retrofit':
+            return RetrofitVectorizer(model_path)
         else:
             raise ValueError(format)
 
