@@ -20,11 +20,11 @@ vectorizers:
     model: './data/sent2vec/kgr10.bin'
     #  - type: 'fasttext'
     #    model: './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
-  - type: 'retrofit'
-    model:
-      - './data/fasttext/kgr10.plain.skipgram.dim300.neg10.retrofit-v3.vec'
-      - './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
-#  - type: 'elmoconv'
-#    model: ''
+    #  - type: 'retrofit'
+    #    model:
+    #      - './data/fasttext/kgr10.plain.skipgram.dim300.neg10.retrofit-v3.vec'
+    #      - './data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin'
+  - type: 'elmoconv'
+    model: ''
 #  - type: 'ner'
 #    model: ''

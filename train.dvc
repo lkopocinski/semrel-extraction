@@ -1,4 +1,4 @@
-md5: 573adef6ac05c1e5f118aff066a32393
+md5: b85f2ee378b8a1406e5efe5c34d551f2
 cmd: CUDA_VISIBLE_DEVICES=7,8,9,10 ./relextr/model/scripts/train.py --data-in ./relextr/model/dataset
   --config ./relextr/model/config/train.yaml
 deps:
@@ -16,10 +16,10 @@ deps:
   path: relextr/model/scripts/utils/metrics.py
 - md5: 016b29335c0388007b38d49841d77989
   path: relextr/model/scripts/utils/batches.py
-- md5: d24bdb6da2eb5a33eff3ead5916ce52b
+- md5: 7d132640f818fb5fccefeef2a0d4c493
   path: relextr/model/config/train.yaml
 outs:
-- md5: 44c6566b813c84e563cfb609e86fed8a
+- md5: 162b17720bca77184f8a34e6ffdd2dd3
   path: metrics.txt
   cache: false
   metric: true
