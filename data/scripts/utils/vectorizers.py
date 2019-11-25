@@ -2,9 +2,12 @@ import abc
 
 import numpy as np
 import sent2vec
-from gensim.models import KeyedVectors
+from allennlp.modules.elmo import Elmo, batch_to_ids
+from gensim.models.KeyedVectors import load_word2vec_format
 from gensim.models.fasttext import load_facebook_model
 from wordfreq import zipf_frequency
+
+from model.models import Relation, Vector
 
 
 class VectorizerFactory:
@@ -18,7 +21,7 @@ class VectorizerFactory:
         elif format == 'fasttext':
             return FastTextVectorizer(model_path)
         elif format == 'elmoconv':
-            return ElmoConvolutionEngine()
+            return ElmoConvolutionVectorizer()
         elif format == 'ner':
             return NamedEntityEngine()
         elif format == 'retrofit':
@@ -30,15 +33,51 @@ class VectorizerFactory:
 class Vectorizer(abc.ABC):
 
     @abc.abstractmethod
-    def make_vectors(self, relation):
+    def make_vectors(self, relation: Relation):
         pass
+
+
+class ElmoVectorizer(Vectorizer):
+
+    def __init__(self, options, weights):
+        self.model = Elmo(options, weights, 1, dropout=0)
+
+    def _make_vector(self, context, idx):
+        character_ids = batch_to_ids([context])
+        embeddings = self.model(character_ids)
+        v = embeddings['elmo_representations'][0].data.numpy()
+        value = v[:, idx, :].flatten()
+        return Vector(value)
+
+    def make_vectors(self, relation: Relation):
+        v1 = self._make_vector(relation.source.context, relation.source.start_idx)
+        v2 = self._make_vector(relation.dest.context, relation.dest.start_idx)
+        return v1, v2
+
+
+class ElmoConvolutionVectorizer(Vectorizer):
+
+    def __init__(self, options, weights):
+        self.model = Elmo(options, weights, 1, dropout=0, scalar_mix_parameters=[1, -9e10, -9e10])
+
+    def _make_vector(self, context, idx):
+        character_ids = batch_to_ids([context])
+        embeddings = self.model(character_ids)
+        v = embeddings['elmo_representations'][0].data.numpy()
+        value = v[:, idx, :].flatten()
+        return Vector(value)
+
+    def make_vectors(self, relation: Relation):
+        v1 = self._make_vector(relation.source.context, relation.source.start_idx)
+        v2 = self._make_vector(relation.dest.context, relation.dest.start_idx)
+        return v1, v2
 
 
 class Sent2VecVectorizer(Vectorizer):
 
     def __init__(self, model_path):
-        self.s2v = sent2vec.Sent2vecModel()
-        self.s2v.load_model(model_path, inference_mode=True)
+        self.model = sent2vec.Sent2vecModel()
+        self.model.load_model(model_path, inference_mode=True)
 
     @staticmethod
     def mask_sentences(idx_f, ctx_f, idx_t, ctx_t):
@@ -55,72 +94,80 @@ class Sent2VecVectorizer(Vectorizer):
 
         return sent_f, sent_t
 
-    def make_vectors(self, relation):
-        sent_f, sent_t = self.mask_sentences(
-            relation.source.index,
+    def _make_vector(self, sentence):
+        value = self.model.embed_sentence(sentence).flatten()
+        return Vector(value)
+
+    def make_vectors(self, relation: Relation):
+        sentence1, sentence2 = self.mask_sentences(
+            relation.source.start_idx,
             relation.source.context,
-            relation.dest.index,
+            relation.dest.start_idx,
             relation.dest.context
         )
-        vf = self.s2v.embed_sentence(sent_f).flatten()
-        vt = self.s2v.embed_sentence(sent_t).flatten()
-        return vf, vt
+
+        v1 = self._make_vector(sentence1)
+        v2 = self._make_vector(sentence2)
+        return v1, v2
 
 
 class FastTextVectorizer(Vectorizer):
 
     def __init__(self, model_path):
-        self.ft = load_facebook_model(model_path)
+        self.model = load_facebook_model(model_path)
 
-    def make_embedding(self, term):
+    def _make_vector(self, term):
         words = term.strip().split('_')
         embeddings = []
         weights = []
 
         for word in words:
-            vec = self.ft[word]
+            vec = self.model[word]
             embeddings.append(vec)
             zipf_freq = zipf_frequency(word, 'pl')
             weights.append(1 / (zipf_freq if zipf_freq > 0 else 1))
 
-        return np.average(embeddings, axis=0, weights=weights)
+        value = np.average(embeddings, axis=0, weights=weights)
+        return Vector(value)
 
-    def make_vectors(self, relation):
-        lemma_f_vec = self.make_embedding(relation.source.lemma)
-        lemma_t_vec = self.make_embedding(relation.dest.lemma)
-        return lemma_f_vec, lemma_t_vec
+    def make_vectors(self, relation: Relation):
+        v1 = self._make_vector(relation.source.lemma)
+        v2 = self._make_vector(relation.dest.lemma)
+        return v1, v2
 
 
 class RetrofitVectorizer(Vectorizer):
 
-    def __init__(self, model_path):
-        self.ft_vec = KeyedVectors.load_word2vec_format(model_path[0])
-        self.ft_bin = load_facebook_model(model_path[1])
+    def __init__(self, retrofitted_model_path, general_model_path):
+        self.model_retrofit = load_word2vec_format(retrofitted_model_path)
+        self.model_general = load_facebook_model(general_model_path)
 
-    def make_embedding(self, term):
+    def _make_vector(self, term):
+        value = []
         try:
-            return self.ft_vec[term]
+            value = self.model_retrofit[term]
         except KeyError:
             print("Term not found in retrofit model: ", term)
-            return self.ft_bin[term]
+            value = self.model_general[term]
+        finally:
+            return Vector(value)
 
-    def make_vectors(self, relation):
-        term_source = relation.source.context[relation.source.index]
-        term_dest = relation.dest.context[relation.dest.index]
+    def make_vectors(self, relation: Relation):
+        term1 = relation.source.context[relation.source.start_idx]
+        term2 = relation.dest.context[relation.dest.start_idx]
 
-        lemma_f_vec = self.make_embedding(term_source)
-        lemma_t_vec = self.make_embedding(term_dest)
-
-        return lemma_f_vec, lemma_t_vec
-
-
-class ElmoConvolutionEngine(Vectorizer):
-
-    def make_vectors(self, relation):
-        return relation.source.conv_vector, relation.dest.conv_vector
+        v1 = self._make_vector(term1)
+        v2 = self._make_vector(term2)
+        return v1, v2
 
 
 class NamedEntityEngine(Vectorizer):
 
+    def _make_vector(self, value):
+        value = [float(value)]
+        return Vector(value)
+
     def make_vectors(self, relation):
-        return [float(relation.source.ne)], [float(relation.dest.ne)]
+        v1 = self._make_vector(relation.source.ne)
+        v2 = self._make_vector(relation.dest.ne)
+        return v1, v2
