@@ -13,13 +13,13 @@ if [[ -z $AWS_BUCKET ]]; then
 fi
 
 CREDENTIALS_FILE=/root/.aws/credentials
-if [[ -f ${CREDENTIALS_FILE} ]]; then
+if [[ ! -f ${CREDENTIALS_FILE} ]]; then
   echo >&2 "Credentials file must be provided."
   exit 1
 fi
 
 mlflow server \
-    --backend-store-uri file://${FILE_DIR} \
+    --backend-store-uri file:/${FILE_DIR} \
     --default-artifact-root s3://${AWS_BUCKET} \
     --host 0.0.0.0 \
     --port $PORT
