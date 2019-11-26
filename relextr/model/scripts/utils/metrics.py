@@ -44,10 +44,10 @@ class Metrics:
         return f1_score(self._targets, self._predicted, average=None)
 
     def __str__(self):
-        return f'\tLoss: {self._loss} ' \
-            f'\n\tAccuracy: {self.accuracy} ' \
-            f'\n\tPrecision: {self.precision} ' \
-            f'\n\tRecall: {self.recall} ' \
+        return f'\tLoss: {self._loss}' \
+            f'\n\tAccuracy: {self.accuracy}' \
+            f'\n\tPrecision: {self.precision}' \
+            f'\n\tRecall: {self.recall}' \
             f'\n\tFscore: {self.fscore}'
 
 
