@@ -15,9 +15,9 @@ mlflow:
 dataset: all
 
 vectorizers:
-  - 'plain'
-  - 'sent2vec'
-  - 'fasttext'
-  - 'retrofit'
+  - 'elmo'
   - 'elmoconv'
+  - 'fasttext'
+  - 'sent2vec'
+  - 'retrofit'
   - 'ner'

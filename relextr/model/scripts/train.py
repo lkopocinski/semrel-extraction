@@ -14,7 +14,7 @@ from torch.utils.data import DataLoader
 from relnet import RelNet
 from utils.batches import Dataset
 from utils.metrics import Metrics, save_metrics
-from utils.utils import is_better_fscore, parse_config
+from utils.utils import is_better_fscore, parse_config, get_device
 
 
 def get_args(argv=None):
