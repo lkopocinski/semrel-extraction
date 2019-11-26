@@ -1,28 +1,8 @@
-from functools import reduce
 from pathlib import Path
 from typing import List
 
 import numpy as np
 from torch.utils import data
-
-from relextr.model.scripts.model.models import PairVec
-
-
-class DatasetOld:
-
-    def __init__(self):
-        self.batches = []
-
-    def add(self, batch):
-        self.batches.append(batch)
-
-    @property
-    def vector_size(self):
-        return len(self.batches[0][0][1])
-
-    @property
-    def size(self):
-        return reduce((lambda x, y: x + len(y)), self.batches, 0)
 
 
 class Dataset(data.dataset):
@@ -59,37 +39,63 @@ class Dataset(data.dataset):
         return X, y
 
 
-class BatchLoader:
+class PairVec:
 
-    def __init__(self, batch_size, vectors_engines=None):
-        self.batch_size = batch_size
-        self.vectors_engines = vectors_engines
+    def __init__(self, line):
+        self.line = line
+        self._init_from_line()
 
-    def load(self, datapath):
-        with open(datapath, encoding="utf-8") as in_file:
-            dataset = Dataset()
-            batch = []
-            for idx, line in enumerate(in_file, 1):
-                try:
-                    relation = PairVec(line)
-                    vectors = [relation.source.vector, relation.dest.vector]
+    def _init_from_line(self):
+        row = self.line.strip().split('\t')
 
-                    for engine in self.vectors_engines:
-                        if engine:
-                            vc1, vc2 = engine.make_vectors(relation)
-                            vectors.append(vc1)
-                            vectors.append(vc2)
+        # Details
+        self.label = row[0]
+        self.lemma1, self.lemma2 = row[1], row[2]
+        self.channel1, self.channel2 = row[3], row[4]
+        self.ne1, self.ne2 = row[5], row[6]
+        self.indices1, self.indices2 = eval(row[7]), eval(row[8])
+        self.context1, self.context2 = eval(row[9]), eval(row[10])
 
-                    batch.append((relation.label, np.concatenate(vectors)))
+        # Vectors
+        self.elmo1, self.elmo2 = eval(row[11]), eval(row[12])
+        self.elmoconv1, self.elmoconv2 = eval(row[13]), eval(row[14])
+        self.fasttext1, self.fasttext2 = eval(row[15]), eval(row[16])
+        self.sent2vec1, self.sent2vec2 = eval(row[17]), eval(row[18])
+        self.retrofit1, self.retrofit2 = eval(row[19]), eval(row[20])
+        self.ner1, self.ner2 = eval(row[21]), eval(row[22])
 
-                    if (idx % self.batch_size) == 0:
-                        dataset.add(batch)
-                        batch = []
-                except Exception as e:
-                    print(e)
-                    continue
+    @property
+    def elmo(self):
+        return self.elmo1, self.elmo2
 
-            if batch:
-                dataset.add(batch)
+    @property
+    def elmoconv(self):
+        return self.elmoconv1, self.elmoconv2
 
-            return dataset
+    @property
+    def fasttext(self):
+        return self.fasttext1, self.fasttext2
+
+    @property
+    def sent2vec(self):
+        return self.sent2vec1, self.sent2vec2
+
+    @property
+    def retrofit(self):
+        return self.retrofit1, self.retrofit2
+
+    @property
+    def ner(self):
+        return self.ner1, self.ner2
+
+    def make_vector(self, methods: List[str]):
+        vectors = [self.elmo1, self.elmo2]
+
+        for method in methods:
+            try:
+                v1, v2 = getattr(self, method)
+                vectors.extend([v1, v2])
+            except AttributeError:
+                print(f'There is no method called {method}')
+
+        return np.concatenate(vectors)

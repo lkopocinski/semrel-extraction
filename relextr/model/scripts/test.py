@@ -36,7 +36,6 @@ def main(argv=None):
     init_mlflow(config)
 
     vectorizers = config['vectorizers']
-
     test_set = Dataset.from_file(Path(f'{args.data_in}/{config["dataset"]}/test.vectors'), vectorizers)
     test_batch_gen = DataLoader(test_set, batch_size=config['batch_size'], num_workers=8)
 
