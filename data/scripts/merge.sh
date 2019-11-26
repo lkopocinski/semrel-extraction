@@ -75,7 +75,7 @@ done
 
 shuf -o ${OUTPUT_PATH}/${domain_out}/train.vectors ${OUTPUT_PATH}/${domain_out}/train.vectors
 shuf -o ${OUTPUT_PATH}/${domain_out}/valid.vectors ${OUTPUT_PATH}/${domain_out}/valid.vectors
-shuf -o ${OUTPUT_PATH}/${domain_out}/valid.vectors ${OUTPUT_PATH}/${domain_out}/test.vectors
+shuf -o ${OUTPUT_PATH}/${domain_out}/test.vectors ${OUTPUT_PATH}/${domain_out}/test.vectors
 
 # Generate for default
 mkdir -p ${OUTPUT_PATH}/all

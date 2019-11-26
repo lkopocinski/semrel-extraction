@@ -1,0 +1,23 @@
+batch_size: 20
+epochs: 30
+
+model:
+  name: 'relextr_model.pt'
+
+mlflow:
+  tracking_uri: 'http://10.17.50.132:8080'
+  experiment_name: 'LREC'
+  tags:
+    files: 81, 82, 83
+    lexical_split: 'no'
+    domain_out: 'no'
+
+dataset: all
+
+vectorizers:
+  - 'plain'
+  - 'sent2vec'
+  - 'fasttext'
+  - 'retrofit'
+  - 'elmoconv'
+  - 'ner'

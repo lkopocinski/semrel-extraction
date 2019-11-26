@@ -2,20 +2,19 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+from pathlib import Path
 
 import argcomplete
 import mlflow
 import torch
 import torch.nn as nn
-import yaml
-from torch.autograd import Variable
 from torch.optim import Adagrad
+from torch.utils.data import DataLoader
 
 from relnet import RelNet
-from utils.batches import BatchLoader
-from utils.engines import VectorizerFactory
+from utils.batches import Dataset
 from utils.metrics import Metrics, save_metrics
-from utils.utils import labels2idx, is_better_fscore
+from utils.utils import is_better_fscore, parse_config
 
 
 def get_args(argv=None):
@@ -34,13 +33,14 @@ def main(argv=None):
     config = parse_config(args.config)
     init_mlflow(config)
 
-    vectorizers = [VectorizerFactory.get_vectorizer(vectorizer['type'], vectorizer['model']) for vectorizer in
-                   config['vectorizers']]
+    vectorizers = config['vectorizers']
+    train_set = Dataset.from_file(Path(f'{args.data_in}/{config["dataset"]}/train.vectors'), vectorizers)
+    valid_set = Dataset.from_file(Path(f'{args.data_in}/{config["dataset"]}/valid.vectors'), vectorizers)
+    test_set = Dataset.from_file(Path(f'{args.data_in}/{config["dataset"]}/test.vectors'), vectorizers)
 
-    batch_loader = BatchLoader(config['batch_size'], vectorizers)
-    train_set = batch_loader.load(f'{args.data_in}/{config["dataset"]}/train.vectors')
-    valid_set = batch_loader.load(f'{args.data_in}/{config["dataset"]}/valid.vectors')
-    test_set = batch_loader.load(f'{args.data_in}/{config["dataset"]}/test.vectors')
+    train_batch_gen = DataLoader(train_set, batch_size=config['batch_size'], num_workers=8)
+    valid_batch_gen = DataLoader(valid_set, batch_size=config['batch_size'], num_workers=8)
+    test_batch_gen = DataLoader(test_set, batch_size=config['batch_size'], num_workers=8)
 
     network = RelNet(in_dim=train_set.vector_size)
     network.to(device)
@@ -50,9 +50,9 @@ def main(argv=None):
     # Log learning params
     mlflow.log_params({
         'batch_size': config['batch_size'],
-        'train_set_size': train_set.size,
-        'valid_set_size': valid_set.size,
-        'test_set_size': test_set.size,
+        'train_set_size': len(train_set),
+        'valid_set_size': len(valid_set),
+        'test_set_size': len(test_set),
         'vector_size': train_set.vector_size,
         'epochs': config['epochs'],
         'optimizer': optimizer.__class__.__name__,
@@ -65,14 +65,14 @@ def main(argv=None):
         print(f'\nEpoch: {epoch} / {config["epochs"]}')
 
         # Train
-        train_metrics = train(network, optimizer, loss_func, train_set.batches, device)
+        train_metrics = train(network, optimizer, loss_func, train_batch_gen, device)
         print(f'Train:\n{train_metrics}')
-        log_metrics(train_metrics, epoch, 'train')
+        log_metrics(train_metrics, 'train', epoch)
 
         # Validate
-        valid_metrics = evaluate(network, valid_set.batches, loss_func, device)
+        valid_metrics = evaluate(network, valid_batch_gen, loss_func, device)
         print(f'Valid:\n{valid_metrics}')
-        log_metrics(valid_metrics, epoch, 'valid')
+        log_metrics(valid_metrics, 'valid', epoch)
 
         # Fscore stopping
         if is_better_fscore(valid_metrics.fscore, best_valid_fscore):
@@ -80,29 +80,11 @@ def main(argv=None):
             torch.save(network.state_dict(), config["model"]["name"])
             mlflow.log_artifact(f'./{config["model"]["name"]}')
 
-        test_metrics = evaluate(network, test_set.batches, loss_func, device)
-        print(f'Test:\n{test_metrics}')
-        log_metrics(valid_metrics, epoch, 'test_')
-
     # Test
-    test_metrics = test(config['model']['name'], test_set.batches, test_set.vector_size, loss_func, device)
+    test_metrics = test(RelNet(test_set.vector_size), config['model']['name'], test_batch_gen, loss_func, device)
     print(f'\n\nTest: {test_metrics}')
     save_metrics(test_metrics, 'metrics.txt')
-    log_metrics(test_metrics, 0, 'test')
-
-
-def get_device():
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-    print(f'Runing on: {device}.')
-    return device
-
-
-def parse_config(path):
-    with open(path, 'r', encoding='utf-8') as stream:
-        try:
-            return yaml.safe_load(stream)
-        except yaml.YAMLError as exc:
-            print(exc)
+    log_metrics(test_metrics, 'test')
 
 
 def init_mlflow(config):
@@ -110,8 +92,7 @@ def init_mlflow(config):
     mlflow.set_tracking_uri(conf['tracking_uri'])
     mlflow.set_experiment(conf['experiment_name'])
     mlflow.set_tags(conf['tags'])
-    mlflow.set_tag('method', [vec['type'] for vec in config['vectorizers']])
-    mlflow.set_tag('domain_out', config['domain_out'])
+    mlflow.set_tag('method', config['vectorizers'])
 
     print(f'\n-- mlflow --'
           f'\nserver: {mlflow.get_tracking_uri()}'
@@ -119,7 +100,7 @@ def init_mlflow(config):
           f'\ntag: {conf["tags"]}')
 
 
-def log_metrics(metrics, step, prefix):
+def log_metrics(metrics, prefix, step=0):
     mlflow.log_metrics({
         f'{prefix}_loss': metrics.loss,
         f'{prefix}_accuracy': metrics.accuracy,
@@ -136,14 +117,13 @@ def train(network, optimizer, loss_function, batches, device):
     metrics = Metrics()
 
     network.train()
-    for batch in batches:
+    for data, labels in batches:
         optimizer.zero_grad()
 
-        labels, data = zip(*batch)
-        target = Variable(torch.LongTensor(labels2idx(labels))).to(device)
-        data = torch.FloatTensor([data])
+        data = data.to(device)
+        target = labels.to(device)
 
-        output = network(data.to(device)).squeeze(0)
+        output = network(data).squeeze(0)
         loss = loss_function(output, target)
 
         loss.backward()
@@ -159,12 +139,11 @@ def evaluate(network, batches, loss_function, device):
     network.eval()
 
     with torch.no_grad():
-        for batch in batches:
-            labels, data = zip(*batch)
-            target = Variable(torch.LongTensor(labels2idx(labels))).to(device)
-            data = torch.FloatTensor([data])
+        for data, labels in batches:
+            data = data.to(device)
+            target = labels.to(device)
 
-            output = network(data.to(device)).squeeze(0)
+            output = network(data).squeeze(0)
             loss = loss_function(output, target)
 
             metrics.update(output.cpu(), target.cpu(), loss.item(), len(batches))
@@ -172,8 +151,7 @@ def evaluate(network, batches, loss_function, device):
     return metrics
 
 
-def test(model_path, batches, in_dim, loss_function, device):
-    network = RelNet(in_dim)
+def test(network, model_path, batches, loss_function, device):
     network.load(model_path)
     network.to(device)
     return evaluate(network, batches, loss_function, device)
