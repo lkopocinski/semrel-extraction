@@ -26,14 +26,14 @@ class Relation:
         return cls(source, dest)
 
     def __str__(self):
-        return f'{self.source.lemma} : {self.dest.lemma}' \
-            f'\t{self.source.channel} : {self.dest.channel}' \
-            f'\t{self.source.start_idx}:{self.source.context}' \
-            f'\t{self.dest.start_idx}:{self.dest.context}' \
-            f'\t{self.source.ne}:{self.dest.ne}'
+        return f'{self.source.lemma}\t{self.dest.lemma}\t' \
+               f'{self.source.channel}\t{self.dest.channel}\t' \
+               f'{self.source.ne}\n{self.dest.ne}\t' \
+               f'{self.source.indices}\t{self.dest.indices}\t' \
+               f'{self.source.context}\t{self.dest.context}\t'
 
     class Element:
-        def __init__(self, lemma: str, channel: str, indices: List[int], context: List[str], ne: int):
+        def __init__(self, lemma: str, channel: str, indices: List[int], context: List[str], ne: bool):
             self.lemma = lemma
             self.channel = channel
             self.indices = indices
@@ -45,7 +45,7 @@ class Relation:
             return self.indices[0]
 
         def __str__(self):
-            return f'{self.lemma}\t{self.channel}\t{self.start_idx}:{self.context}'
+            return f'{self.lemma}\t{self.channel}\t{self.ne}\t{self.indices}\t{self.context}'
 
 
 class Vector:

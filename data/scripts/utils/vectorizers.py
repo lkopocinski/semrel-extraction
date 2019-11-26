@@ -23,7 +23,7 @@ class VectorizerFactory:
         elif format == 'elmoconv':
             return ElmoConvolutionVectorizer()
         elif format == 'ner':
-            return NamedEntityEngine()
+            return NamedEntityVectorizer()
         elif format == 'retrofit':
             return RetrofitVectorizer(model_path)
         else:
@@ -80,19 +80,19 @@ class Sent2VecVectorizer(Vectorizer):
         self.model.load_model(model_path, inference_mode=True)
 
     @staticmethod
-    def mask_sentences(idx_f, ctx_f, idx_t, ctx_t):
-        if ctx_f == ctx_t:
-            ctx_f[int(idx_f)] = 'MASK'
-            ctx_f[int(idx_t)] = 'MASK'
-            sent_f = ' '.join(ctx_f)
-            sent_t = ' '.join(ctx_f)
+    def mask_sentences(index1, context1, index2, context2):
+        if context1 == context2:
+            context1[int(index1)] = 'MASK'
+            context1[int(index2)] = 'MASK'
+            sentence1 = ' '.join(context1)
+            sentence2 = sentence1
         else:
-            ctx_f[int(idx_f)] = 'MASK'
-            ctx_t[int(idx_t)] = 'MASK'
-            sent_f = ' '.join(ctx_f)
-            sent_t = ' '.join(ctx_t)
+            context1[int(index1)] = 'MASK'
+            context2[int(index2)] = 'MASK'
+            sentence1 = ' '.join(context1)
+            sentence2 = ' '.join(context2)
 
-        return sent_f, sent_t
+        return sentence1, sentence2
 
     def _make_vector(self, sentence):
         value = self.model.embed_sentence(sentence).flatten()
@@ -161,7 +161,7 @@ class RetrofitVectorizer(Vectorizer):
         return v1, v2
 
 
-class NamedEntityEngine(Vectorizer):
+class NamedEntityVectorizer(Vectorizer):
 
     def _make_vector(self, value):
         value = [float(value)]
