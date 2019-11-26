@@ -50,7 +50,7 @@ class Relation:
 
 class Vector:
     def __init__(self, value):
-        self.value = value
+        self.value = np.asarray(value)
 
     def __str__(self):
         return np.array2string(self.value, separator=', ').replace('\n', '')
