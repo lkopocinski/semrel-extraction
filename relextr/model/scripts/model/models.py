@@ -1,6 +1,3 @@
-import numpy as np
-
-
 class RelationVec:
 
     def __init__(self, line):
@@ -11,41 +8,18 @@ class RelationVec:
         self._init_from_line()
 
     def _init_from_line(self):
-        line = self.line.strip()
-        by_tab = line.split('\t')
+        row = self.line.strip().split('\t')
 
-        self.label = by_tab[0]
-        vector_from, vector_to = np.array(eval(by_tab[1])), np.array(eval(by_tab[2]))
-        lemma_from, lemma_to = by_tab[3], by_tab[6]
-        channel_from, channel_to = by_tab[4], by_tab[7]
-        index_from, context_from = by_tab[5].split(':', 1)
-        index_to, context_to = by_tab[8].split(':', 1)
-        conv_vector_from, conv_vector_to = np.array(eval(by_tab[9])), np.array(eval(by_tab[10]))
-        ne_from, ne_to = eval(by_tab[11]), eval(by_tab[12])
+        self.label = row[0]
+        self.lemma1, self.lemma2 = row[1], row[2]
+        self.channel1, self.channel2 = row[3], row[4]
+        self.ne1, self.ne2 = row[5], row[6]
+        self.indices1, self.indices2 = eval(row[7]), eval(row[8])
+        self.context1, self.context2 = eval(row[9]), eval(row[10])
 
-        context_from = eval(context_from)
-        context_to = eval(context_to)
-
-        index_from = int(index_from)
-        index_to = int(index_to)
-
-        self._from = self.Element(vector_from, lemma_from, channel_from, index_from, context_from, conv_vector_from, ne_from)
-        self._to = self.Element(vector_to, lemma_to, channel_to, index_to, context_to, conv_vector_to, ne_to)
-
-    @property
-    def source(self):
-        return self._from
-
-    @property
-    def dest(self):
-        return self._to
-
-    class Element:
-        def __init__(self, vector, lemma, channel, index, context, conv_vector, ne):
-            self.vector = vector
-            self.lemma = lemma
-            self.channel = channel
-            self.index = index
-            self.context = context
-            self.conv_vector = conv_vector
-            self.ne = ne
+        self.elmo1, self.elmo2 = eval(row[11]), row[12]
+        self.elmoconv1, self.elmoconv2 = eval(row[13]), eval(row[14])
+        self.fasttext1, self.fasttext2 = eval(row[15]), eval(row[16])
+        self.sent2vec1, self.sent2vec2 = eval(row[17]), eval(row[18])
+        self.retrofit1, self.retrofit2 = eval(row[19]), eval(row[20])
+        self.ner1, self.ner2 = eval(row[21]), eval(row[22])
