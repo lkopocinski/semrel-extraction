@@ -3,7 +3,7 @@ import abc
 import numpy as np
 import sent2vec
 from allennlp.modules.elmo import Elmo, batch_to_ids
-from gensim.models.KeyedVectors import load_word2vec_format
+from gensim.models import KeyedVectors
 from gensim.models.fasttext import load_facebook_model
 from wordfreq import zipf_frequency
 
@@ -139,7 +139,7 @@ class FastTextVectorizer(Vectorizer):
 class RetrofitVectorizer(Vectorizer):
 
     def __init__(self, retrofitted_model_path, general_model_path):
-        self.model_retrofit = load_word2vec_format(retrofitted_model_path)
+        self.model_retrofit = KeyedVectors.load_word2vec_format(retrofitted_model_path)
         self.model_general = load_facebook_model(general_model_path)
 
     def _make_vector(self, term):

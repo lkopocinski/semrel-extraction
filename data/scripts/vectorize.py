@@ -7,7 +7,7 @@ from pathlib import Path
 import argcomplete
 import numpy as np
 
-import vectorizers as v
+import utils.vectorizers as v
 from model.models import Relation
 from utils.io import save_lines
 
