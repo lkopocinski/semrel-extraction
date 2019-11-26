@@ -20,15 +20,15 @@ class Relation:
         ne_source, ne_dest = row[4].split(':', 1)
 
         source = cls.Element(lemma_source, channel_source, [int(index_source)],
-                             eval(context_source), float(ne_source))
+                             eval(context_source), bool(ne_source))
         dest = cls.Element(lemma_dest, channel_dest, [int(index_dest)],
-                           eval(context_dest), float(ne_dest))
+                           eval(context_dest), bool(ne_dest))
         return cls(source, dest)
 
     def __str__(self):
         return f'{self.source.lemma}\t{self.dest.lemma}\t' \
                f'{self.source.channel}\t{self.dest.channel}\t' \
-               f'{self.source.ne}\n{self.dest.ne}\t' \
+               f'{self.source.ne}\t{self.dest.ne}\t' \
                f'{self.source.indices}\t{self.dest.indices}\t' \
                f'{self.source.context}\t{self.dest.context}\t'
 
