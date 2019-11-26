@@ -29,7 +29,7 @@ class Dataset(data.dataset):
     def __len__(self):
         return len(self.lines)
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int):
         line = self.lines[index]
         pair = PairVec(line)
 
@@ -41,7 +41,7 @@ class Dataset(data.dataset):
 
 class PairVec:
 
-    def __init__(self, line):
+    def __init__(self, line: str):
         self.line = line
         self._init_from_line()
 
@@ -89,13 +89,11 @@ class PairVec:
         return self.ner1, self.ner2
 
     def make_vector(self, methods: List[str]):
-        vectors = [self.elmo1, self.elmo2]
-
+        vectors = []
         for method in methods:
             try:
                 v1, v2 = getattr(self, method)
                 vectors.extend([v1, v2])
             except AttributeError:
                 print(f'There is no method called {method}')
-
         return np.concatenate(vectors)
