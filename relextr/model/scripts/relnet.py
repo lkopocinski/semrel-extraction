@@ -6,11 +6,12 @@ import torch.nn as nn
 
 class RelNet(nn.Module):
     """
-        in_dim: vectors concatenation size, hidden_dim: hidden layer dimension,
+        in_dim: vectors concatenation size,
+        hidden_dim: hidden layer dimension,
         out_dim: relations quantity
     """
 
-    def __init__(self, in_dim=3448, hidden_dim=512, out_dim=2, dropout=0.5):
+    def __init__(self, in_dim=2048, hidden_dim=512, out_dim=2, dropout=0.5):
         super(RelNet, self).__init__()
         self.f1 = nn.Linear(in_dim, hidden_dim)
         self.f2 = nn.Linear(hidden_dim, hidden_dim)
