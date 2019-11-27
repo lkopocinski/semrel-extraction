@@ -21,7 +21,7 @@ def generate_positive(files, channels):
                     if element_from and element_to:
                         dir_id, document_id = get_document_name(document)
                         rel = Relation(document_id, element_from, element_to)
-                        yield '\t'.join((dir_id, 'in_relation', str(rel)))
+                        yield f'{dir_id}\tin_relation\t{rel}'
 
 
 def generate_negative(files, channels):
