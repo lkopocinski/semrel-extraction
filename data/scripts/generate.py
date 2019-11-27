@@ -24,16 +24,14 @@ def main(argv=None):
     args = get_args(argv)
 
     lines = []
+    out_file_path = Path(f'{args.output_path}/relations.context')
     for directory in args.directories:
         source_path = Path(f'{args.data_in}/{directory}')
         if source_path.is_dir():
             files = list(source_path.glob('*.ne.rel.xml'))
-            out_file_path = Path(f'{args.output_path}/relations.context')
             positive_lines = generate_positive(files, ('BRAND_NAME', 'PRODUCT_NAME'))
-            # negative_lines = generate_negative(files, ('BRAND_NAME', 'PRODUCT_NAME'))
-            # lines = chain(positive_lines, negative_lines)
-            lines.append(positive_lines)
-
+            negative_lines = generate_negative(files, ('BRAND_NAME', 'PRODUCT_NAME'))
+            lines.extend([positive_lines, negative_lines])
 
     save_lines(out_file_path, chain(*lines))
 
