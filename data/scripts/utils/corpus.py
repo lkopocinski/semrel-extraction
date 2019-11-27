@@ -41,7 +41,7 @@ def get_relation_element(rel, sentences):
 
     context = get_context(sent)
     lemma = get_lemma(sent, indices[0])
-    ne = is_named_entity(sent, indices[0])
+    ne = is_named_entity(sent, indices)
     return Relation.Element(sent_id, lemma, channel_name, ne, indices, context)
 
 
@@ -72,10 +72,9 @@ def get_document_name(document):
     return ccl_path.parent.stem, ccl_path.stem.split('.')[0]
 
 
-def is_named_entity(sent, index):
-    token = [token for token in sent.tokens()][index]
-    ann = tou.get_annotation(sent, token, 'NE', index, default=0)
-    return ann > 0
+def is_named_entity(sent, indices):
+    annotations = [tou.get_annotation(sent, token, 'NE', index, default=0) for index, token in enumerate(sent.tokens()) if index in indices]
+    return all(annotations)
 
 
 def get_nouns_idx(sent):
