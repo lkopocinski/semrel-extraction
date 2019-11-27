@@ -10,26 +10,6 @@ from wordfreq import zipf_frequency
 from model.models import Relation, Vector
 
 
-class VectorizerFactory:
-    @staticmethod
-    def get_vectorizer(format, model_path):
-        if format == 'plain':
-            return None
-
-        if format == 'sent2vec':
-            return Sent2VecVectorizer(model_path)
-        elif format == 'fasttext':
-            return FastTextVectorizer(model_path)
-        elif format == 'elmoconv':
-            return ElmoConvolutionVectorizer()
-        elif format == 'ner':
-            return NamedEntityVectorizer()
-        elif format == 'retrofit':
-            return RetrofitVectorizer(model_path)
-        else:
-            raise ValueError(format)
-
-
 class Vectorizer(abc.ABC):
 
     @abc.abstractmethod

@@ -3,9 +3,8 @@
 from itertools import permutations, product
 
 from model.models import Relation
-from utils.corpus import id_to_sent_dict, \
-    is_ner_relation, is_in_channel, get_relation_element, \
-    get_nouns_idx, get_lemma, corpora_documents, get_document_name
+from utils.corpus import id_to_sent_dict, is_ner_relation, is_in_channel, get_relation_element, get_nouns_idx, \
+    get_lemma, corpora_documents, get_document_name
 
 
 def generate_positive(files, channels):
@@ -88,6 +87,9 @@ def generate_negative(files, channels):
 
                 f_lemma = get_lemma(sentences[f_sent_id], f_idx)
                 t_lemma = get_lemma(sentences[t_sent_id], t_idx)
-                source = Relation.Element(f_lemma, _f_channel_name, [f_idx], f_context, _f_ne)
-                target = Relation.Element(t_lemma, _t_channel_name, [t_idx], t_context, _t_ne)
-                yield Relation(source, target)
+                element_from = Relation.Element(f_sent_id, f_lemma, _f_channel_name, _f_ne, [f_idx], f_context)
+                element_to = Relation.Element(t_sent_id, t_lemma, _t_channel_name, _t_ne, [t_idx], t_context)
+
+                dir_id, document_id = get_document_name(document)
+                rel = Relation(document_id, element_from, element_to)
+                yield f'{dir_id}\tin_relation\t{rel}'

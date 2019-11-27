@@ -21,4 +21,3 @@ ${SCRIPTS_DIR}/generate.py --data-in ${DATA_IN} \
                            --directories 111 112 114 115
 
 popd
-# TODO: sort -u -o *.context
