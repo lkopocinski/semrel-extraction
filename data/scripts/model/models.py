@@ -24,13 +24,13 @@ class Relation:
         return '\t'.join((self.document_id, self.source, self.dest))
 
     class Element:
-        def __init__(self, sent_id: int, lemma: str, channel: str, indices: List[int], context: List[str], ne: bool):
+        def __init__(self, sent_id: int, lemma: str, channel: str, ne: bool, indices: List[int], context: List[str]):
             self.sent_id = sent_id
             self.lemma = lemma
             self.channel = channel
+            self.ne = ne
             self.indices = indices
             self.context = context
-            self.ne = ne
 
         @property
         def start_idx(self):

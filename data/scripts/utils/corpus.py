@@ -42,8 +42,9 @@ def get_relation_element(rel, sentences):
     context = get_context(sent)
     lemma = get_lemma(sent, indices[0])
     ne = is_named_entity(sent, indices[0])
-
-    return Relation.Element(sent_id, lemma, channel_name, indices, context, ne)
+    import pudb
+    pudb.set_trace()
+    return Relation.Element(sent_id, lemma, channel_name, ne, indices, context)
 
 
 def get_annotation_indices(sent, ann_number, ann_channel):
