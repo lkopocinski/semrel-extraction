@@ -1,8 +1,0 @@
-name: semrel
-
-entry_points:
-  main:
-    parameters:
-      data-in: {type: path, default: "./relextr/model/dataset"}
-      config: {type: path, default: "./relextr/model/config.yaml"}
-    command: "python3.6 relextr/model/scripts"
