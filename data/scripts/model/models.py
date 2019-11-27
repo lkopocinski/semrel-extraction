@@ -21,10 +21,10 @@ class Relation:
         return cls(document_id, source, dest)
 
     def __str__(self):
-        return '\t'.join((self.document_id, str(self.source), str(self.dest)))
+        return f'{self.document_id}\t{self.source}\t{self.dest}'
 
     class Element:
-        def __init__(self, sent_id: int, lemma: str, channel: str, ne: bool, indices: List[int], context: List[str]):
+        def __init__(self, sent_id: str, lemma: str, channel: str, ne: bool, indices: List[int], context: List[str]):
             self.sent_id = sent_id
             self.lemma = lemma
             self.channel = channel
@@ -37,8 +37,7 @@ class Relation:
             return self.indices[0]
 
         def __str__(self):
-            return '\t'.join((self.sent_id, self.lemma, self.channel,
-                              str(self.ne), self.indices, self.context))
+            return f'{self.sent_id}\t{self.lemma}\t{self.channel}\t{self.ne}\t{self.indices}\t{self.context}'
 
 
 class Vector:
