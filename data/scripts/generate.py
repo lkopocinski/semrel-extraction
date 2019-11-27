@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
-
 import argparse
+from itertools import chain
 from pathlib import Path
 
 import argcomplete
-from generator import generate_positive, generate_negative
 
+from generator import generate_positive, generate_negative
 from utils.io import save_lines
 
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-in', required=True, help='Directory with lists of files split into datasets.')
-    parser.add_argument('--output-path', required=True, help='Directory Directory for saving generated datasets.')
+    parser.add_argument('--data-in', required=True, help='Directory with corpora.')
+    parser.add_argument('--directories', nargs='+', required=True, help='Directories names to be processed.')
+    parser.add_argument('--output-path', required=True, help='Directory for saving generated datasets.')
 
     argcomplete.autocomplete(parser)
 
@@ -22,14 +23,17 @@ def get_args(argv=None):
 def main(argv=None):
     args = get_args(argv)
 
-    for set_name in ['train', 'valid', 'test']:
-        source_path = Path(f'{args.data_in}/{set_name}')
+    for directory in args.directories:
+        source_path = Path(f'{args.data_in}/{directory}')
         if source_path.is_dir():
-            for label_type, gen in zip(['positive', 'negative'], [generate_positive, generate_negative]):
-                for list_file in source_path.glob('*.list'):
-                    out_file_path = Path(f'{args.output_path}/{set_name}/{label_type}/{list_file.stem}.context')
-                    lines = gen(list_file, ('BRAND_NAME', 'PRODUCT_NAME'))
-                    save_lines(out_file_path, lines)
+            files = list(source_path.glob('*.ne.rel.xml'))
+            out_file_path = Path(f'{args.output_path}/relations.context')
+
+            positive_lines = generate_positive(files, ('BRAND_NAME', 'PRODUCT_NAME'))
+            negative_lines = generate_negative(files, ('BRAND_NAME', 'PRODUCT_NAME'))
+            lines = chain(positive_lines, negative_lines)
+
+            save_lines(out_file_path, lines)
 
 
 if __name__ == "__main__":

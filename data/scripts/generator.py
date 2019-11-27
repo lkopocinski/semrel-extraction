@@ -3,36 +3,29 @@
 from itertools import permutations, product
 
 from model.models import Relation
-from utils.corpus import corpora_files, load_document, id_to_sent_dict, \
+from utils.corpus import id_to_sent_dict, \
     is_ner_relation, is_in_channel, get_relation_element, \
-    get_nouns_idx, get_lemma, get_relation_element_multiword
+    get_nouns_idx, get_lemma, corpora_documents, get_document_name
 
 
-def generate_positive(list_file, channels, multiword=False):
-    for corpora_file, relations_file in corpora_files(list_file):
-        document = load_document(corpora_file, relations_file)
+def generate_positive(files, channels):
+    for document in corpora_documents(files):
         sentences = id_to_sent_dict(document)
 
         for relation in document.relations():
             if is_ner_relation(relation):
                 if is_in_channel(relation, channels):
-                    f = relation.rel_from()
-                    t = relation.rel_to()
+                    element_from = get_relation_element(relation.rel_from(), sentences)
+                    element_to = get_relation_element(relation.rel_to(), sentences)
 
-                    if multiword:
-                        f_element = get_relation_element_multiword(f, sentences)
-                        t_element = get_relation_element_multiword(t, sentences)
-                    else:
-                        f_element = get_relation_element(f, sentences)
-                        t_element = get_relation_element(t, sentences)
-
-                    if f_element and t_element:
-                        yield Relation(f_element, t_element)
+                    if element_from and element_to:
+                        dir_id, document_id = get_document_name(document)
+                        rel = Relation(document_id, element_from, element_to)
+                        yield '\t'.join((dir_id, 'in_relation', rel))
 
 
-def generate_negative(list_file, channels):
-    for corpora_file, relations_file in corpora_files(list_file):
-        document = load_document(corpora_file, relations_file)
+def generate_negative(files, channels):
+    for document in corpora_documents(files):
         sentences = id_to_sent_dict(document)
 
         relations = {}
