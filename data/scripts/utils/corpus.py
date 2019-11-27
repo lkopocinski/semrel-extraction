@@ -42,8 +42,6 @@ def get_relation_element(rel, sentences):
     context = get_context(sent)
     lemma = get_lemma(sent, indices[0])
     ne = is_named_entity(sent, indices[0])
-    import pudb
-    pudb.set_trace()
     return Relation.Element(sent_id, lemma, channel_name, ne, indices, context)
 
 
@@ -60,8 +58,12 @@ def get_context(sent):
     return [token.orth_utf8() for token in sent.tokens()]
 
 
-def get_lemma(sent, idx):
-    return [token.lexemes()[0].lemma_utf8() for token in sent.tokens()][idx]
+def get_lemma(sent, index):
+    token = [token for token in sent.tokens()][index]
+    try:
+        return token.lexemes()[0].lemma_utf8()
+    except:
+        return ''
 
 
 def get_document_name(document):
