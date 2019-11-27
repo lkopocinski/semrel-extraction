@@ -70,7 +70,7 @@ def get_document_name(document):
 
 
 def is_named_entity(sent, index):
-    token = [token.orth_utf8() for token in sent.tokens()][index]
+    token = [token for token in sent.tokens()][index]
     ann = tou.get_annotation(sent, token, 'NE', index, default=0)
     return ann > 0
 
