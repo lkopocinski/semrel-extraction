@@ -1,0 +1,16 @@
+md5: 942e042e22d9722d002d200989e87721
+cmd: ./data/scripts/vectorize.py --data-in ./data/sampled --output-path ./data/vectors
+  --elmo_options ./data/elmo/emb-options.json --elmo_weights ./data/elmo/emb-weights.hdf5
+  --fasttext_model ./data/fasttext/kgr10.plain.lemma.skipgram.dim300.neg10.bin --sent2vec_model
+  ./data/sent2vec/kgr10.bin --retrofit_model ./data/fasttext/kgr10.plain.skipgram.dim300.neg10.retrofit-v3.vec
+deps:
+- md5: 26194c1a5e9861366ef306e78424f768.dir
+  path: data/sampled
+- md5: bff15721bab57256c04a001e838deeb3
+  path: data/scripts/vectorize.py
+outs:
+- md5: 42dcd9e3f0f8f63a8d808cf51d5a7059.dir
+  path: data/vectors
+  cache: true
+  metric: false
+  persist: false
