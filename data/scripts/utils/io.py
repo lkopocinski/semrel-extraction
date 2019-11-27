@@ -1,4 +1,7 @@
-def save_lines(path, lines):
+from pathlib import Path
+
+
+def save_lines(path: Path, lines):
     if not path.parent.exists():
         path.parent.mkdir(parents=True, exist_ok=True)
 
