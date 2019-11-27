@@ -62,7 +62,7 @@ def get_lemma(sent, index):
     token = [token for token in sent.tokens()][index]
     try:
         return token.lexemes()[0].lemma_utf8()
-    except:
+    except IndexError:
         return ''
 
 
@@ -82,4 +82,7 @@ def get_nouns_idx(sent):
 
 
 def is_noun(token):
-    return 'subst' == cou.get_pos(token, 'nkjp', True)
+    try:
+        return 'subst' == cou.get_pos(token, 'nkjp', True)
+    except IndexError:
+        return False
