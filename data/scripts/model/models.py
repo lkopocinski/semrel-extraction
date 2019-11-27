@@ -5,7 +5,8 @@ import numpy as np
 
 class Relation:
 
-    def __init__(self, source, dest):
+    def __init__(self, document_id, source, dest):
+        self.document_id = document_id
         self.source = source
         self.dest = dest
 
@@ -13,27 +14,18 @@ class Relation:
     def from_line(cls, line: str):
         row = line.strip().split('\t')
 
-        lemma_source, lemma_dest = row[0].replace(' : ', ':').split(':', 1)
-        channel_source, channel_dest = row[1].replace(' : ', ':').split(':', 1)
-        index_source, context_source = row[2].split(':', 1)
-        index_dest, context_dest = row[3].split(':', 1)
-        ne_source, ne_dest = row[4].split(':', 1)
+        document_id = row[2]
+        source = cls.Element(*row[3:9])
+        dest = cls.Element(*row[9:15])
 
-        source = cls.Element(lemma_source, channel_source, [int(index_source)],
-                             eval(context_source), bool(ne_source))
-        dest = cls.Element(lemma_dest, channel_dest, [int(index_dest)],
-                           eval(context_dest), bool(ne_dest))
-        return cls(source, dest)
+        return cls(document_id, source, dest)
 
     def __str__(self):
-        return f'{self.source.lemma}\t{self.dest.lemma}\t' \
-               f'{self.source.channel}\t{self.dest.channel}\t' \
-               f'{self.source.ne}\t{self.dest.ne}\t' \
-               f'{self.source.indices}\t{self.dest.indices}\t' \
-               f'{self.source.context}\t{self.dest.context}\t'
+        return '\t'.join((self.document_id, self.source, self.dest))
 
     class Element:
-        def __init__(self, lemma: str, channel: str, indices: List[int], context: List[str], ne: bool):
+        def __init__(self, sent_id: int, lemma: str, channel: str, indices: List[int], context: List[str], ne: bool):
+            self.sent_id = sent_id
             self.lemma = lemma
             self.channel = channel
             self.indices = indices
@@ -45,7 +37,7 @@ class Relation:
             return self.indices[0]
 
         def __str__(self):
-            return f'{self.lemma}\t{self.channel}\t{self.ne}\t{self.indices}\t{self.context}'
+            return '\t'.join((self.sent_id, self.lemma, self.channel, self.ne, self.indices, self.context))
 
 
 class Vector:

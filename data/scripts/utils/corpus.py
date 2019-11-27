@@ -1,26 +1,18 @@
-import os
-from data.scripts.model.models import Relation
+from pathlib import Path
+from typing import List
 
 from corpus_ccl import cclutils as ccl
 from corpus_ccl import corpus_object_utils as cou
 from corpus_ccl import token_utils as tou
 
-
-def corpora_files(paths_file):
-    with open(paths_file, 'r', encoding='utf-8') as in_file:
-        for line in in_file:
-            filepath = line.strip()
-            if filepath.endswith('ne.rel.xml'):
-                rel_file = filepath
-                corpus_file = filepath.replace('.rel', '')
-                if os.path.isfile(corpus_file):
-                    yield corpus_file, rel_file
-            else:
-                continue
+from data.scripts.model.models import Relation
 
 
-def load_document(corpora_file, rel_file):
-    return ccl.read_ccl_and_rel_ccl(corpora_file, rel_file)
+def corpora_documents(relation_files: List[Path]):
+    for rel_path in relation_files:
+        ccl_path = Path(str(rel_path).replace('.rel', ''))
+        if rel_path.is_file() and ccl_path.is_file():
+            yield ccl.read_ccl_and_rel_ccl(str(ccl_path), str(rel_path))
 
 
 def id_to_sent_dict(document):
@@ -39,27 +31,28 @@ def is_in_channel(relation, channels):
 
 
 def get_relation_element(rel, sentences):
-    sent = sentences[rel.sentence_id()]
+    sent_id = rel.sentence_id()
+    sent = sentences[sent_id]
     channel_name = rel.channel_name()
-    indices = find_token_indices(sent, rel.annotation_number(), channel_name)
+    indices = get_annotation_indices(sent, rel.annotation_number(), channel_name)
 
     if not indices:
         return None
 
     context = get_context(sent)
     lemma = get_lemma(sent, indices[0])
-    ne = is_ne(sent, indices[0])
+    ne = is_named_entity(sent, indices[0])
 
-    return Relation.Element(lemma, channel_name, indices, context, ne)
+    return Relation.Element(sent_id, lemma, channel_name, indices, context, ne)
 
 
-def find_token_indices(sent, ann_number, ann_channel):
-    idxs = []
-    for idx, token in enumerate(sent.tokens()):
-        number = tou.get_annotation(sent, token, ann_channel)
+def get_annotation_indices(sent, ann_number, ann_channel):
+    indices = []
+    for index, token in enumerate(sent.tokens()):
+        number = tou.get_annotation(sent, token, ann_channel, index, default=0)
         if number == ann_number:
-            idxs.append(idx)
-    return idxs
+            indices.append(index)
+    return indices
 
 
 def get_context(sent):
@@ -70,10 +63,16 @@ def get_lemma(sent, idx):
     return [token.lexemes()[0].lemma_utf8() for token in sent.tokens()][idx]
 
 
-def is_ne(sent, idx):
-    val = int([tou.get_annotation(sent, token, 'NE', i, default=0) for i, token
-               in enumerate(sent.tokens())][idx])
-    return 1.0 if val > 0 else 0.0
+def get_document_name(document):
+    ccl_path, rel_path = document.path().split(';')
+    ccl_path = Path(ccl_path)
+    return ccl_path.parent.stem, ccl_path.stem.split('.')[0]
+
+
+def is_named_entity(sent, index):
+    token = [token.orth_utf8() for token in sent.tokens()][index]
+    ann = tou.get_annotation(sent, token, 'NE', index, default=0)
+    return ann > 0
 
 
 def get_nouns_idx(sent):
@@ -82,48 +81,3 @@ def get_nouns_idx(sent):
 
 def is_noun(token):
     return 'subst' == cou.get_pos(token, 'nkjp', True)
-
-
-def get_relation_element_multiword(rel, sentences):
-    sent = sentences[rel.sentence_id()]
-    channel_name = rel.channel_name()
-    indices = find_token_indices(sent, rel.annotation_number(), channel_name)
-
-    if not indices:
-        return None
-
-    begin = indices[0]
-    end = indices[-1]
-
-    context = get_context(sent)
-    phrase = ' '.join(context[begin:end + 1])
-    context[begin:end + 1] = [phrase]
-
-    lemma = get_multiword_lemma(sent, indices[0])
-    return Relation.Element(lemma, channel_name, [begin], context)
-
-
-def get_multiword_lemma(sent, idx):
-    token = [token for token in sent.tokens()][idx]
-    try:
-        lemma = tou.get_attributes(token)['BRAND_NAME:lemma']
-        if lemma == '':
-            raise Exception
-    except:
-        try:
-            lemma = tou.get_attributes(token)['BRAND_NAME:Forma podstawowa']
-            if lemma == '':
-                raise Exception
-        except:
-            try:
-                lemma = tou.get_attributes(token)['PRODUCT_NAME:Forma podstawowa']
-                if lemma == '':
-                    raise Exception
-            except:
-                try:
-                    lemma = tou.get_attributes(token)['PRODUCT_NAME:lemma']
-                    if lemma == '':
-                        raise Exception
-                except:
-                    lemma = get_lemma(sent, idx)
-    return lemma
