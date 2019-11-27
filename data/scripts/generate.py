@@ -30,8 +30,9 @@ def main(argv=None):
             out_file_path = Path(f'{args.output_path}/relations.context')
 
             positive_lines = generate_positive(files, ('BRAND_NAME', 'PRODUCT_NAME'))
-            negative_lines = generate_negative(files, ('BRAND_NAME', 'PRODUCT_NAME'))
-            lines = chain(positive_lines, negative_lines)
+            # negative_lines = generate_negative(files, ('BRAND_NAME', 'PRODUCT_NAME'))
+            # lines = chain(positive_lines, negative_lines)
+            lines = positive_lines
 
             save_lines(out_file_path, lines)
 
