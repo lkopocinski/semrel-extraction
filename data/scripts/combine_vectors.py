@@ -4,9 +4,8 @@ import argparse
 from pathlib import Path
 
 import argcomplete
-import torch.nn as nn
 import torch
-from model.models import Vector
+import torch.nn as nn
 
 
 def get_args(argv=None):
@@ -42,7 +41,7 @@ def load_map(map_path):
     return vec_map
 
 
-def combine_vectors(tensor):
+def max_pool(tensor):
     pool = nn.MaxPool1d(5, stride=0)
     tensor = tensor.transpose(2, 1)
     output = pool(tensor)
@@ -79,14 +78,17 @@ def main(argv=None):
         sent_id2 = row[9]
         tokens2 = eval(row[13])
 
-        rel_key = (doc_id, (sent_id1, tuple(tokens1)), (sent_id2,
-                                                        tuple(tokens2)))
-        rel_map[rel_key] = (get_tensor(doc_id, sent_id1, tokens1, elmo_map),
-                            get_tensor(doc_id, sent_id2, tokens2, elmo_map))
+        rel_key = (doc_id, (sent_id1, tuple(tokens1)), (sent_id2, tuple(tokens2)))
+        rel_map[rel_key] = (
+            get_tensor(doc_id, sent_id1, tokens1, elmo_map),
+            get_tensor(doc_id, sent_id2, tokens2, elmo_map)
+        )
 
         elmo1, elmo2 = zip(*rel_map.values())
-        output = combine_vectors(torch.cat(elmo1))
-        print(output)
+        output1 = max_pool(elmo1)
+        output2 = max_pool(elmo2)
+
+        print(output1, output2)
 
 
 if __name__ == '__main__':
