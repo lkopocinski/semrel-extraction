@@ -14,9 +14,9 @@ dvc run \
 -o ${OUTPUT_PATH} \
 ${SCRIPTS_DIR}/combine_vectors.py --data-in ${DATA_IN} \
                                  --output-path ${OUTPUT_PATH} \
-                                 --elmo-map "./data/maps/1xx.corpus.elmo.map" \
-                                 --fasttext-map "./data/maps/1xx.corpus.fasttext.map" \
-                                 --retrofit-map "./data/maps/1xx.corpus.retrofit.map" 
+                                 --elmo-map "./data/maps/elmo.fake.map" \
+                                 --fasttext-map "./data/maps/fasttext.fake.map" \
+                                 --retrofit-map "./data/maps/retrofit.fake.map" 
 
 #                                 --sent2vec-map "./data/maps/1xx.corpus.sent2vec.map" \
 #                                 --elmoconv-map "./data/maps/1xx.corpus.elmoconv.map" \
