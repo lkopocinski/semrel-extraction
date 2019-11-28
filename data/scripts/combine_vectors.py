@@ -43,15 +43,15 @@ def load_map(map_path):
 
 
 def combine_vectors(tensor):
-    pool = nn.MaxPool1d(3, stride=2)
-    tensor = tensor.transpose(0, 2)
+    pool = nn.MaxPool1d(5, stride=0)
+    tensor = tensor.transpose(2, 1)
     output = pool(tensor)
     return output
 
 
 def get_tensor(doc_id, sent_id, token_indices, vec_map):
     vectors = [vec_map[(doc_id, sent_id, idx)] for idx in token_indices]
-    vectors = torch.FloatTensor(vectors)
+    vectors = torch.FloatTensor(vectors).unsqueeze(0)
     tensor = torch.zeros(1, 5, 1024)
     tensor[:, 0:vectors.shape[1], :] = vectors
     return tensor
@@ -79,11 +79,14 @@ def main(argv=None):
         sent_id2 = row[9]
         tokens2 = eval(row[13])
 
-        rel_key = (doc_id, (sent_id1, tokens1), (sent_id2, tokens2))
-        rel_map[rel_key] = (get_tensor(doc_id, sent_id1, tokens1, elmo_map), get_tensor(doc_id, sent_id1, tokens1, elmo_map))
+        rel_key = (doc_id, (sent_id1, tuple(tokens1)), (sent_id2,
+                                                        tuple(tokens2)))
+        rel_map[rel_key] = (get_tensor(doc_id, sent_id1, tokens1, elmo_map),
+                            get_tensor(doc_id, sent_id2, tokens2, elmo_map))
 
-        elmo1, elmo2 = rel_map.values()
+        elmo1, elmo2 = zip(*rel_map.values())
         output = combine_vectors(torch.cat(elmo1))
+        print(output)
 
 
 if __name__ == '__main__':
