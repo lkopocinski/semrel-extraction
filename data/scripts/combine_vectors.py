@@ -5,7 +5,7 @@ from pathlib import Path
 
 import argcomplete
 import torch.nn as nn
-
+import torch
 from model.models import Vector
 
 
@@ -45,7 +45,7 @@ def load_map(map_path):
 def combine_vectors(doc_id, sent_id, token_indices, vec_map):
     pool = nn.MaxPool1d(3, stride=2)
     vectors = [vec_map[(doc_id, sent_id, idx)] for idx in token_indices]
-    vec = torch.FloatTensor(vectors)
+    vec = torch.FloatTensor(vectors).unsqueeze(0)
     output = pool(vec)
     return str(Vector(output.numpy()))
 
@@ -60,7 +60,7 @@ def main(argv=None):
     retrofit_map = load_map(args.retrofit_map)
     # sent2vec_map = load_map(args.sent2vec_map)
 
-    source_path = Path(f'{args.data_in}/relations.context.uniq')
+    source_path = Path(f'{args.data_in}/relations.fake.context')
     for row in file_rows(source_path):
         doc_id = row[2]
         sent_id = row[3]
@@ -82,8 +82,8 @@ def main(argv=None):
         # sent2vec_from_vec = combine_vectors(doc_id, sent_id, tokens_from, sent2vec_map)
         # sent2vec_to_vec = combine_vectors(doc_id, sent_id, tokens_from, sent2vec_map)
 
-        ne_from = [float(eval(row[6]))]
-        ne_to = [float(eval(row[12]))]
+        ne_from = str([float(eval(row[6]))])
+        ne_to = str([float(eval(row[12]))])
 
         row.extend([
             elmo_from_vec, elmo_to_vec,
