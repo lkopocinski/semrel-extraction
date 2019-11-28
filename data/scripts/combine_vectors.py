@@ -13,9 +13,9 @@ def get_args(argv=None):
     parser.add_argument('--data-in', required=True, help='Directory with sampled datasets.')
     parser.add_argument('--output-path', required=True, help='Directory to save vectors.')
     parser.add_argument('--elmo-map', required=True, help="Map file with elmo vectors")
-    # parser.add_argument('--elmoconv-map', required=True, help="Map file with elmoconv vectors")
     parser.add_argument('--fasttext-map', required=True, help="Map file with fasttext vectors")
     parser.add_argument('--retrofit-map', required=True, help="Map file with retrofitted fasttext vectors")
+    # parser.add_argument('--elmoconv-map', required=True, help="Map file with elmoconv vectors")
     # parser.add_argument('--sent2vec-map', required=True, help="Map file with sent2vec vectors")
 
     argcomplete.autocomplete(parser)
@@ -55,18 +55,10 @@ def get_tensor(doc_id, sent_id, token_indices, vec_map, vec_size=1024):
     tensor[:, 0:vectors.shape[1], :] = vectors
     return tensor
 
-def main(argv=None):
-    args = get_args(argv)
-    elmo_map = load_map(args.elmo_map)
-    # elmoconv_map = load_map(args.elmoconv_map)
-    # fasttext_map = load_map(args.fasttext_map)
-    # retrofit_map = load_map(args.retrofit_map)
-    # sent2vec_map = load_map(args.sent2vec_map)
 
-    source_path = Path(f'{args.data_in}/relations.fake.context')
-
+def make_tensors_map(path: Path, vec_map):
     rel_map = {}
-    for row in file_rows(source_path):
+    for row in file_rows(path):
         cat_id = row[0]
         label = row[1]
         doc_id = row[2]
@@ -79,15 +71,30 @@ def main(argv=None):
 
         rel_key = (cat_id, label, doc_id, (sent_id1, tuple(tokens1)), (sent_id2, tuple(tokens2)))
         rel_map[rel_key] = (
-            get_tensor(doc_id, sent_id1, tokens1, elmo_map),
-            get_tensor(doc_id, sent_id2, tokens2, elmo_map)
+            get_tensor(doc_id, sent_id1, tokens1, vec_map),
+            get_tensor(doc_id, sent_id2, tokens2, vec_map)
         )
+    return rel_map
 
-    elmo1, elmo2 = zip(*rel_map.values())
-    output1 = max_pool(torch.cat(elmo1))
-    output2 = max_pool(torch.cat(elmo2))
 
-    print(torch.cat([output1, output2]))
+def main(argv=None):
+    args = get_args(argv)
+    elmo_map = load_map(args.elmo_map)
+    fasttext_map = load_map(args.fasttext_map)
+    retrofit_map = load_map(args.retrofit_map)
+    # elmoconv_map = load_map(args.elmoconv_map)
+    # sent2vec_map = load_map(args.sent2vec_map)
+
+    source_path = Path(f'{args.data_in}/relations.fake.context')
+    for vec_map, vec_size, save_name in [(elmo_map, 1024, 'elmo.rel.pt'), (fasttext_map, 300, 'fasttext.rel.pt'), (retrofit_map, 300, 'retrofit.rel.pt')]:
+        rel_map = make_tensors_map(source_path, vec_map)
+
+        vec1, vec2 = zip(*rel_map.values())
+        output1 = max_pool(torch.cat(vec1))
+        output2 = max_pool(torch.cat(vec2))
+
+        concat_dump = torch.cat([output1, output2])
+        torch.save(concat_dump, f'{args.output_path}/{save_name}')
 
 
 if __name__ == '__main__':
