@@ -92,4 +92,4 @@ def generate_negative(files, channels):
 
                 dir_id, document_id = get_document_name(document)
                 rel = Relation(document_id, element_from, element_to)
-                yield f'{dir_id}\tin_relation\t{rel}'
+                yield f'{dir_id}\tno_relation\t{rel}'
