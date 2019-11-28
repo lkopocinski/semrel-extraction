@@ -15,6 +15,8 @@ ${SCRIPTS_DIR}/combine_vectors.py --data-in ${DATA_IN} \
                                  --elmo-map "./data/maps/1xx.corpus.elmo.map" \
                                  --fasttext-map "./data/maps/1xx.corpus.fasttext.map" \
                                  --retrofit-model "./data/maps/1xx.corpus.retrofit.map" \
-                                 --sent2vec-map "./data/maps/1xx.corpus.sent2vec.map" \
+
+#                                 --sent2vec-map "./data/maps/1xx.corpus.sent2vec.map" \
+#                                 --elmoconv-map "./data/maps/1xx.corpus.elmoconv.map" \
 
 popd
