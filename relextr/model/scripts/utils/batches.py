@@ -6,6 +6,8 @@ from typing import List
 import torch
 from torch.utils import data
 
+random.seed(42)
+
 
 class Dataset(data.dataset):
     label2digit = {
@@ -44,14 +46,26 @@ class Dataset(data.dataset):
 
 class Sampler(object):
 
-    def __init__(self, dataset):
+    def __init__(self, dataset, set_type):
         self.dataset = dataset
+        self.set_type = set_type
         self.invert_keys = {v: k for k, v in dataset.keys.items()}
         self.domain_to_idx = self.indices_by_domain()
         self.domain_to_settype = self.indices_by_domain_by_settype()
 
+        self.train_indices = []
+        self.valid_indices = []
+        self.test_indices = []
+
     def __iter__(self):
-        raise NotImplementedError
+        if self.set_type == 'train':
+            return self.train_indices
+        elif self.set_type == 'valid':
+            return self.valid_indices
+        elif self.set_type == 'test':
+            return self.test_indices
+        else:
+            raise KeyError(f'There is no data set for {self.set_type}')
 
     def __len__(self):
         pass
