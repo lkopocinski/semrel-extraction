@@ -68,7 +68,14 @@ class Sampler(object):
             raise KeyError(f'There is no data set for {self.set_type}')
 
     def __len__(self):
-        pass
+        if self.set_type == 'train':
+            return len(self.train_indices)
+        elif self.set_type == 'valid':
+            return len(self.valid_indices)
+        elif self.set_type == 'test':
+            return len(self.test_indices)
+        else:
+            raise KeyError(f'There is no data set for {self.set_type}')
 
     def indices_by_domain(self, domains=(112, 113, 115)):
         domain_to_idx = defaultdict(list)
@@ -85,7 +92,7 @@ class Sampler(object):
         return domain_to_settype
 
     def indices_by_label(self):
-        # TODO:
+        # TODO: negative, positive
         pass
 
     def _split(self, indices):
