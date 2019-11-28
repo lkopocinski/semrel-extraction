@@ -1,10 +1,12 @@
+#!/usr/bin/env python3
+
 import argparse
 from pathlib import Path
 
 import argcomplete
 import torch.nn as nn
 
-from models import Vector
+from model.models import Vector
 
 
 def get_args(argv=None):
@@ -28,14 +30,14 @@ def file_rows(path: Path):
             yield line.strip().split('\t')
 
 
-def load_map(map_path: Path):
+def load_map(map_path):
     vec_map = {}
-    for row in file_rows(map_path):
+    for row in file_rows(Path(map_path)):
         try:
             doc_id, sent_id, tok_id = row[0:3]
             vec = eval(row[4])
             vec_map[(doc_id, sent_id, int(tok_id))] = vec
-        except IndexError:
+        except ValueError:
             continue
     return vec_map
 
@@ -50,6 +52,8 @@ def combine_vectors(doc_id, sent_id, token_indices, vec_map):
 
 def main(argv=None):
     args = get_args(argv)
+    import pudb
+    pudb.set_trace()
     elmo_map = load_map(args.elmo_map)
     # elmoconv_map = load_map(args.elmoconv_map)
     fasttext_map = load_map(args.fasttext_map)
@@ -91,3 +95,7 @@ def main(argv=None):
         ])
 
         print('\t'.join(row))
+
+
+if __name__ == '__main__':
+    main()
