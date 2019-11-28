@@ -1,7 +1,9 @@
+import random
+from collections import defaultdict
 from pathlib import Path
 from typing import List
 
-import numpy as np
+import torch
 from torch.utils import data
 
 
@@ -12,88 +14,72 @@ class Dataset(data.dataset):
     }
 
     @staticmethod
-    def from_file(path: Path, methods: List):
-        with path.open('r', encoding="utf-8") as f:
-            lines = [line for line in f]
-            return Dataset(lines, methods)
+    def load_keys(path: Path):
+        keys = {}
+        with path.open('r', encoding='utf-8') as f:
+            for idx, line in enumerate(f):
+                row = line.strip().split('\t')
+                keys[idx] = tuple(row)
+        return keys
 
-    def __init__(self, lines: List[str], methods: List):
-        self.lines = lines
-        self.methods = methods
+    def __init__(self, vectors_models: List[str], keys: dict):
+        self.vectors_models = vectors_models
+        self.keys = keys
+
+        self.vectors = [torch.load(model) for model in self.vectors_models]
+        self.vectors = torch.cat(self.vectors, dim=1)
 
     @property
     def vector_size(self):
-        x, _ = self[0]
-        return len(x)
+        return self.vectors.shape[-1]
 
     def __len__(self):
-        return len(self.lines)
+        return self.vectors.shape[0]
 
     def __getitem__(self, index: int):
-        line = self.lines[index]
-        pair = PairVec(line)
-
-        X = pair.make_vector(self.methods)
-        y = self.label2digit[pair.label]
-
+        X = self.vectors[index]
+        y = self.label2digit[self.keys[index][1]]
         return X, y
 
 
-class PairVec:
+class Sampler(object):
 
-    def __init__(self, line: str):
-        self.line = line
-        self._init_from_line()
+    def __init__(self, dataset):
+        self.dataset = dataset
+        self.invert_keys = {v: k for k, v in dataset.keys.items()}
+        self.domain_to_idx = self.indices_by_domain()
+        self.domain_to_settype = self.indices_by_domain_by_settype()
 
-    def _init_from_line(self):
-        row = self.line.strip().split('\t')
+    def __iter__(self):
+        raise NotImplementedError
 
-        # Details
-        self.label = row[0]
-        self.lemma1, self.lemma2 = row[1], row[2]
-        self.channel1, self.channel2 = row[3], row[4]
-        self.ne1, self.ne2 = row[5], row[6]
-        self.indices1, self.indices2 = eval(row[7]), eval(row[8])
-        self.context1, self.context2 = eval(row[9]), eval(row[10])
+    def __len__(self):
+        pass
 
-        # Vectors
-        self.elmo1, self.elmo2 = eval(row[11]), eval(row[12])
-        self.elmoconv1, self.elmoconv2 = eval(row[13]), eval(row[14])
-        self.fasttext1, self.fasttext2 = eval(row[15]), eval(row[16])
-        self.retrofit1, self.retrofit2 = eval(row[17]), eval(row[18])
-        self.sent2vec1, self.sent2vec2 = eval(row[19]), eval(row[20])
-        self.ner1, self.ner2 = eval(row[21]), eval(row[22])
+    def indices_by_domain(self, domains=(112, 113, 115)):
+        domain_to_idx = defaultdict(list)
+        for k, i in self.invert_keys.items():
+            domain = k[0]
+            if int(domain) in domains:
+                domain_to_idx[domain] = i
+        return domain_to_idx
 
-    @property
-    def elmo(self):
-        return self.elmo1, self.elmo2
+    def indices_by_domain_by_settype(self):
+        domain_to_settype = defaultdict(list)
+        for k, v in self.domain_to_idx.items():
+            domain_to_settype[k] = self._split(v)
+        return domain_to_settype
 
-    @property
-    def elmoconv(self):
-        return self.elmoconv1, self.elmoconv2
+    def indices_by_label(self):
+        # TODO:
+        pass
 
-    @property
-    def fasttext(self):
-        return self.fasttext1, self.fasttext2
+    def _split(self, indices):
+        random.shuffle(indices)
+        return self._chunk(indices)
 
-    @property
-    def sent2vec(self):
-        return self.sent2vec1, self.sent2vec2
-
-    @property
-    def retrofit(self):
-        return self.retrofit1, self.retrofit2
-
-    @property
-    def ner(self):
-        return self.ner1, self.ner2
-
-    def make_vector(self, methods: List[str]):
-        vectors = []
-        for method in methods:
-            try:
-                v1, v2 = getattr(self, method)
-                vectors.extend([v1, v2])
-            except AttributeError:
-                print(f'There is no method called {method}')
-        return np.concatenate(vectors)
+    def _chunk(self, seq):
+        avg = len(seq) / float(5)
+        t_len = int(3 * avg)
+        v_len = int(avg)
+        return [seq[0:t_len], seq[t_len:t_len + v_len], seq[t_len + v_len:]]

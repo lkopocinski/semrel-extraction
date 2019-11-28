@@ -12,7 +12,7 @@ from torch.optim import Adagrad
 from torch.utils.data import DataLoader
 
 from relnet import RelNet
-from utils.batches import Dataset
+from utils.batches import Dataset, Sampler
 from utils.metrics import Metrics, save_metrics
 from utils.utils import is_better_fscore, parse_config, get_device
 
@@ -33,16 +33,13 @@ def main(argv=None):
     config = parse_config(args.config)
     init_mlflow(config)
 
-    vectorizers = config['vectorizers']
-    train_set = Dataset.from_file(Path(f'{args.data_in}/{config["dataset"]}/train.vectors'), vectorizers)
-    valid_set = Dataset.from_file(Path(f'{args.data_in}/{config["dataset"]}/valid.vectors'), vectorizers)
-    test_set = Dataset.from_file(Path(f'{args.data_in}/{config["dataset"]}/test.vectors'), vectorizers)
+    dataset = Dataset(config['vectorizers'], config['keys'])
 
-    train_batch_gen = DataLoader(train_set, batch_size=config['batch_size'], num_workers=8)
-    valid_batch_gen = DataLoader(valid_set, batch_size=config['batch_size'], num_workers=8)
-    test_batch_gen = DataLoader(test_set, batch_size=config['batch_size'], num_workers=8)
+    train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset), num_workers=8)
+    valid_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset), num_workers=8)
+    test_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset), num_workers=8)
 
-    network = RelNet(in_dim=train_set.vector_size)
+    network = RelNet(in_dim=dataset.vector_size)
     network.to(device)
     optimizer = Adagrad(network.parameters())
     loss_func = nn.CrossEntropyLoss()
@@ -53,7 +50,7 @@ def main(argv=None):
         'train_set_size': len(train_set),
         'valid_set_size': len(valid_set),
         'test_set_size': len(test_set),
-        'vector_size': train_set.vector_size,
+        'vector_size': dataset.vector_size,
         'epochs': config['epochs'],
         'optimizer': optimizer.__class__.__name__,
         'loss_function': loss_func.__class__.__name__
@@ -81,7 +78,7 @@ def main(argv=None):
             mlflow.log_artifact(f'./{config["model"]["name"]}')
 
     # Test
-    test_metrics = test(RelNet(test_set.vector_size), config['model']['name'], test_batch_gen, loss_func, device)
+    test_metrics = test(RelNet(dataset.vector_size), config['model']['name'], test_batch_gen, loss_func, device)
     print(f'\n\nTest: {test_metrics}')
     save_metrics(test_metrics, 'metrics.txt')
     log_metrics(test_metrics, 'test')
