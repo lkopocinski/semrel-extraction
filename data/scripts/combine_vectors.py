@@ -31,9 +31,12 @@ def file_rows(path: Path):
 def load_map(map_path: Path):
     vec_map = {}
     for row in file_rows(map_path):
-        doc_id, sent_id, tok_id = row[0:3]
-        vec = eval(row[4])
-        vec_map[(doc_id, sent_id, int(tok_id))] = vec
+        try:
+            doc_id, sent_id, tok_id = row[0:3]
+            vec = eval(row[4])
+            vec_map[(doc_id, sent_id, int(tok_id))] = vec
+        except IndexError:
+            continue
     return vec_map
 
 
