@@ -18,7 +18,4 @@ ${SCRIPTS_DIR}/combine_vectors.py --data-in ${DATA_IN} \
                                  --fasttext-map "./data/maps/fasttext.fake.map" \
                                  --retrofit-map "./data/maps/retrofit.fake.map" 
 
-#                                 --sent2vec-map "./data/maps/1xx.corpus.sent2vec.map" \
-#                                 --elmoconv-map "./data/maps/1xx.corpus.elmoconv.map" \
-
 popd
