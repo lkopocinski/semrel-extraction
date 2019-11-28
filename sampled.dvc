@@ -1,8 +1,8 @@
-md5: 68c51811d5163c961d3011b6254eb05c
+md5: 2b6c89c049d912a6d7e9108306c405ea
 cmd: ./data/scripts/sample.py --data-in ./data/generations --output-path ./data/sampled
   --train-size 200 400 --valid-size 100 100 --test-size 100 100
 deps:
-- md5: df53cefc715fa70ff2b0e6f346bebd32.dir
+- md5: bfba61187f6c65dd145bf2f94715ff8f.dir
   path: data/generations
 - md5: 3222124d6f193f3b7762a57454409cee
   path: data/scripts/sample.py
