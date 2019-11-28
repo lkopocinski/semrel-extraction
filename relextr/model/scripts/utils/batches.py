@@ -60,8 +60,8 @@ class PairVec:
         self.elmo1, self.elmo2 = eval(row[11]), eval(row[12])
         self.elmoconv1, self.elmoconv2 = eval(row[13]), eval(row[14])
         self.fasttext1, self.fasttext2 = eval(row[15]), eval(row[16])
-        self.sent2vec1, self.sent2vec2 = eval(row[17]), eval(row[18])
-        self.retrofit1, self.retrofit2 = eval(row[19]), eval(row[20])
+        self.retrofit1, self.retrofit2 = eval(row[17]), eval(row[18])
+        self.sent2vec1, self.sent2vec2 = eval(row[19]), eval(row[20])
         self.ner1, self.ner2 = eval(row[21]), eval(row[22])
 
     @property
