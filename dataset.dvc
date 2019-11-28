@@ -1,9 +1,7 @@
-md5: d939f4eec2bbd0809e7be3d459916a99
+md5: b9572c49a45bf91db1bdcb4fa5af73e6
 cmd: ./data/scripts/merge.sh ./data/vectors ./relextr/model/dataset
 deps:
-- md5: 51f4011ad0e58ebb39e47c0265de4923.dir
-  path: data/vectors
-- md5: c1c45aa713fbe7e5ac7801016ffe48d6
+- md5: 490f31550001f3622aa4c70112d8df8c
   path: data/scripts/merge.sh
 outs:
 - md5: e21c17aa25871f229aa1b3c05ead5464.dir
