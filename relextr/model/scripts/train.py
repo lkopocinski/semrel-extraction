@@ -34,7 +34,8 @@ def main(argv=None):
     init_mlflow(config)
 
     import pudb; pudb.set_trace()
-    dataset = Dataset(config['vectorizers'], config['keys'])
+    keys = Dataset.load_keys(Path(config['keys']))
+    dataset = Dataset(config['vectorizers'], keys)
 
     train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'train'), num_workers=8)
     valid_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'valid'), num_workers=8)

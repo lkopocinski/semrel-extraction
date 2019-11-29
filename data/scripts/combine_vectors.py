@@ -92,15 +92,15 @@ def main(argv=None):
     # elmoconv_map = load_map(args.elmoconv_map)
     # sent2vec_map = load_map(args.sent2vec_map)
 
-    source_path = Path(f'{args.data_in}/relations.fake.context')
+    source_path = Path(f'{args.data_in}/relations.context.uniq')
     for vec_map, vec_size, save_name in [(elmo_map, 1024, 'elmo.rel.pt'), (fasttext_map, 300, 'fasttext.rel.pt'), (retrofit_map, 300, 'retrofit.rel.pt')]:
         rel_map, keys = make_tensors_map(source_path, vec_map, vec_size)
-
+#        import pudb; pudb.set_trace()
         vec1, vec2 = zip(*rel_map.values())
         output1 = max_pool(torch.cat(vec1))
         output2 = max_pool(torch.cat(vec2))
 
-        concat_dump = torch.cat([output1, output2])
+        concat_dump = torch.cat([output1, output2], dim=1)
         torch.save(concat_dump, save_name)
         with open('keys.txt', 'w', encoding='utf-8') as f:
             for key in keys:
