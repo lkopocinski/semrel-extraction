@@ -45,9 +45,10 @@ class Dataset(data.Dataset):
 
 class Sampler(data.Sampler):
 
-    def __init__(self, dataset, set_type):
+    def __init__(self, dataset):
         self.ds = dataset
-        self.set_type = set_type
+        self._set_type = None
+        self._data_type = None
 
         # self.domain_to_idx = self.indices_by_domain()
 
@@ -57,25 +58,32 @@ class Sampler(data.Sampler):
 
         self.generate_dataset(balanced=True)
 
+    @property
+    def data_type(self):
+        return self._data_type
+
+    @data_type.setter(self, val):
+        self._data_type = val
+
     def __iter__(self):
-        if self.set_type == 'train':
+        if self._set_type == 'train':
             return iter(self.train_indices)
-        elif self.set_type == 'valid':
+        elif self._set_type == 'valid':
             return iter(self.valid_indices)
-        elif self.set_type == 'test':
+        elif self._set_type == 'test':
             return iter(self.test_indices)
         else:
-            raise KeyError(f'There is no data set for {self.set_type}')
+            raise KeyError(f'There is no data set for {self._set_type}')
 
     def __len__(self):
-        if self.set_type == 'train':
+        if self._set_type == 'train':
             return len(self.train_indices)
-        elif self.set_type == 'valid':
+        elif self._set_type == 'valid':
             return len(self.valid_indices)
-        elif self.set_type == 'test':
+        elif self._set_type == 'test':
             return len(self.test_indices)
         else:
-            raise KeyError(f'There is no data set for {self.set_type}')
+            raise KeyError(f'There is no data set for {self._set_type}')
 
     def indices_by_domain(self, domains=(112, 113, 115)):
         domain_to_idx = defaultdict(list)

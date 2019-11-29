@@ -30,8 +30,8 @@ def main():
 
     dataset = Dataset(models, keys)
     sampler = Sampler(dataset)
-    batch_gen = DataLoader(dataset, batch_size=3,
-                           sampler=Sampler(dataset, 'train'))
+    batch_gen = DataLoader(dataset, batch_size=3, sampler=sampler)
+
     for idx in batch_gen:
         pass
 
