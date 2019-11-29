@@ -11,19 +11,16 @@ import torch.nn as nn
 from torch.optim import Adagrad
 from torch.utils.data import DataLoader
 
-from relnet import RelNet
 from relextr.model.scripts.utils.batches import Dataset, Sampler
+from relnet import RelNet
 from utils.metrics import Metrics, save_metrics
 from utils.utils import is_better_fscore, parse_config, get_device
 
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
-    # parser.add_argument('--data-in', required=True, type=str, help="Directory with train, validation and test dataset.")
     parser.add_argument('--config', required=True, type=str, help="Config file path")
-
     argcomplete.autocomplete(parser)
-
     return parser.parse_args(argv)
 
 
@@ -36,9 +33,12 @@ def main(argv=None):
     keys = Dataset.load_keys(Path(config['keys']))
     dataset = Dataset(config['methods'], keys)
 
-    train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'train'), num_workers=8)
-    valid_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'valid'), num_workers=8)
-    test_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'test'), num_workers=8)
+    train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'train', config['data_type']),
+                                 num_workers=8)
+    valid_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'valid', config['data_type']),
+                                 num_workers=8)
+    test_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'test', config['data_type']),
+                                num_workers=8)
 
     network = RelNet(in_dim=dataset.vector_size)
     network.to(device)
@@ -90,7 +90,8 @@ def init_mlflow(config):
     mlflow.set_tracking_uri(conf['tracking_uri'])
     mlflow.set_experiment(conf['experiment_name'])
     mlflow.set_tags(conf['tags'])
-    mlflow.set_tag('method', config['methods'])
+    mlflow.set_tag('methods', config['methods'])
+    mlflow.set_tag('data_type', config['data_type'])
 
     print(f'\n-- mlflow --'
           f'\nserver: {mlflow.get_tracking_uri()}'
