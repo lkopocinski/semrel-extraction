@@ -33,7 +33,7 @@ def main(argv=None):
 
     keys = Dataset.load_keys(Path(config['keys']))
     dataset = Dataset(config['methods'], keys)
-    
+
     import pudb; pudb.set_trace()
     sampler = Sampler(dataset)
     sampler.set_type = 'train'
