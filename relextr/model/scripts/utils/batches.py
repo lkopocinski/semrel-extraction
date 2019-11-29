@@ -20,8 +20,7 @@ class Dataset(data.Dataset):
         keys = {}
         with path.open('r', encoding='utf-8') as f:
             for idx, line in enumerate(f):
-                row = line.strip().split('\t')
-                keys[idx] = tuple(row)
+                keys[idx] = eval(line.strip())
         return keys
 
     def __init__(self, vectors_models: List[str], keys: dict):
@@ -44,7 +43,7 @@ class Dataset(data.Dataset):
         return X, y
 
 
-class Sampler(object):
+class Sampler(data.Sampler):
 
     def __init__(self, dataset, set_type):
         self.dataset = dataset
@@ -57,7 +56,7 @@ class Sampler(object):
         self.test_indices = []
 
     def __iter__(self):
-        return self.dataset.keys.keys()
+        return iter(list(self.dataset.keys.keys()))
         # if self.set_type == 'train':
         #     return self.train_indices
         # elif self.set_type == 'valid':

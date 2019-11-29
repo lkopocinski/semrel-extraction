@@ -18,7 +18,7 @@ dvc run \
 -d ${CONFIG} \
 -M metrics.txt \
 -f train.dvc \
-CUDA_VISIBLE_DEVICES=0,1,2,3 ${SCRIPTS_DIR}/train.py --data-in ${DATA_IN} \
+CUDA_VISIBLE_DEVICES=1,2,3 ${SCRIPTS_DIR}/train.py --data-in ${DATA_IN} \
                                                       --config ${CONFIG}
 
 popd
