@@ -33,12 +33,13 @@ def main(argv=None):
     keys = Dataset.load_keys(Path(config['keys']))
     dataset = Dataset(config['methods'], keys)
 
-    train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'train', config['data_type']),
-                                 num_workers=8)
-    valid_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'valid', config['data_type']),
-                                 num_workers=8)
-    test_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'test', config['data_type']),
-                                num_workers=8)
+    sampler = Sampler(dataset)
+    sampler.set_type = 'train'
+    train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler, num_workers=8)
+    sampler.set_type = 'valid'
+    valid_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler, num_workers=8)
+    sampler.set_type = 'test'
+    test_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler, num_workers=8)
 
     network = RelNet(in_dim=dataset.vector_size)
     network.to(device)
