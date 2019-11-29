@@ -44,8 +44,14 @@ class Dataset(data.Dataset):
 
 
 class Sampler(data.Sampler):
+    '''
+        Args:
+            dataset: data.Dataset with all exaples and keys
+            set_type: one of (train, valid, test)
+            data_type: one of (all, 112_out, 114_out, 115_out, lexical)
 
-    def __init__(self, dataset, set_type):
+    '''
+    def __init__(self, dataset, set_type, data_type):
         self.dataset = dataset
         self.set_type = set_type
         # self.inverted_keys = {v: k for k, v in dataset.keys.items()}
@@ -77,7 +83,7 @@ class Sampler(data.Sampler):
         # else:
         #     raise KeyError(f'There is no data set for {self.set_type}')
 
-    def indices_by_domain(self, domains=(112, 113, 115)):
+    def indices_by_domain(self, domains=(112, 114, 115)):
         domain_to_idx = defaultdict(list)
         for k, i in self.inverted_keys.items():
             domain = k[0]
