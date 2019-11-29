@@ -19,7 +19,7 @@ from utils.utils import is_better_fscore, parse_config, get_device
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-in', required=True, type=str, help="Directory with train, validation and test dataset.")
+    # parser.add_argument('--data-in', required=True, type=str, help="Directory with train, validation and test dataset.")
     parser.add_argument('--config', required=True, type=str, help="Config file path")
 
     argcomplete.autocomplete(parser)
@@ -33,9 +33,8 @@ def main(argv=None):
     config = parse_config(Path(args.config))
     init_mlflow(config)
 
-    import pudb; pudb.set_trace()
     keys = Dataset.load_keys(Path(config['keys']))
-    dataset = Dataset(config['vectorizers'], keys)
+    dataset = Dataset(config['methods'], keys)
 
     train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'train'), num_workers=8)
     valid_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'valid'), num_workers=8)
@@ -49,9 +48,9 @@ def main(argv=None):
     # Log learning params
     mlflow.log_params({
         'batch_size': config['batch_size'],
-        # 'train_set_size': len(train_set),
-        # 'valid_set_size': len(valid_set),
-        # 'test_set_size': len(test_set),
+        'train_set_size': len(train_batch_gen.sampler),
+        'valid_set_size': len(valid_batch_gen.sampler),
+        'test_set_size': len(test_batch_gen.sampler),
         'vector_size': dataset.vector_size,
         'epochs': config['epochs'],
         'optimizer': optimizer.__class__.__name__,
@@ -91,7 +90,7 @@ def init_mlflow(config):
     mlflow.set_tracking_uri(conf['tracking_uri'])
     mlflow.set_experiment(conf['experiment_name'])
     mlflow.set_tags(conf['tags'])
-    mlflow.set_tag('method', config['vectorizers'])
+    mlflow.set_tag('method', config['methods'])
 
     print(f'\n-- mlflow --'
           f'\nserver: {mlflow.get_tracking_uri()}'
