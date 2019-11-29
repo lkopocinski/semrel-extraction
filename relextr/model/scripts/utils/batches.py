@@ -56,7 +56,6 @@ class Sampler(data.Sampler):
         self.test_indices = []
 
     def __iter__(self):
-        return iter(list(self.dataset.keys.keys()))
         # if self.set_type == 'train':
         #     return self.train_indices
         # elif self.set_type == 'valid':
@@ -130,10 +129,8 @@ class Sampler(data.Sampler):
         out_domain = [idx for idx, desc in self.keys.items()
                       if desc[0] == domain]
 
-
-    def _generate_dataset(self, test_domain=None):
-        pass
-
+    def generate_dataset(self, balanced=False):
+        self.train_indices, self.valid_indices, self.test_indices = self._ds_mixed(balanced)
 
     def make_data_sets(self, domains):
         data = defaultdict(list)
