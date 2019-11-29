@@ -19,6 +19,7 @@ def main():
     models = None
 
     dataset = Dataset(models, keys)
+    sampler = Sampler(dataset)
 
 
 if __name__ == "__main__":
