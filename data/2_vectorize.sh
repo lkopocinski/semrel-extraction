@@ -3,7 +3,7 @@
 pushd "$(git rev-parse --show-toplevel)"
 
 DATA_IN="./data/generations"
-OUTPUT_PATH="./data/vectors"
+OUTPUT_PATH="./data/vectorss"
 SCRIPTS_DIR="./data/scripts"
 
 mkdir -p ${OUTPUT_PATH}
