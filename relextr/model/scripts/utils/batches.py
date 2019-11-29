@@ -9,7 +9,7 @@ from torch.utils import data
 random.seed(42)
 
 
-class Dataset(data.dataset):
+class Dataset(data.Dataset):
     label2digit = {
         'no_relation': 0,
         'in_relation': 1,

@@ -12,7 +12,7 @@ from torch.optim import Adagrad
 from torch.utils.data import DataLoader
 
 from relnet import RelNet
-from utils.batches import Dataset, Sampler
+from relextr.model.scripts.utils.batches import Dataset, Sampler
 from utils.metrics import Metrics, save_metrics
 from utils.utils import is_better_fscore, parse_config, get_device
 
@@ -30,9 +30,10 @@ def get_args(argv=None):
 def main(argv=None):
     device = get_device()
     args = get_args(argv)
-    config = parse_config(args.config)
+    config = parse_config(Path(args.config))
     init_mlflow(config)
 
+    import pudb; pudb.set_trace()
     dataset = Dataset(config['vectorizers'], config['keys'])
 
     train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'train'), num_workers=8)
