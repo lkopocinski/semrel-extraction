@@ -15,7 +15,7 @@ mlflow:
 dataset: all
 
 keys: 'keys.txt'
-vectorizers:
+methods:
   - 'elmo.rel.pt'
   - 'fasttext.rel.pt'
   - 'retrofit.rel.pt'
