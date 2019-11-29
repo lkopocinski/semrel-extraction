@@ -85,6 +85,56 @@ class Sampler(data.Sampler):
                 domain_to_idx[domain].append(i)
         return domain_to_idx
 
+    def _ds_mixed(self, balanced=False):
+        """ Just ignore the structure of the data: we want a mixed dataset with
+        all domains together. The data is splitted to train, dev, and test. """
+        # this ignores also the underlying data distribution (e.g.  that  there
+        # are more negative examples than positive
+        if not balanced:
+            return self._split(self.keys.keys())
+        # ok, lets try to balance the data (positives vs negatives)
+        # 2 cases to cover: i) B-N, P-N, and ii) N-N
+        positives = [idx for idx, desc in self.keys().items()
+                     if desc[1] == 'in_relation']
+        n_positives = len(positives)
+
+        # all negatives
+        negatives = {idx for idx, desc in self.keys().items()
+                     if desc[1] == 'no_relation'}
+        # take the negatives connected with Bs or Ps
+        negatives_bps = set(self._filter_indices_by_channels(
+            negatives, ('BRAND_NAME', 'PRODUCT_NAME')))
+        negatives_nns = negatives.difference(negatives_bps)
+        # balance the data (take 2 times #positives of negative examples)
+        negatives = set.union(random.sample(negatives_bps, n_positives),
+                              random.sample(negatives_nns, n_positives))
+        return self._split(positives.union(negatives))
+
+    def _filter_indices_by_channels(self, indices, channels):
+        return [idx for idx in indices if (self.keys[idx][5] in channels or
+                                           self.keys[idx][6] in channels)]
+
+    def _ds_domain_out(self, domain):
+        """ Lets remind ourselves that the stucture of our `keys` with  indices
+        and metadata contains:
+
+            domain, label, doc_id, first_sent_id, second_sent_id, ...
+
+        We generate splitted data (train, dev, test) by examining the domain of
+        our examples, omiting the examples annotated with given `domain`. First
+        take all of in_domain examples and generate subsets for train, and dev.
+        Then the test set is built from all `out_domain` examples.
+        """
+        in_domain = [idx for idx, desc in self.keys.items()
+                     if desc[0] != domain]
+        out_domain = [idx for idx, desc in self.keys.items()
+                      if desc[0] == domain]
+
+
+    def _generate_dataset(self, test_domain=None):
+        pass
+
+
     def make_data_sets(self, domains):
         data = defaultdict(list)
 
