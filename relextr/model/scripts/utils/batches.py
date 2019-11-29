@@ -44,89 +44,99 @@ class Dataset(data.Dataset):
 
 
 class Sampler(data.Sampler):
-    '''
-        Args:
-            dataset: data.Dataset with all exaples and keys
-            set_type: one of (train, valid, test)
-            data_type: one of (all, 112_out, 114_out, 115_out, lexical)
 
-    '''
-    def __init__(self, dataset, set_type, data_type):
-        self.dataset = dataset
-        self.set_type = set_type
-        # self.inverted_keys = {v: k for k, v in dataset.keys.items()}
-        # self.domain_to_idx = self.indices_by_domain()
+    def __init__(self, dataset):
+        self.ds = dataset
+        self._set_type = None
+        self._data_type = None
 
         self.train_indices = []
         self.valid_indices = []
         self.test_indices = []
 
+        self.generate_dataset(balanced=True)
+
+    @property
+    def set_type(self):
+        return self._set_type
+
+    @set_type.setter
+    def set_type(self, val):
+        self._set_type = val if val in ('train', 'valid', 'test') else None
+
     def __iter__(self):
-        return iter(list(self.dataset.keys.keys()))
-        # if self.set_type == 'train':
-        #     return self.train_indices
-        # elif self.set_type == 'valid':
-        #     return self.valid_indices
-        # elif self.set_type == 'test':
-        #     return self.test_indices
-        # else:
-        #     raise KeyError(f'There is no data set for {self.set_type}')
+        if self._set_type == 'train':
+            return iter(self.train_indices)
+        elif self._set_type == 'valid':
+            return iter(self.valid_indices)
+        elif self._set_type == 'test':
+            return iter(self.test_indices)
+        else:
+            raise KeyError(f'There is no data set for {self._set_type}')
 
     def __len__(self):
-        return len(self.dataset.keys.keys())
-        # if self.set_type == 'train':
-        #     return len(self.train_indices)
-        # elif self.set_type == 'valid':
-        #     return len(self.valid_indices)
-        # elif self.set_type == 'test':
-        #     return len(self.test_indices)
-        # else:
-        #     raise KeyError(f'There is no data set for {self.set_type}')
+        if self._set_type == 'train':
+            return len(self.train_indices)
+        elif self._set_type == 'valid':
+            return len(self.valid_indices)
+        elif self._set_type == 'test':
+            return len(self.test_indices)
+        else:
+            raise KeyError(f'There is no data set for {self._set_type}')
 
-    def indices_by_domain(self, domains=(112, 114, 115)):
-        domain_to_idx = defaultdict(list)
-        for k, i in self.inverted_keys.items():
-            domain = k[0]
-            if int(domain) in domains:
-                domain_to_idx[domain].append(i)
-        return domain_to_idx
+    def _filter_indices_by_channels(self, indices, channels):
+        return [idx for idx in indices if (self.ds.keys[idx][5] in channels or
+                                           self.ds.keys[idx][6] in channels)]
 
-    def make_data_sets(self, domains):
-        data = defaultdict(list)
+    def _ds_mixed(self, balanced=False):
+        """ Just ignore the structure of the data: we want a mixed dataset with
+        all domains together. The data is splitted to train, dev, and test. """
+        # this ignores also the underlying data distribution (e.g.  that  there
+        # are more negative examples than positive
+        if not balanced:
+            return self._split(self.ds.keys.keys())
+        # ok, lets try to balance the data (positives vs negatives)
+        # 2 cases to cover: i) B-N, P-N, and ii) N-N
+        positives = {idx for idx, desc in self.ds.keys.items()
+                     if desc[1] == 'in_relation'}
+        n_positives = len(positives)
 
-        for domain, indices in self.domain_to_idx:
-            train, valid, test = self._split(indices)
-            for key, index in self.inverted_keys:
-                label = key[1]
-                channel = key[3]
+        # all negatives
+        negatives = {idx for idx, desc in self.ds.keys.items()
+                     if desc[1] == 'no_relation'}
+        # take the negatives connected with Bs or Ps
+        negatives_bps = set(self._filter_indices_by_channels(
+            negatives, ('BRAND_NAME', 'PRODUCT_NAME')))
+        negatives_nns = negatives.difference(negatives_bps)
 
-                if index in train:
-                    data[(domain, 'train', label, channel)].append(index)
-                elif index in valid:
-                    data[(domain, 'valid', label, channel)].append(index)
-                elif index in test:
-                    data[(domain, 'test', label, channel)].append(index)
+        if negatives_bps and len(negatives_bps) >= n_positives:
+            negatives_bps = random.sample(negatives_bps, n_positives)
+        if negatives_nns and len(negatives_nns) >= n_positives:
+            negatives_nns = random.sample(negatives_nns, n_positives)
 
-        for domain in domains:
-            for settype in ['train', 'valid', 'test']:
-                if settype == 'train':
-                    indices_b = data[(domain, settype, 'in_relation', 'BRAND_NAME')]
-                    indices_p = data[(domain, 'train', 'in_relation', 'PRODUCT_NAME')]
-                    indices_n = data[(domain, 'train', 'no_relation', 'PRODUCT_NAME')]
-                    # TODO: Losowanie negatywnych
-                    self.train_indices.extend([indices_b, indices_p, indices_n])
-                elif settype == 'valid':
-                    indices_b = data[(domain, settype, 'in_relation', 'BRAND_NAME')]
-                    indices_p = data[(domain, 'valid', 'in_relation', 'PRODUCT_NAME')]
-                    indices_n = data[(domain, 'valid', 'no_relation', 'PRODUCT_NAME')]
-                    # TODO: Losowanie negatywnych
-                    self.valid_indices.extend([indices_b, indices_p, indices_n])
-                if settype == 'test':
-                    indices_b = data[(domain, settype, 'in_relation', 'BRAND_NAME')]
-                    indices_p = data[(domain, 'test', 'in_relation', 'PRODUCT_NAME')]
-                    indices_n = data[(domain, 'test', 'no_relation', 'PRODUCT_NAME')]
-                    # TODO: Losowanie negatywnych
-                    self.test_indices.extend([indices_b, indices_p, indices_n])
+        # balance the data (take 2 times #positives of negative examples)
+        negatives = set.union(negatives_bps, negatives_nns)
+        return self._split(list(positives.union(negatives)))
+
+    def _ds_domain_out(self, domain):
+        """ Lets remind ourselves that the stucture of our `keys` with  indices
+        and metadata contains:
+
+            domain, label, doc_id, first_sent_id, second_sent_id, ...
+
+        We generate splitted data (train, dev, test) by examining the domain of
+        our examples, omiting the examples annotated with given `domain`. First
+        take all of in_domain examples and generate subsets for train, and dev.
+        Then the test set is built from all `out_domain` examples.
+        """
+        in_domain = [idx for idx, desc in self.ds.keys.items()
+                     if desc[0] != domain]
+        out_domain = [idx for idx, desc in self.ds.keys.items()
+                      if desc[0] == domain]
+        # todo: finish
+
+    def generate_dataset(self, balanced=False):
+        self.train_indices, self.valid_indices, self.test_indices = self._ds_mixed(balanced)
 
     def _split(self, indices):
         random.shuffle(indices)
