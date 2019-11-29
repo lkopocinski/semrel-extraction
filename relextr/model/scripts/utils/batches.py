@@ -89,7 +89,7 @@ class Sampler(data.Sampler):
         return [idx for idx in indices if (self.ds.keys[idx][5] in channels or
                                            self.ds.keys[idx][6] in channels)]
 
-    def _ds_mixed(self, balanced=False):
+    def _ds_mixed(self, balanced=False, lexical_split=False):
         """ Just ignore the structure of the data: we want a mixed dataset with
         all domains together. The data is splitted to train, dev, and test. """
         # this ignores also the underlying data distribution (e.g.  that  there
@@ -110,12 +110,12 @@ class Sampler(data.Sampler):
             negatives, ('BRAND_NAME', 'PRODUCT_NAME')))
         negatives_nns = negatives.difference(negatives_bps)
 
+        # balance the data (take 2 times #positives of negative examples)
         if negatives_bps and len(negatives_bps) >= n_positives:
             negatives_bps = random.sample(negatives_bps, n_positives)
         if negatives_nns and len(negatives_nns) >= n_positives:
             negatives_nns = random.sample(negatives_nns, n_positives)
 
-        # balance the data (take 2 times #positives of negative examples)
         negatives = set.union(negatives_bps, negatives_nns)
         return self._split(list(positives.union(negatives)))
 
