@@ -85,6 +85,10 @@ class Sampler(data.Sampler):
                 domain_to_idx[domain].append(i)
         return domain_to_idx
 
+    def _filter_indices_by_channels(self, indices, channels):
+        return [idx for idx in indices if (self.ds.keys[idx][5] in channels or
+                                           self.ds.keys[idx][6] in channels)]
+
     def _ds_mixed(self, balanced=False):
         """ Just ignore the structure of the data: we want a mixed dataset with
         all domains together. The data is splitted to train, dev, and test. """
@@ -114,10 +118,6 @@ class Sampler(data.Sampler):
         # balance the data (take 2 times #positives of negative examples)
         negatives = set.union(negatives_bps, negatives_nns)
         return self._split(list(positives.union(negatives)))
-
-    def _filter_indices_by_channels(self, indices, channels):
-        return [idx for idx in indices if (self.ds.keys[idx][5] in channels or
-                                           self.ds.keys[idx][6] in channels)]
 
     def _ds_domain_out(self, domain):
         """ Lets remind ourselves that the stucture of our `keys` with  indices
