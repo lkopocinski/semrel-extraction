@@ -18,6 +18,6 @@ dvc run \
 -o ${OUTPUT_PATH} \
 ${SCRIPTS_DIR}/generate.py --data-in ${DATA_IN} \
                            --output-path ${OUTPUT_PATH} \
-                           --directories 111 112 114 115
+                           --directories 112 114 115
 
 popd
