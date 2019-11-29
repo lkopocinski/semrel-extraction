@@ -30,10 +30,18 @@ def main():
 
     dataset = Dataset(models, keys)
     sampler = Sampler(dataset)
-    batch_gen = DataLoader(dataset, batch_size=3, sampler=sampler)
 
-    for idx in batch_gen:
-        pass
+    sampler.set_type = 'train'
+    batch_gen = DataLoader(dataset, batch_size=3, sampler=sampler)
+    print(list(batch_gen))
+
+    sampler.set_type = 'valid'
+    batch_gen = DataLoader(dataset, batch_size=3, sampler=sampler)
+    print(list(batch_gen))
+
+    sampler.set_type = 'test'
+    batch_gen = DataLoader(dataset, batch_size=3, sampler=sampler)
+    print(list(batch_gen))
 
 
 if __name__ == "__main__":
