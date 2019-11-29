@@ -49,9 +49,8 @@ class Sampler(object):
     def __init__(self, dataset, set_type):
         self.dataset = dataset
         self.set_type = set_type
-        self.invert_keys = {v: k for k, v in dataset.keys.items()}
+        self.inverted_keys = {v: k for k, v in dataset.keys.items()}
         self.domain_to_idx = self.indices_by_domain()
-        self.domain_to_settype = self.indices_by_domain_by_settype()
 
         self.train_indices = []
         self.valid_indices = []
@@ -79,21 +78,48 @@ class Sampler(object):
 
     def indices_by_domain(self, domains=(112, 113, 115)):
         domain_to_idx = defaultdict(list)
-        for k, i in self.invert_keys.items():
+        for k, i in self.inverted_keys.items():
             domain = k[0]
             if int(domain) in domains:
-                domain_to_idx[domain] = i
+                domain_to_idx[domain].append(i)
         return domain_to_idx
 
-    def indices_by_domain_by_settype(self):
-        domain_to_settype = defaultdict(list)
-        for k, v in self.domain_to_idx.items():
-            domain_to_settype[k] = self._split(v)
-        return domain_to_settype
+    def make_data_sets(self, domains):
+        data = defaultdict(list)
 
-    def indices_by_label(self):
-        # TODO: negative, positive
-        pass
+        for domain, indices in self.domain_to_idx:
+            train, valid, test = self._split(indices)
+            for key, index in self.inverted_keys:
+                label = key[1]
+                channel = key[3]
+
+                if index in train:
+                    data[(domain, 'train', label, channel)].append(index)
+                elif index in valid:
+                    data[(domain, 'valid', label, channel)].append(index)
+                elif index in test:
+                    data[(domain, 'test', label, channel)].append(index)
+
+        for domain in domains:
+            for settype in ['train', 'valid', 'test']:
+                if settype == 'train':
+                    indices_b = data[(domain, settype, 'in_relation', 'BRAND_NAME')]
+                    indices_p = data[(domain, 'train', 'in_relation', 'PRODUCT_NAME')]
+                    indices_n = data[(domain, 'train', 'no_relation', 'PRODUCT_NAME')]
+                    # TODO: Losowanie negatywnych
+                    self.train_indices.extend([indices_b, indices_p, indices_n])
+                elif settype == 'valid':
+                    indices_b = data[(domain, settype, 'in_relation', 'BRAND_NAME')]
+                    indices_p = data[(domain, 'valid', 'in_relation', 'PRODUCT_NAME')]
+                    indices_n = data[(domain, 'valid', 'no_relation', 'PRODUCT_NAME')]
+                    # TODO: Losowanie negatywnych
+                    self.valid_indices.extend([indices_b, indices_p, indices_n])
+                if settype == 'test':
+                    indices_b = data[(domain, settype, 'in_relation', 'BRAND_NAME')]
+                    indices_p = data[(domain, 'test', 'in_relation', 'PRODUCT_NAME')]
+                    indices_n = data[(domain, 'test', 'no_relation', 'PRODUCT_NAME')]
+                    # TODO: Losowanie negatywnych
+                    self.test_indices.extend([indices_b, indices_p, indices_n])
 
     def _split(self, indices):
         random.shuffle(indices)
