@@ -56,25 +56,24 @@ class Sampler(data.Sampler):
         self.test_indices = []
 
     def __iter__(self):
-        # if self.set_type == 'train':
-        #     return self.train_indices
-        # elif self.set_type == 'valid':
-        #     return self.valid_indices
-        # elif self.set_type == 'test':
-        #     return self.test_indices
-        # else:
-        #     raise KeyError(f'There is no data set for {self.set_type}')
+        if self.set_type == 'train':
+            return self.train_indices
+        elif self.set_type == 'valid':
+            return self.valid_indices
+        elif self.set_type == 'test':
+            return self.test_indices
+        else:
+            raise KeyError(f'There is no data set for {self.set_type}')
 
     def __len__(self):
-        return len(self.dataset.keys.keys())
-        # if self.set_type == 'train':
-        #     return len(self.train_indices)
-        # elif self.set_type == 'valid':
-        #     return len(self.valid_indices)
-        # elif self.set_type == 'test':
-        #     return len(self.test_indices)
-        # else:
-        #     raise KeyError(f'There is no data set for {self.set_type}')
+        if self.set_type == 'train':
+            return len(self.train_indices)
+        elif self.set_type == 'valid':
+            return len(self.valid_indices)
+        elif self.set_type == 'test':
+            return len(self.test_indices)
+        else:
+            raise KeyError(f'There is no data set for {self.set_type}')
 
     def indices_by_domain(self, domains=(112, 113, 115)):
         domain_to_idx = defaultdict(list)
@@ -128,6 +127,7 @@ class Sampler(data.Sampler):
                      if desc[0] != domain]
         out_domain = [idx for idx, desc in self.keys.items()
                       if desc[0] == domain]
+        # todo: finish
 
     def generate_dataset(self, balanced=False):
         self.train_indices, self.valid_indices, self.test_indices = self._ds_mixed(balanced)
