@@ -72,6 +72,9 @@ def make_tensors_map(path: Path, vec_map, vec_size):
         sent_id2 = row[9]
         tokens2 = eval(row[13])
 
+        if len(tokens1) > 5 or len(tokens2) > 5:
+            continue
+
         rel_key = (cat_id, label, doc_id, (sent_id1, tuple(tokens1)), (sent_id2, tuple(tokens2)))
         rel_map[rel_key] = (
             get_tensor(doc_id, sent_id1, tokens1, vec_map, vec_size),
