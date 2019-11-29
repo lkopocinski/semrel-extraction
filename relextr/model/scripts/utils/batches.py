@@ -59,12 +59,12 @@ class Sampler(data.Sampler):
         self.generate_dataset(balanced=True)
 
     @property
-    def data_type(self):
-        return self._data_type
+    def set_type(self):
+        return self._set_type
 
-    @data_type.setter
-    def data_type(self, val):
-        self._data_type = val
+    @set_type.setter
+    def set_type(self, val):
+        self._set_type = val if val in ('train', 'valid', 'test') else None
 
     def __iter__(self):
         if self._set_type == 'train':
