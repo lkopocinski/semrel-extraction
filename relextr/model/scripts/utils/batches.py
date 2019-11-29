@@ -94,12 +94,12 @@ class Sampler(data.Sampler):
             return self._split(self.keys.keys())
         # ok, lets try to balance the data (positives vs negatives)
         # 2 cases to cover: i) B-N, P-N, and ii) N-N
-        positives = [idx for idx, desc in self.keys().items()
+        positives = [idx for idx, desc in self.keys.items()
                      if desc[1] == 'in_relation']
         n_positives = len(positives)
 
         # all negatives
-        negatives = {idx for idx, desc in self.keys().items()
+        negatives = {idx for idx, desc in self.keys.items()
                      if desc[1] == 'no_relation'}
         # take the negatives connected with Bs or Ps
         negatives_bps = set(self._filter_indices_by_channels(
