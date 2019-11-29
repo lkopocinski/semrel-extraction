@@ -32,7 +32,7 @@ def main():
     sampler = Sampler(dataset)
 
     sampler.set_type = 'train'
-    batch_gen = DataLoader(dataset, batch_size=3, sampler=sampler)
+    batch_gen = DataLoader(dataset, batch_size=2, sampler=sampler)
     print(list(batch_gen))
 
     sampler.set_type = 'valid'
