@@ -29,6 +29,7 @@ class Dataset(data.Dataset):
 
         # self.vectors = [torch.load(model) for model in self.vectors_models]
         # self.vectors = torch.cat(self.vectors, dim=1)
+        self.vectors = [i for i in range(len(self.keys))]
 
     @property
     def vector_size(self):
@@ -49,8 +50,6 @@ class Sampler(data.Sampler):
         self.ds = dataset
         self._set_type = None
         self._data_type = None
-
-        # self.domain_to_idx = self.indices_by_domain()
 
         self.train_indices = []
         self.valid_indices = []
@@ -85,14 +84,6 @@ class Sampler(data.Sampler):
             return len(self.test_indices)
         else:
             raise KeyError(f'There is no data set for {self._set_type}')
-
-    def indices_by_domain(self, domains=(112, 113, 115)):
-        domain_to_idx = defaultdict(list)
-        for k, i in self.inverted_keys.items():
-            domain = k[0]
-            if int(domain) in domains:
-                domain_to_idx[domain].append(i)
-        return domain_to_idx
 
     def _filter_indices_by_channels(self, indices, channels):
         return [idx for idx in indices if (self.ds.keys[idx][5] in channels or
