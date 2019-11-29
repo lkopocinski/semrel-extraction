@@ -8,15 +8,15 @@ pushd "$(git rev-parse --show-toplevel)"
 SCRIPTS_DIR="./relextr/model/scripts"
 CONFIG="./relextr/model/config.yaml"
 
-dvc run \
--d ${SCRIPTS_DIR}/train.py \
--d ${SCRIPTS_DIR}/relnet.py \
--d ${SCRIPTS_DIR}/utils/utils.py \
--d ${SCRIPTS_DIR}/utils/metrics.py \
--d ${SCRIPTS_DIR}/utils/batches.py \
--d ${CONFIG} \
--M metrics.txt \
--f train.dvc \
+#dvc run \
+#-d ${SCRIPTS_DIR}/train.py \
+#-d ${SCRIPTS_DIR}/relnet.py \
+#-d ${SCRIPTS_DIR}/utils/utils.py \
+#-d ${SCRIPTS_DIR}/utils/metrics.py \
+#-d ${SCRIPTS_DIR}/utils/batches.py \
+#-d ${CONFIG} \
+#-M metrics.txt \
+#-f train.dvc \
 CUDA_VISIBLE_DEVICES=1,2,3 ${SCRIPTS_DIR}/train.py --config ${CONFIG}
 
 popd
