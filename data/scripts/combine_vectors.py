@@ -58,7 +58,6 @@ def get_tensor(doc_id, sent_id, token_indices, vec_map, vec_size=1024):
 
 def make_tensors_map(path: Path, vec_map, vec_size):
     rel_map = {}
-    keys = []
     for row in file_rows(path):
         cat_id = row[0]
         label = row[1]
@@ -75,16 +74,13 @@ def make_tensors_map(path: Path, vec_map, vec_size):
         if len(tokens1) > 5 or len(tokens2) > 5:
             continue
 
-        rel_key = (cat_id, label, doc_id, (sent_id1, tuple(tokens1)), (sent_id2, tuple(tokens2)))
+        rel_key = (cat_id, label, doc_id, sent_id1, sent_id2, channel1, channel2)
         rel_map[rel_key] = (
             get_tensor(doc_id, sent_id1, tokens1, vec_map, vec_size),
             get_tensor(doc_id, sent_id2, tokens2, vec_map, vec_size)
         )
 
-        keys.append((cat_id, label, doc_id, sent_id1, sent_id2, channel1,
-                     channel2))
-
-    return rel_map, keys
+    return rel_map
 
 
 def main(argv=None):
@@ -97,15 +93,16 @@ def main(argv=None):
 
     source_path = Path(f'{args.data_in}/relations.context.uniq')
     for vec_map, vec_size, save_name in [(elmo_map, 1024, 'elmo.rel.pt'), (fasttext_map, 300, 'fasttext.rel.pt'), (retrofit_map, 300, 'retrofit.rel.pt')]:
-        rel_map, keys = make_tensors_map(source_path, vec_map, vec_size)
-#        import pudb; pudb.set_trace()
-        vec1, vec2 = zip(*rel_map.values())
+        rel_map = make_tensors_map(source_path, vec_map, vec_size)
+        keys, vec = zip(*rel_map.items())
+        vec1, vec2 = zip(*vec)
         output1 = max_pool(torch.cat(vec1))
         output2 = max_pool(torch.cat(vec2))
 
         concat_dump = torch.cat([output1, output2], dim=1)
         torch.save(concat_dump, save_name)
-        with open('keys.txt', 'w', encoding='utf-8') as f:
+
+        with open(f'{save_name}.keys', 'w', encoding='utf-8') as f:
             for key in keys:
                 f.write(f'{key}\n')
 
