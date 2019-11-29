@@ -115,7 +115,7 @@ class Sampler(data.Sampler):
             negatives_nns = random.sample(negatives_nns, n_positives)
 
         # balance the data (take 2 times #positives of negative examples)
-        negatives = set.union(negatives_bps, negatives_nns)
+        negatives = set.union(set(negatives_bps), set(negatives_nns))
         return self._split(list(positives.union(negatives)))
 
     def _ds_domain_out(self, domain):

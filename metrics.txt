@@ -1,0 +1,5 @@
+	Loss: 0.5486259002500447
+	Accuracy: 1.0
+	Precision: [1. 1.]
+	Recall: [1. 1.]
+	Fscore: [1. 1.]

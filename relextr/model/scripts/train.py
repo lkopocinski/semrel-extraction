@@ -32,7 +32,8 @@ def main(argv=None):
 
     keys = Dataset.load_keys(Path(config['keys']))
     dataset = Dataset(config['methods'], keys)
-
+    
+    import pudb; pudb.set_trace()
     sampler = Sampler(dataset)
     sampler.set_type = 'train'
     train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler, num_workers=8)
