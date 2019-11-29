@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from batches import Dataset, Sampler
+from torch.utils.data import DataLoader
 
 
 def main():
@@ -20,6 +21,10 @@ def main():
 
     dataset = Dataset(models, keys)
     sampler = Sampler(dataset)
+    batch_gen = DataLoader(dataset, batch_size=3,
+                           sampler=Sampler(dataset, 'train'))
+    for idx in batch_gen:
+        pass
 
 
 if __name__ == "__main__":
