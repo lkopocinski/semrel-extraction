@@ -59,11 +59,11 @@ class Sampler(data.Sampler):
 
     def __iter__(self):
         if self.set_type == 'train':
-            return self.train_indices
+            return iter(self.train_indices)
         elif self.set_type == 'valid':
-            return self.valid_indices
+            return iter(self.valid_indices)
         elif self.set_type == 'test':
-            return self.test_indices
+            return iter(self.test_indices)
         else:
             raise KeyError(f'There is no data set for {self.set_type}')
 
