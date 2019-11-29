@@ -46,9 +46,9 @@ class Dataset(data.Dataset):
 class Sampler(data.Sampler):
 
     def __init__(self, dataset, set_type):
-        self.dataset = dataset
+        self.ds = dataset
         self.set_type = set_type
-        # self.inverted_keys = {v: k for k, v in dataset.keys.items()}
+
         # self.domain_to_idx = self.indices_by_domain()
 
         self.train_indices = []
@@ -91,15 +91,15 @@ class Sampler(data.Sampler):
         # this ignores also the underlying data distribution (e.g.  that  there
         # are more negative examples than positive
         if not balanced:
-            return self._split(self.keys.keys())
+            return self._split(self.ds.keys.keys())
         # ok, lets try to balance the data (positives vs negatives)
         # 2 cases to cover: i) B-N, P-N, and ii) N-N
-        positives = [idx for idx, desc in self.keys.items()
+        positives = [idx for idx, desc in self.ds.keys.items()
                      if desc[1] == 'in_relation']
         n_positives = len(positives)
 
         # all negatives
-        negatives = {idx for idx, desc in self.keys.items()
+        negatives = {idx for idx, desc in self.ds.keys.items()
                      if desc[1] == 'no_relation'}
         # take the negatives connected with Bs or Ps
         negatives_bps = set(self._filter_indices_by_channels(
@@ -111,8 +111,8 @@ class Sampler(data.Sampler):
         return self._split(positives.union(negatives))
 
     def _filter_indices_by_channels(self, indices, channels):
-        return [idx for idx in indices if (self.keys[idx][5] in channels or
-                                           self.keys[idx][6] in channels)]
+        return [idx for idx in indices if (self.ds.keys[idx][5] in channels or
+                                           self.ds.keys[idx][6] in channels)]
 
     def _ds_domain_out(self, domain):
         """ Lets remind ourselves that the stucture of our `keys` with  indices
@@ -125,9 +125,9 @@ class Sampler(data.Sampler):
         take all of in_domain examples and generate subsets for train, and dev.
         Then the test set is built from all `out_domain` examples.
         """
-        in_domain = [idx for idx, desc in self.keys.items()
+        in_domain = [idx for idx, desc in self.ds.keys.items()
                      if desc[0] != domain]
-        out_domain = [idx for idx, desc in self.keys.items()
+        out_domain = [idx for idx, desc in self.ds.keys.items()
                       if desc[0] == domain]
         # todo: finish
 
