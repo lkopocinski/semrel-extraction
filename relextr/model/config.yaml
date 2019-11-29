@@ -8,16 +8,14 @@ mlflow:
   tracking_uri: 'http://10.17.50.132:8080'
   experiment_name: 'LREC'
   tags:
-    files: 81, 82, 83
+    files: 111, 113, 115
     lexical_split: 'no'
     domain_out: 'no'
 
 dataset: all
 
+keys: 'keys.txt'
 vectorizers:
-  - 'elmo'
-  - 'elmoconv'
-  - 'fasttext'
-  - 'sent2vec'
-  - 'retrofit'
-  - 'ner'
+  - 'elmo.rel.pt'
+  - 'fasttext.rel.pt'
+  - 'retrofit.rel.pt'

@@ -49,32 +49,34 @@ class Sampler(object):
     def __init__(self, dataset, set_type):
         self.dataset = dataset
         self.set_type = set_type
-        self.inverted_keys = {v: k for k, v in dataset.keys.items()}
-        self.domain_to_idx = self.indices_by_domain()
+        # self.inverted_keys = {v: k for k, v in dataset.keys.items()}
+        # self.domain_to_idx = self.indices_by_domain()
 
         self.train_indices = []
         self.valid_indices = []
         self.test_indices = []
 
     def __iter__(self):
-        if self.set_type == 'train':
-            return self.train_indices
-        elif self.set_type == 'valid':
-            return self.valid_indices
-        elif self.set_type == 'test':
-            return self.test_indices
-        else:
-            raise KeyError(f'There is no data set for {self.set_type}')
+        return self.dataset.keys.keys()
+        # if self.set_type == 'train':
+        #     return self.train_indices
+        # elif self.set_type == 'valid':
+        #     return self.valid_indices
+        # elif self.set_type == 'test':
+        #     return self.test_indices
+        # else:
+        #     raise KeyError(f'There is no data set for {self.set_type}')
 
     def __len__(self):
-        if self.set_type == 'train':
-            return len(self.train_indices)
-        elif self.set_type == 'valid':
-            return len(self.valid_indices)
-        elif self.set_type == 'test':
-            return len(self.test_indices)
-        else:
-            raise KeyError(f'There is no data set for {self.set_type}')
+        return len(self.dataset.keys.keys())
+        # if self.set_type == 'train':
+        #     return len(self.train_indices)
+        # elif self.set_type == 'valid':
+        #     return len(self.valid_indices)
+        # elif self.set_type == 'test':
+        #     return len(self.test_indices)
+        # else:
+        #     raise KeyError(f'There is no data set for {self.set_type}')
 
     def indices_by_domain(self, domains=(112, 113, 115)):
         domain_to_idx = defaultdict(list)

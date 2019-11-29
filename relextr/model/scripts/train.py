@@ -35,9 +35,9 @@ def main(argv=None):
 
     dataset = Dataset(config['vectorizers'], config['keys'])
 
-    train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset), num_workers=8)
-    valid_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset), num_workers=8)
-    test_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset), num_workers=8)
+    train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'train'), num_workers=8)
+    valid_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'valid'), num_workers=8)
+    test_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=Sampler(dataset, 'test'), num_workers=8)
 
     network = RelNet(in_dim=dataset.vector_size)
     network.to(device)
@@ -47,9 +47,9 @@ def main(argv=None):
     # Log learning params
     mlflow.log_params({
         'batch_size': config['batch_size'],
-        'train_set_size': len(train_set),
-        'valid_set_size': len(valid_set),
-        'test_set_size': len(test_set),
+        # 'train_set_size': len(train_set),
+        # 'valid_set_size': len(valid_set),
+        # 'test_set_size': len(test_set),
         'vector_size': dataset.vector_size,
         'epochs': config['epochs'],
         'optimizer': optimizer.__class__.__name__,
