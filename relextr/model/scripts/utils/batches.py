@@ -113,7 +113,7 @@ class Sampler(data.Sampler):
 
         # balance the data (take 2 times #positives of negative examples)
         negatives = set.union(negatives_bps, negatives_nns)
-        return self._split(positives.union(negatives))
+        return self._split(list(positives.union(negatives)))
 
     def _filter_indices_by_channels(self, indices, channels):
         return [idx for idx in indices if (self.ds.keys[idx][5] in channels or
