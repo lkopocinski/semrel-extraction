@@ -4,6 +4,7 @@
 import argparse
 from pathlib import Path
 
+import copy
 import argcomplete
 import mlflow
 import torch
@@ -36,11 +37,15 @@ def main(argv=None):
     import pudb; pudb.set_trace()
     sampler = Sampler(dataset)
     sampler.set_type = 'train'
-    train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler, num_workers=8)
+    sampler_train = copy.copy(sampler)
     sampler.set_type = 'valid'
-    valid_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler, num_workers=8)
+    sampler_valid = copy.copy(sampler)
     sampler.set_type = 'test'
-    test_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler, num_workers=8)
+    sampler_test = copy.copy(sampler)
+
+    train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_train, num_workers=8)
+    valid_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_valid, num_workers=8)
+    test_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_test, num_workers=8)
 
     network = RelNet(in_dim=dataset.vector_size)
     network.to(device)
