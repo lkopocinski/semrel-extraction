@@ -62,7 +62,8 @@ class Sampler(data.Sampler):
     def data_type(self):
         return self._data_type
 
-    @data_type.setter(self, val):
+    @data_type.setter
+    def data_type(self, val):
         self._data_type = val
 
     def __iter__(self):
