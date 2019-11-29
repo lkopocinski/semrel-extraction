@@ -105,9 +105,14 @@ class Sampler(data.Sampler):
         negatives_bps = set(self._filter_indices_by_channels(
             negatives, ('BRAND_NAME', 'PRODUCT_NAME')))
         negatives_nns = negatives.difference(negatives_bps)
+
+        if negatives_bps and len(negatives_bps) >= n_positives:
+            negatives_bps = random.sample(negatives_bps, n_positives)
+        if negatives_nns and len(negatives_nns) >= n_positives:
+            negatives_nns = random.sample(negatives_nns, n_positives)
+
         # balance the data (take 2 times #positives of negative examples)
-        negatives = set.union(random.sample(negatives_bps, n_positives),
-                              random.sample(negatives_nns, n_positives))
+        negatives = set.union(negatives_bps, negatives_nns)
         return self._split(positives.union(negatives))
 
     def _filter_indices_by_channels(self, indices, channels):
