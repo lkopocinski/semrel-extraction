@@ -135,15 +135,17 @@ class Sampler(data.Sampler):
 
         brand_indices = defaultdict(list)
         for idx in all_indices:
+            brand = None
             if self.ds.keys[idx][5] == 'BRAND_NAME':
                 brand = self.ds.keys[idx][7]
             elif self.ds.keys[idx][6] == 'BRAND_NAME':
                 brand = self.ds.keys[idx][8]
             else:
                 nns_and_nps_indices.append(idx)
-            brand_indices[brand].append(idx)
+            if brand:
+                brand_indices[brand].append(idx)
 
-        n_brand_indices = sum(len(brand_indices[b] for b in brand_indices))
+        n_brand_indices = sum([len(brand_indices[b]) for b in brand_indices])
 
         # split equally starting from the least frequent brands
         counter = 0
