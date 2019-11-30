@@ -128,10 +128,11 @@ class Sampler(data.Sampler):
         # 8 - the position of right argument
         # 5 - channel name for left argument
         # 6 - channel name for right argument
-        # if the channel name for left argument is 'BRAND_NAME' -> take the left arg
-        # otherwise the right argument has to be 'BRAND_NAME', because we
-        # scan only positives
+        train, valid, test = [], [], []
+
         all_indices = positives.union(negatives)
+        nns_and_nps_indices = list()
+
         brand_indices = defaultdict(list)
         for idx in all_indices:
             if self.ds.keys[idx][5] == 'BRAND_NAME':
@@ -139,20 +140,32 @@ class Sampler(data.Sampler):
             elif self.ds.keys[idx][6] == 'BRAND_NAME':
                 brand = self.ds.keys[idx][8]
             else:
-                continue
+                nns_and_nps_indices.append(idx)
             brand_indices[brand].append(idx)
 
-        # now, we want to split the samples by taking into account the number
-        # of examples per brand (3:1:1)
-        counter = 1
+        n_brand_indices = sum(len(brand_indices[b] for b in brand_indices))
+
+        # split equally starting from the least frequent brands
+        counter = 0
         for brand in sorted(brand_indices, key=lambda k: len(brand_indices[k])):
+            # if some brand has more than 50% of examples -> add it to train
+            if len(brand_indices[brand]) > (0.5 * len(n_brand_indices)):
+                counter = 0
             if counter % 3 == 0:
-                self.train_indices.extend(brand_indices[brand])
+                train.extend(brand_indices[brand])
             elif counter % 3 == 1:
-                self.valid_indices.extend(brand_indices[brand])
+                valid.extend(brand_indices[brand])
             elif counter % 3 == 2:
-                self.test_indices.extend(brand_indices[brand])
+                test.extend(brand_indices[brand])
             counter += 1
+
+        # use held_out indices of type N-N and N-P and split them
+        # to make our datasets more like 3:1:1
+        tr, vd, ts = self._split(nns_and_nps_indices)
+        train.extend(tr)
+        valid.extend(vd)
+        test.extend(ts)
+        return train, valid, test
 
     def _ds_domain_out(self, domain):
         """ Lets remind ourselves that the stucture of our `keys` with  indices
