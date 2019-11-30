@@ -124,8 +124,8 @@ class Sampler(data.Sampler):
         return self._lexical_split(positives, negatives)
 
     def _lexical_split(self, positives, negatives):
-        # 7 - the position of left argument,
-        # 8 - the position of right argument
+        # 9 - the position of left argument,
+        # 10 - the position of right argument
         # 5 - channel name for left argument
         # 6 - channel name for right argument
         train, valid, test = [], [], []
@@ -135,9 +135,9 @@ class Sampler(data.Sampler):
         for idx in positives.union(negatives):
             brand = None
             if self.ds.keys[idx][5] == 'BRAND_NAME':
-                brand = self.ds.keys[idx][7]
+                brand = self.ds.keys[idx][9]
             elif self.ds.keys[idx][6] == 'BRAND_NAME':
-                brand = self.ds.keys[idx][8]
+                brand = self.ds.keys[idx][10]
             else:
                 nns_and_nps_indices.append(idx)
             if brand:
