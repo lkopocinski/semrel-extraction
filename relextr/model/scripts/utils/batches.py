@@ -89,32 +89,32 @@ class Sampler(data.Sampler):
         return [idx for idx in indices if (self.ds.keys[idx][5] in channels or
                                            self.ds.keys[idx][6] in channels)]
 
-    def _ds_mixed(self, balanced=False, lexical_split=True):
+    def _ds_mixed(self, balanced=False, lexical_split=True, in_domain=None):
         """ Just ignore the structure of the data: we want a mixed dataset with
         all domains together. The data is splitted to train, dev, and test. """
-        # this ignores also the underlying data distribution (e.g.  that  there
-        # are more negative examples than positive
+        if in_domain:
+            indices = [idx for idx, desc in self.ds.keys.items()
+                       if desc[0] == in_domain]
+        else:
+            indices = self.ds.keys.keys()
+
         if not balanced:
-            return self._split(self.ds.keys.keys())
+            return self._split(indices)
         # ok, lets try to balance the data (positives vs negatives)
         # 2 cases to cover: i) B-N, P-N, and ii) N-N
-        positives = {idx for idx, desc in self.ds.keys.items()
-                     if desc[1] == 'in_relation'}
-        n_positives = len(positives)
+        positives = {idx for idx in indices if self.ds.keys[idx][1] == 'in_relation'}
+        negatives = {idx for idx in indices if self.ds.keys[idx][1] == 'no_relation'}
 
-        # all negatives
-        negatives = {idx for idx, desc in self.ds.keys.items()
-                     if desc[1] == 'no_relation'}
         # take the negatives connected with Bs or Ps
         negatives_bps = set(self._filter_indices_by_channels(
             negatives, ('BRAND_NAME', 'PRODUCT_NAME')))
         negatives_nns = negatives.difference(negatives_bps)
 
         # balance the data (take 2 times #positives of negative examples)
-        if negatives_bps and len(negatives_bps) >= n_positives:
-            negatives_bps = random.sample(negatives_bps, n_positives)
-        if negatives_nns and len(negatives_nns) >= n_positives:
-            negatives_nns = random.sample(negatives_nns, n_positives)
+        if negatives_bps and len(negatives_bps) >= len(positives):
+            negatives_bps = random.sample(negatives_bps, len(positives))
+        if negatives_nns and len(negatives_nns) >= len(positives):
+            negatives_nns = random.sample(negatives_nns, len(positives))
 
         negatives = set.union(negatives_bps, negatives_nns)
         if not lexical_split:
@@ -129,12 +129,10 @@ class Sampler(data.Sampler):
         # 5 - channel name for left argument
         # 6 - channel name for right argument
         train, valid, test = [], [], []
-
-        all_indices = positives.union(negatives)
         nns_and_nps_indices = list()
 
         brand_indices = defaultdict(list)
-        for idx in all_indices:
+        for idx in positives.union(negatives):
             brand = None
             if self.ds.keys[idx][5] == 'BRAND_NAME':
                 brand = self.ds.keys[idx][7]
