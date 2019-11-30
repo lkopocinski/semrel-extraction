@@ -62,19 +62,23 @@ def make_tensors_map(path: Path, vec_map, vec_size):
         cat_id = row[0]
         label = row[1]
         doc_id = row[2]
+
         channel1 = row[5]
         channel2 = row[11]
 
         sent_id1 = row[3]
-        tokens1 = eval(row[7])
-
         sent_id2 = row[9]
+
+        lemma1 = row[4]
+        lemma2 = row[10]
+
+        tokens1 = eval(row[7])
         tokens2 = eval(row[13])
 
         if len(tokens1) > 5 or len(tokens2) > 5:
             continue
 
-        rel_key = (cat_id, label, doc_id, sent_id1, sent_id2, channel1, channel2)
+        rel_key = (cat_id, label, doc_id, sent_id1, sent_id2, channel1, channel2, row[7], row[13], lemma1, lemma2)
         rel_map[rel_key] = (
             get_tensor(doc_id, sent_id1, tokens1, vec_map, vec_size),
             get_tensor(doc_id, sent_id2, tokens2, vec_map, vec_size)
