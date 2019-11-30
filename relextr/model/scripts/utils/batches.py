@@ -1,5 +1,5 @@
 import random
-from collections import defaultdict
+from collections import defaultdict, Counter
 from pathlib import Path
 from typing import List
 
@@ -89,35 +89,83 @@ class Sampler(data.Sampler):
         return [idx for idx in indices if (self.ds.keys[idx][5] in channels or
                                            self.ds.keys[idx][6] in channels)]
 
-    def _ds_mixed(self, balanced=False):
+    def _ds_mixed(self, balanced=False, lexical_split=True, in_domain=None):
         """ Just ignore the structure of the data: we want a mixed dataset with
         all domains together. The data is splitted to train, dev, and test. """
-        # this ignores also the underlying data distribution (e.g.  that  there
-        # are more negative examples than positive
+        if in_domain:
+            indices = [idx for idx, desc in self.ds.keys.items()
+                       if desc[0] == in_domain]
+        else:
+            indices = self.ds.keys.keys()
+
         if not balanced:
-            return self._split(self.ds.keys.keys())
+            return self._split(indices)
         # ok, lets try to balance the data (positives vs negatives)
         # 2 cases to cover: i) B-N, P-N, and ii) N-N
-        positives = {idx for idx, desc in self.ds.keys.items()
-                     if desc[1] == 'in_relation'}
-        n_positives = len(positives)
+        positives = {idx for idx in indices if self.ds.keys[idx][1] == 'in_relation'}
+        negatives = {idx for idx in indices if self.ds.keys[idx][1] == 'no_relation'}
 
-        # all negatives
-        negatives = {idx for idx, desc in self.ds.keys.items()
-                     if desc[1] == 'no_relation'}
         # take the negatives connected with Bs or Ps
         negatives_bps = set(self._filter_indices_by_channels(
             negatives, ('BRAND_NAME', 'PRODUCT_NAME')))
         negatives_nns = negatives.difference(negatives_bps)
 
-        if negatives_bps and len(negatives_bps) >= n_positives:
-            negatives_bps = random.sample(negatives_bps, n_positives)
-        if negatives_nns and len(negatives_nns) >= n_positives:
-            negatives_nns = random.sample(negatives_nns, n_positives)
-
         # balance the data (take 2 times #positives of negative examples)
-        negatives = set.union(set(negatives_bps), set(negatives_nns))
-        return self._split(list(positives.union(negatives)))
+        if negatives_bps and len(negatives_bps) >= len(positives):
+            negatives_bps = random.sample(negatives_bps, len(positives))
+        if negatives_nns and len(negatives_nns) >= len(positives):
+            negatives_nns = random.sample(negatives_nns, len(positives))
+
+        negatives = set.union(negatives_bps, negatives_nns)
+        if not lexical_split:
+            return self._split(list(positives.union(negatives)))
+
+        # ok, lexical split... Lets take all the brands and split the dataset
+        return self._lexical_split(positives, negatives)
+
+    def _lexical_split(self, positives, negatives):
+        # 7 - the position of left argument,
+        # 8 - the position of right argument
+        # 5 - channel name for left argument
+        # 6 - channel name for right argument
+        train, valid, test = [], [], []
+        nns_and_nps_indices = list()
+
+        brand_indices = defaultdict(list)
+        for idx in positives.union(negatives):
+            brand = None
+            if self.ds.keys[idx][5] == 'BRAND_NAME':
+                brand = self.ds.keys[idx][7]
+            elif self.ds.keys[idx][6] == 'BRAND_NAME':
+                brand = self.ds.keys[idx][8]
+            else:
+                nns_and_nps_indices.append(idx)
+            if brand:
+                brand_indices[brand].append(idx)
+
+        n_brand_indices = sum([len(brand_indices[b]) for b in brand_indices])
+
+        # split equally starting from the least frequent brands
+        counter = 0
+        for brand in sorted(brand_indices, key=lambda k: len(brand_indices[k])):
+            # if some brand has more than 50% of examples -> add it to train
+            if len(brand_indices[brand]) > (0.5 * n_brand_indices):
+                counter = 0
+            if counter % 3 == 0:
+                train.extend(brand_indices[brand])
+            elif counter % 3 == 1:
+                valid.extend(brand_indices[brand])
+            elif counter % 3 == 2:
+                test.extend(brand_indices[brand])
+            counter += 1
+
+        # use held_out indices of type N-N and N-P and split them
+        # to make our datasets more like 3:1:1
+        tr, vd, ts = self._split(nns_and_nps_indices)
+        train.extend(tr)
+        valid.extend(vd)
+        test.extend(ts)
+        return train, valid, test
 
     def _ds_domain_out(self, domain):
         """ Lets remind ourselves that the stucture of our `keys` with  indices
