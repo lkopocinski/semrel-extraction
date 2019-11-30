@@ -1,15 +1,15 @@
-md5: aea047bd03d66fec894d888b66c789c6
+md5: 9d52bed70f5c72d0257d015df516e55d
 cmd: ./data/scripts/generate.py --data-in ./data/corpora --output-path ./data/generations
-  --directories 111 112 114 115
+  --directories 112 114 115
 deps:
 - md5: 7b93cdc30d883709eef0971346a847a9.dir
   path: data/corpora
-- md5: 59efb4ce02765037f5d771cd9232f7ab
+- md5: 7c107a753daac1094bd3227b1c849109
   path: data/scripts/generate.py
 - md5: e14a386a9b311cdf34684a3966cc59b1
   path: data/scripts/generator.py
 outs:
-- md5: bfba61187f6c65dd145bf2f94715ff8f.dir
+- md5: f406fbf5921b0db1ded6dff15b473bd5.dir
   path: data/generations
   cache: true
   metric: false

@@ -95,7 +95,7 @@ def main(argv=None):
     # elmoconv_map = load_map(args.elmoconv_map)
     # sent2vec_map = load_map(args.sent2vec_map)
 
-    source_path = Path(f'{args.data_in}/relations.context.uniq')
+    source_path = Path(f'{args.data_in}/relations.112.114.115.context.uniq')
     for vec_map, vec_size, save_name in [(elmo_map, 1024, 'elmo.rel.pt'), (fasttext_map, 300, 'fasttext.rel.pt'), (retrofit_map, 300, 'retrofit.rel.pt')]:
         rel_map = make_tensors_map(source_path, vec_map, vec_size)
         keys, vec = zip(*rel_map.items())
