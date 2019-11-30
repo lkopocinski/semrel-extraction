@@ -24,7 +24,7 @@ def main(argv=None):
     args = get_args(argv)
 
     lines = []
-    out_file_path = Path(f'{args.output_path}/relations.context')
+    out_file_path = Path(f'{args.output_path}/relations.112.114.115.context')
     for directory in args.directories:
         source_path = Path(f'{args.data_in}/{directory}')
         if source_path.is_dir():
