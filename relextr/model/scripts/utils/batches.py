@@ -27,9 +27,9 @@ class Dataset(data.Dataset):
         self.vectors_models = vectors_models
         self.keys = keys
 
-        # self.vectors = [torch.load(model) for model in self.vectors_models]
-        # self.vectors = torch.cat(self.vectors, dim=1)
-        self.vectors = [i for i in range(len(self.keys))]
+        self.vectors = [torch.load(model) for model in self.vectors_models]
+        self.vectors = torch.cat(self.vectors, dim=1)
+        #self.vectors = [i for i in range(len(self.keys))]
 
     @property
     def vector_size(self):

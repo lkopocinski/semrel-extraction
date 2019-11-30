@@ -15,8 +15,8 @@ data_type: all
 #data_type: 114_out
 #data_type: 115_out
 
-keys: 'keys.txt'
+keys: 'elmo.rel.pt.keys'
 methods:
   - 'elmo.rel.pt'
-  - 'fasttext.rel.pt'
+    #  - 'fasttext.rel.pt'
   - 'retrofit.rel.pt'
