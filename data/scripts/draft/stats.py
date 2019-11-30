@@ -15,8 +15,8 @@ def corpus_files(path: Path):
 def main():
     for data in corpus_files(PATH):
         brand_dict = defaultdict(int)
-        for id, content in data.items():
-            id = content['id']
+        for idx, content in data.items():
+            idx = content['id']
             text = content['text']
             relations = content['ner']
 

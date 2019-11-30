@@ -1,0 +1,7 @@
+md5: 703fddfca36a36d3291f380e8e014bca
+outs:
+- md5: ce0c09097727c6f747c4b586dfb3abe2
+  path: fasttext.rel.pt
+  cache: true
+  metric: false
+  persist: false

@@ -11,3 +11,5 @@ dist
 
 *.map
 *.pt
+/fasttext.rel.pt
+/retrofit.rel.pt

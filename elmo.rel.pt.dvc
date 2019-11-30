@@ -1,0 +1,7 @@
+md5: fbba10d2d8cfef2047a760328e287bbe
+outs:
+- md5: ee5de477859456deae640c41804c6ea0
+  path: elmo.rel.pt
+  cache: true
+  metric: false
+  persist: false
