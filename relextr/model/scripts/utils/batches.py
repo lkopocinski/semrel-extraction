@@ -89,7 +89,7 @@ class Sampler(data.Sampler):
         return [idx for idx in indices if (self.ds.keys[idx][5] in channels or
                                            self.ds.keys[idx][6] in channels)]
 
-    def _ds_mixed(self, balanced=False, lexical_split=False):
+    def _ds_mixed(self, balanced=False, lexical_split=True):
         """ Just ignore the structure of the data: we want a mixed dataset with
         all domains together. The data is splitted to train, dev, and test. """
         # this ignores also the underlying data distribution (e.g.  that  there
@@ -151,7 +151,7 @@ class Sampler(data.Sampler):
         counter = 0
         for brand in sorted(brand_indices, key=lambda k: len(brand_indices[k])):
             # if some brand has more than 50% of examples -> add it to train
-            if len(brand_indices[brand]) > (0.5 * len(n_brand_indices)):
+            if len(brand_indices[brand]) > (0.5 * n_brand_indices):
                 counter = 0
             if counter % 3 == 0:
                 train.extend(brand_indices[brand])
