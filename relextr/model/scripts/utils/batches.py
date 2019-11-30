@@ -1,5 +1,5 @@
 import random
-from collections import defaultdict
+from collections import defaultdict, Counter
 from pathlib import Path
 from typing import List
 
@@ -117,7 +117,42 @@ class Sampler(data.Sampler):
             negatives_nns = random.sample(negatives_nns, n_positives)
 
         negatives = set.union(negatives_bps, negatives_nns)
-        return self._split(list(positives.union(negatives)))
+        if not lexical_split:
+            return self._split(list(positives.union(negatives)))
+
+        # ok, lexical split... Lets take all the brands and split the dataset
+        return self._lexical_split(positives, negatives)
+
+    def _lexical_split(self, positives, negatives):
+        # 7 - the position of left argument,
+        # 8 - the position of right argument
+        # 5 - channel name for left argument
+        # 6 - channel name for right argument
+        # if the channel name for left argument is 'BRAND_NAME' -> take the left arg
+        # otherwise the right argument has to be 'BRAND_NAME', because we
+        # scan only positives
+        all_indices = positives.union(negatives)
+        brand_indices = defaultdict(list)
+        for idx in all_indices:
+            if self.ds.keys[idx][5] == 'BRAND_NAME':
+                brand = self.ds.keys[idx][7]
+            elif self.ds.keys[idx][6] == 'BRAND_NAME':
+                brand = self.ds.keys[idx][8]
+            else:
+                continue
+            brand_indices[brand].append(idx)
+
+        # now, we want to split the samples by taking into account the number
+        # of examples per brand (3:1:1)
+        counter = 1
+        for brand in sorted(brand_indices, key=lambda k: len(brand_indices[k])):
+            if counter % 3 == 0:
+                self.train_indices.extend(brand_indices[brand])
+            elif counter % 3 == 1:
+                self.valid_indices.extend(brand_indices[brand])
+            elif counter % 3 == 2:
+                self.test_indices.extend(brand_indices[brand])
+            counter += 1
 
     def _ds_domain_out(self, domain):
         """ Lets remind ourselves that the stucture of our `keys` with  indices
