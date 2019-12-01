@@ -1,5 +1,5 @@
 import random
-from collections import defaultdict, Counter
+from collections import defaultdict
 from pathlib import Path
 from typing import List
 
@@ -29,7 +29,7 @@ class Dataset(data.Dataset):
 
         self.vectors = [torch.load(model) for model in self.vectors_models]
         self.vectors = torch.cat(self.vectors, dim=1)
-        #self.vectors = [i for i in range(len(self.keys))]
+        # self.vectors = [i for i in range(len(self.keys))]
 
     @property
     def vector_size(self):
@@ -46,7 +46,7 @@ class Dataset(data.Dataset):
 
 class Sampler(data.Sampler):
 
-    def __init__(self, dataset, balanced=False, lexical_split=True, in_domain=None):
+    def __init__(self, dataset, balanced=False, lexical_split=True, in_domain=None, out_domain=None):
         self.ds = dataset
         self._set_type = None
 
@@ -54,7 +54,7 @@ class Sampler(data.Sampler):
         self.valid_indices = []
         self.test_indices = []
 
-        self.generate_dataset(balanced, lexical_split, in_domain)
+        self.generate_dataset(balanced, lexical_split, in_domain, out_domain)
 
     @property
     def set_type(self):
@@ -88,12 +88,14 @@ class Sampler(data.Sampler):
         return [idx for idx in indices if (self.ds.keys[idx][5] in channels or
                                            self.ds.keys[idx][6] in channels)]
 
-    def _ds_mixed(self, balanced=False, lexical_split=True, in_domain=None):
+    def _ds_mixed(self, balanced=False, lexical_split=True, in_domain=None, out_domain=None):
         """ Just ignore the structure of the data: we want a mixed dataset with
         all domains together. The data is splitted to train, dev, and test. """
         if in_domain:
             indices = [idx for idx, desc in self.ds.keys.items()
                        if desc[0] == in_domain]
+        elif out_domain:
+            return self._ds_domain_out(out_domain)
         else:
             indices = self.ds.keys.keys()
 
@@ -173,7 +175,7 @@ class Sampler(data.Sampler):
             domain, label, doc_id, first_sent_id, second_sent_id, ...
 
         We generate splitted data (train, dev, test) by examining the domain of
-        our examples, omiting the examples annotated with given `domain`. First
+        our examples, omiting the examples annotated with given `out_domain`. First
         take all of in_domain examples and generate subsets for train, and dev.
         Then the test set is built from all `out_domain` examples.
         """
@@ -181,10 +183,34 @@ class Sampler(data.Sampler):
                      if desc[0] != domain]
         out_domain = [idx for idx, desc in self.ds.keys.items()
                       if desc[0] == domain]
-        # todo: finish
 
-    def generate_dataset(self, balanced=False, lexical_split=True, in_domain=None):
-        self.train_indices, self.valid_indices, self.test_indices = self._ds_mixed(balanced, lexical_split, in_domain)
+        # ok, lets try to balance the data (positives vs negatives)
+        # 2 cases to cover: i) B-N, P-N, and ii) N-N
+        positives = {idx for idx in in_domain if self.ds.keys[idx][1] == 'in_relation'}
+        negatives = {idx for idx in in_domain if self.ds.keys[idx][1] == 'no_relation'}
+
+        # take the negatives connected with Bs or Ps
+        negatives_bps = set(self._filter_indices_by_channels(
+            negatives, ('BRAND_NAME', 'PRODUCT_NAME')))
+        negatives_nns = negatives.difference(negatives_bps)
+
+        # balance the data (take 2 times #positives of negative examples)
+        if negatives_bps and len(negatives_bps) >= len(positives):
+            negatives_bps = random.sample(negatives_bps, len(positives))
+        if negatives_nns and len(negatives_nns) >= len(positives):
+            negatives_nns = random.sample(negatives_nns, len(positives))
+
+        negatives = set.union(negatives_bps, negatives_nns)
+        in_domain_train, in_domain_valid, in_domain_test = self._split(list(positives.union(negatives)))
+
+        train = in_domain_train
+        valid = in_domain_valid + in_domain_test
+        test = out_domain
+
+        return train, valid, test
+
+    def generate_dataset(self, balanced=False, lexical_split=True, in_domain=None, out_domain=None):
+        self.train_indices, self.valid_indices, self.test_indices = self._ds_mixed(balanced, lexical_split, in_domain, out_domain)
 
     def _split(self, indices):
         random.shuffle(indices)

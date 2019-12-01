@@ -35,7 +35,8 @@ def main(argv=None):
     dataset = Dataset(config['methods'], keys)
 
     in_domain = config['in_domain'] if 'in_domain' in config.keys() else None
-    sampler = Sampler(dataset, balanced=True, lexical_split=config['lexical_split'], in_domain=in_domain)
+    out_domain = config['out_domain'] if 'out_domain' in config.keys() else None
+    sampler = Sampler(dataset, balanced=True, lexical_split=config['lexical_split'], in_domain=in_domain, out_domain=out_domain)
     sampler.set_type = 'train'
     sampler_train = copy.copy(sampler)
     sampler.set_type = 'valid'
@@ -100,11 +101,13 @@ def init_mlflow(config):
 
     methods = ', '.join([m.replace('rel.pt', '') for m in config['methods']])
     in_domain = config['in_domain'] if 'in_domain' in config.keys() else None
+    out_domain = config['out_domain'] if 'out_domain' in config.keys() else None
     mlflow.set_tags({
         'methods': methods,
         'data_type': config['data_type'],
         'lexical_split': config['lexical_split'],
-        'in_domain': in_domain
+        'in_domain': in_domain,
+        'out_domain': out_domain,
     })
 
     print(f'\n-- mlflow --'
