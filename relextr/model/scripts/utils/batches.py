@@ -115,7 +115,7 @@ class Sampler(data.Sampler):
         if negatives_nns and len(negatives_nns) >= len(positives):
             negatives_nns = random.sample(negatives_nns, len(positives))
 
-        negatives = set.union(negatives_bps, negatives_nns)
+        negatives = set.union(set(negatives_bps), set(negatives_nns))
         if not lexical_split:
             return self._split(list(positives.union(negatives)))
 
