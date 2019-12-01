@@ -34,7 +34,8 @@ def main(argv=None):
     keys = Dataset.load_keys(Path(config['keys']))
     dataset = Dataset(config['methods'], keys)
 
-    sampler = Sampler(dataset)
+    in_domain = config['in_domain'] if 'in_domain' in config.keys() else None
+    sampler = Sampler(dataset, balanced=True, lexical_split=config['lexical_split'], in_domain=in_domain)
     sampler.set_type = 'train'
     sampler_train = copy.copy(sampler)
     sampler.set_type = 'valid'
@@ -96,8 +97,13 @@ def init_mlflow(config):
     mlflow.set_tracking_uri(conf['tracking_uri'])
     mlflow.set_experiment(conf['experiment_name'])
     mlflow.set_tags(conf['tags'])
-    mlflow.set_tag('methods', config['methods'])
-    mlflow.set_tag('data_type', config['data_type'])
+
+    methods = ', '.join([m.replace('rel.pt', '') for m in config['methods']])
+    mlflow.set_tags({
+        'methods': methods,
+        'data_type': config['data_type'],
+        'lexical_split': config['lexical_split']
+    })
 
     print(f'\n-- mlflow --'
           f'\nserver: {mlflow.get_tracking_uri()}'

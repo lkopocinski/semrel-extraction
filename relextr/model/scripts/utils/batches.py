@@ -46,16 +46,15 @@ class Dataset(data.Dataset):
 
 class Sampler(data.Sampler):
 
-    def __init__(self, dataset):
+    def __init__(self, dataset, balanced=False, lexical_split=True, in_domain=None):
         self.ds = dataset
         self._set_type = None
-        self._data_type = None
 
         self.train_indices = []
         self.valid_indices = []
         self.test_indices = []
 
-        self.generate_dataset(balanced=True)
+        self.generate_dataset(balanced, lexical_split, in_domain)
 
     @property
     def set_type(self):
@@ -184,8 +183,8 @@ class Sampler(data.Sampler):
                       if desc[0] == domain]
         # todo: finish
 
-    def generate_dataset(self, balanced=False):
-        self.train_indices, self.valid_indices, self.test_indices = self._ds_mixed(balanced)
+    def generate_dataset(self, balanced=False, lexical_split=True, in_domain=None):
+        self.train_indices, self.valid_indices, self.test_indices = self._ds_mixed(balanced, lexical_split, in_domain)
 
     def _split(self, indices):
         random.shuffle(indices)
