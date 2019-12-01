@@ -99,10 +99,12 @@ def init_mlflow(config):
     mlflow.set_tags(conf['tags'])
 
     methods = ', '.join([m.replace('rel.pt', '') for m in config['methods']])
+    in_domain = config['in_domain'] if 'in_domain' in config.keys() else None
     mlflow.set_tags({
         'methods': methods,
         'data_type': config['data_type'],
-        'lexical_split': config['lexical_split']
+        'lexical_split': config['lexical_split'],
+        'in_domain': in_domain
     })
 
     print(f'\n-- mlflow --'

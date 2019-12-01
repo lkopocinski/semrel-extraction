@@ -12,11 +12,11 @@ mlflow:
 
 
 lexical_split: False
-#in_domain: 112
-#in_domain: 114
-#in_domain: 115
+#in_domain: '112'
+#in_domain: '114'
+in_domain: '115'
 
-data_type: all
+data_type: ''
 #data_type: 112_out
 #data_type: 114_out
 #data_type: 115_out
@@ -24,5 +24,5 @@ data_type: all
 keys: 'elmo.rel.pt.keys'
 methods:
   - 'elmo.rel.pt'
-#  - 'fasttext.rel.pt'
-#  - 'retrofit.rel.pt'
+    #  - 'fasttext.rel.pt'
+    # - 'retrofit.rel.pt'
