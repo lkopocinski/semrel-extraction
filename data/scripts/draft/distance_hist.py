@@ -1,4 +1,5 @@
 import pandas as pd
+from pathlib import Path
 
 from data.scripts.utils.corpus import id_to_sent_dict, is_ner_relation, is_in_channel, get_relation_element, \
     corpora_documents
@@ -6,7 +7,13 @@ from data.scripts.utils.corpus import id_to_sent_dict, is_ner_relation, is_in_ch
 
 def distance_hist(relation_files, channels, nr):
     to_save = []
-    for document in corpora_documents(relation_files):
+
+    files = []
+    with open(relation_files, 'r', encoding='utf-8') as f:
+        for line in f:
+            files.append(Path(line.strip()))
+
+    for document in corpora_documents(files):
         sentences = id_to_sent_dict(document)
 
         for relation in document.relations():
@@ -35,6 +42,7 @@ def distance_hist(relation_files, channels, nr):
     hist = pd.Series(to_save)
     hist = hist.value_counts()
     hist = hist.sort_index()
+    print(hist.sum())
     hist.to_csv(f'{nr}.dist.hist', sep='\t', header=False)
 
 
