@@ -104,7 +104,6 @@ def init_mlflow(config):
     out_domain = config['out_domain'] if 'out_domain' in config.keys() else None
     mlflow.set_tags({
         'methods': methods,
-        'data_type': config['data_type'],
         'lexical_split': config['lexical_split'],
         'in_domain': in_domain,
         'out_domain': out_domain,

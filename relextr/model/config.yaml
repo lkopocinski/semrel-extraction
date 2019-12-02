@@ -11,10 +11,10 @@ mlflow:
     files: 112, 114, 115
 
 
-lexical_split: False
+lexical_split: True
 #in_domain: '112'
 #in_domain: '114'
-#in_domain: '115'
+in_domain: '115'
 
 #out_domain: '112'
 #out_domain: '114'
@@ -23,5 +23,5 @@ lexical_split: False
 keys: 'elmo.rel.pt.keys'
 methods:
   - 'elmo.rel.pt'
-#  - 'fasttext.rel.pt'
-#  - 'retrofit.rel.pt'
+  - 'fasttext.rel.pt'
+    #  - 'retrofit.rel.pt'
