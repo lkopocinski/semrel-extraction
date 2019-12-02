@@ -85,7 +85,7 @@ def make_vectors(relations_file, s2v):
         sentence = ' '.join(tokens)
 
         rel_key = (domain, _label, doc_id, f_sent_id, t_sent_id, _f_channel, _t_channel, f_indices, t_indices, _f_lemma, _t_lemma)
-        rel_map[rel_key] = torch.FloatTensor(s2v.embed_sentence(sentence).flatten())
+        rel_map[rel_key] = torch.FloatTensor(s2v.embed_sentence(sentence))
 
     return rel_map
 
@@ -98,7 +98,8 @@ def main(argv=None):
 
     rel_map = make_vectors(args.relations_file, model)
     keys, vec = zip(*rel_map.items())
-    torch.save(vec, 'sen2vec.rel.pt')
+#    import pudb; pudb.set_trace()
+    torch.save(torch.cat(vec), 'sen2vec.rel.pt')
 
     with open('sen2vec.rel.pt.keys', 'w', encoding='utf-8') as f:
         for key in keys:
