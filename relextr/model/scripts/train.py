@@ -33,89 +33,90 @@ def main(argv=None):
 
     try:
         for nr, params in RUNS.items():
-            print(f'\nRUN:{nr} WITH {params}')
+            with mlflow.start_run():
+                print(f'\nRUN:{nr} WITH {params}')
 
-            lexical_split = params['lexical_split']
-            in_domain = params['in_domain'] if 'in_domain' in config.keys() else None
-            out_domain = params['out_domain'] if 'out_domain' in config.keys() else None
-            methods = params['methods']
+                lexical_split = params['lexical_split']
+                in_domain = params['in_domain'] if 'in_domain' in config.keys() else None
+                out_domain = params['out_domain'] if 'out_domain' in config.keys() else None
+                methods = params['methods']
 
-            mlflow.set_tags({
-                'lexical_split': lexical_split,
-                'in_domain': in_domain,
-                'out_domain': out_domain,
-                'methods': ', '.join(methods),
-            })
+                mlflow.set_tags({
+                    'lexical_split': lexical_split,
+                    'in_domain': in_domain,
+                    'out_domain': out_domain,
+                    'methods': ', '.join(methods),
+                })
 
-            dataset = Dataset(
-                vectors_models=[m + '.rel.pt' for m in methods],
-                keys=Dataset.load_keys(config['keys'])
-            )
+                dataset = Dataset(
+                    vectors_models=[m + '.rel.pt' for m in methods],
+                    keys=Dataset.load_keys(config['keys'])
+                )
 
-            sampler = Sampler(
-                dataset,
-                balanced=True,
-                lexical_split=lexical_split,
-                in_domain=in_domain,
-                out_domain=out_domain
-            )
+                sampler = Sampler(
+                    dataset,
+                    balanced=True,
+                    lexical_split=lexical_split,
+                    in_domain=in_domain,
+                    out_domain=out_domain
+                )
 
-            sampler.set_type = 'train'
-            sampler_train = copy.copy(sampler)
-            sampler.set_type = 'valid'
-            sampler_valid = copy.copy(sampler)
-            sampler.set_type = 'test'
-            sampler_test = copy.copy(sampler)
+                sampler.set_type = 'train'
+                sampler_train = copy.copy(sampler)
+                sampler.set_type = 'valid'
+                sampler_valid = copy.copy(sampler)
+                sampler.set_type = 'test'
+                sampler_test = copy.copy(sampler)
 
-            train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_train, num_workers=8)
-            valid_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_valid, num_workers=8)
-            test_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_test, num_workers=8)
+                train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_train, num_workers=8)
+                valid_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_valid, num_workers=8)
+                test_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_test, num_workers=8)
 
-            network = RelNet(in_dim=dataset.vector_size)
-            network.to(device)
-            optimizer = Adagrad(network.parameters())
-            loss_func = nn.CrossEntropyLoss()
+                network = RelNet(in_dim=dataset.vector_size)
+                network.to(device)
+                optimizer = Adagrad(network.parameters())
+                loss_func = nn.CrossEntropyLoss()
 
-            # Log learning params
-            mlflow.log_params({
-                'batch_size': config['batch_size'],
-                'train_set_size': len(train_batch_gen.sampler),
-                'valid_set_size': len(valid_batch_gen.sampler),
-                'test_set_size': len(test_batch_gen.sampler),
-                'vector_size': dataset.vector_size,
-                'epochs': config['epochs'],
-                'optimizer': optimizer.__class__.__name__,
-                'loss_function': loss_func.__class__.__name__
-            })
+                # Log learning params
+                mlflow.log_params({
+                    'batch_size': config['batch_size'],
+                    'train_set_size': len(train_batch_gen.sampler),
+                    'valid_set_size': len(valid_batch_gen.sampler),
+                    'test_set_size': len(test_batch_gen.sampler),
+                    'vector_size': dataset.vector_size,
+                    'epochs': config['epochs'],
+                    'optimizer': optimizer.__class__.__name__,
+                    'loss_function': loss_func.__class__.__name__
+                })
 
-            best_valid_fscore = (0.0, 0.0)
-            
-            print('Epochs:', end =" ")
-            for epoch in range(config['epochs']):
-                #print(f'Epoch: {epoch} / {config["epochs"]}')
-                print(epoch, end =" ")
+                best_valid_fscore = (0.0, 0.0)
 
-                # Train
-                train_metrics = train(network, optimizer, loss_func, train_batch_gen, device)
-                #print(f'Train:\n{train_metrics}')
-                log_metrics(train_metrics, 'train', epoch)
+                print('Epochs:', end =" ")
+                for epoch in range(config['epochs']):
+                    #print(f'Epoch: {epoch} / {config["epochs"]}')
+                    print(epoch, end =" ")
 
-                # Validate
-                valid_metrics = evaluate(network, valid_batch_gen, loss_func, device)
-                #print(f'Valid:\n{valid_metrics}')
-                log_metrics(valid_metrics, 'valid', epoch)
+                    # Train
+                    train_metrics = train(network, optimizer, loss_func, train_batch_gen, device)
+                    #print(f'Train:\n{train_metrics}')
+                    log_metrics(train_metrics, 'train', epoch)
 
-                # Fscore stopping
-                if is_better_fscore(valid_metrics.fscore, best_valid_fscore):
-                    best_valid_fscore = valid_metrics.fscore
-                    torch.save(network.state_dict(), config["model"]["name"])
-                    mlflow.log_artifact(f'./{config["model"]["name"]}')
+                    # Validate
+                    valid_metrics = evaluate(network, valid_batch_gen, loss_func, device)
+                    #print(f'Valid:\n{valid_metrics}')
+                    log_metrics(valid_metrics, 'valid', epoch)
 
-            # Test
-            test_metrics = test(RelNet(dataset.vector_size), config['model']['name'], test_batch_gen, loss_func, device)
-            print(f'\n\nTest: {test_metrics}')
-            save_metrics(test_metrics, 'metrics.txt')
-            log_metrics(test_metrics, 'test')
+                    # Fscore stopping
+                    if is_better_fscore(valid_metrics.fscore, best_valid_fscore):
+                        best_valid_fscore = valid_metrics.fscore
+                        torch.save(network.state_dict(), config["model"]["name"])
+                        mlflow.log_artifact(f'./{config["model"]["name"]}')
+
+                # Test
+                test_metrics = test(RelNet(dataset.vector_size), config['model']['name'], test_batch_gen, loss_func, device)
+                print(f'\n\nTest: {test_metrics}')
+                save_metrics(test_metrics, 'metrics.txt')
+                log_metrics(test_metrics, 'test')
 
     except Exception as e:
         print(f"In {nr}'th run exception occurred", e)
