@@ -1,4 +1,4 @@
-RUNS = {
+DEFAULT_RUNS = {
     # all domains
     # # 1: {'lexical_split': False, 'methods': ['elmo']},
     # # 2: {'lexical_split': False, 'methods': ['elmo', 'fasttext']},
@@ -90,3 +90,44 @@ RUNS = {
     66: {'out_domain': '115', 'lexical_split': False, 'methods': ['elmo', 'fasttext', 'sent2vec']},
     67: {'out_domain': '115', 'lexical_split': False, 'methods': ['elmo', 'retrofit', 'sent2vec']},
 }
+
+AREK_RUNS = {
+    1: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo']},
+    2: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo']},
+    3: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo']},
+    4: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo']},
+    5: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo']},
+
+    6: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'fasttext']},
+    7: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'fasttext']},
+    8: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'fasttext']},
+    9: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'fasttext']},
+    10: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'fasttext']},
+
+    11: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'sent2vec']},
+    12: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'sent2vec']},
+    13: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'sent2vec']},
+    14: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'sent2vec']},
+    15: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'sent2vec']},
+
+    16: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'retrofit']},
+    17: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'retrofit']},
+    18: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'retrofit']},
+    19: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'retrofit']},
+    20: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'retrofit']},
+
+    21: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'fasttext', 'sent2vec']},
+    22: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'fasttext', 'sent2vec']},
+    23: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'fasttext', 'sent2vec']},
+    24: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'fasttext', 'sent2vec']},
+    25: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'fasttext', 'sent2vec']},
+
+    26: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'retrofit', 'sent2vec']},
+    27: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'retrofit', 'sent2vec']},
+    28: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'retrofit', 'sent2vec']},
+    29: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'retrofit', 'sent2vec']},
+    30: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'retrofit', 'sent2vec']},
+}
+
+
+RUNS = AREK_RUNS
