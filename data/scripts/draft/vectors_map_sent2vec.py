@@ -76,7 +76,7 @@ def make_vectors(relations_file, s2v):
             ctx_between.extend(mask_tokens(sentence_map[(domain, doc_id)][f_sent_id_int], f_indices_int))
 
             for i in range(f_sent_id_int + 1, t_sent_id_int):
-                ctx_between.append(sentence_map[(domain, doc_id)].get(i, []))
+                ctx_between.extend(sentence_map[(domain, doc_id)].get(i, []))
 
             ctx_between.extend(mask_tokens(sentence_map[(domain, doc_id)][t_sent_id_int], t_indices_int))
             ctx_right = sentence_map[(domain, doc_id)].get(t_sent_id_int + 1, [])
