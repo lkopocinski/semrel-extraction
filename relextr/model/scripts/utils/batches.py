@@ -199,7 +199,7 @@ class Sampler(data.Sampler):
         if negatives_nns and len(negatives_nns) >= len(positives):
             negatives_nns = random.sample(negatives_nns, len(positives))
 
-        negatives = set.union(negatives_bps, negatives_nns)
+        negatives = set.union(set(negatives_bps), set(negatives_nns))
         in_domain_train, in_domain_valid, in_domain_test = self._split(list(positives.union(negatives)))
 
         train = in_domain_train
