@@ -1,6 +1,5 @@
 import random
 from collections import defaultdict
-from pathlib import Path
 from typing import List
 
 import torch
@@ -16,9 +15,9 @@ class Dataset(data.Dataset):
     }
 
     @staticmethod
-    def load_keys(path: Path):
+    def load_keys(path):
         keys = {}
-        with path.open('r', encoding='utf-8') as f:
+        with open(path, 'r', encoding='utf-8') as f:
             for idx, line in enumerate(f):
                 keys[idx] = eval(line.strip())
         return keys
@@ -210,7 +209,8 @@ class Sampler(data.Sampler):
         return train, valid, test
 
     def generate_dataset(self, balanced=False, lexical_split=True, in_domain=None, out_domain=None):
-        self.train_indices, self.valid_indices, self.test_indices = self._ds_mixed(balanced, lexical_split, in_domain, out_domain)
+        self.train_indices, self.valid_indices, self.test_indices = self._ds_mixed(balanced, lexical_split, in_domain,
+                                                                                   out_domain)
 
     def _split(self, indices):
         random.shuffle(indices)

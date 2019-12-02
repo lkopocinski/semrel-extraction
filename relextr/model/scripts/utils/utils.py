@@ -1,15 +1,13 @@
-from pathlib import Path
-
-import yaml
 import torch
+import yaml
 
 
 def is_better_fscore(fscore, best_fscore):
     return fscore[0] > best_fscore[0] and fscore[1] > best_fscore[1]
 
 
-def parse_config(path: Path):
-    with path.open('r', encoding='utf-8') as stream:
+def parse_config(path):
+    with open(path, 'r', encoding='utf-8') as stream:
         try:
             return yaml.safe_load(stream)
         except yaml.YAMLError as exc:
