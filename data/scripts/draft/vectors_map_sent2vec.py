@@ -19,8 +19,8 @@ def get_args(argv=None):
     return parser.parse_args(argv)
 
 
-def file_rows(path: Path):
-    with path.open('r', encoding='utf-8') as f:
+def file_rows(path):
+    with open(path, 'r', encoding='utf-8') as f:
         for line in f:
             yield line.strip().split('\t')
 
@@ -33,7 +33,7 @@ def make_sentence_map(path):
         if (domain, doc_id) not in sentence_map:
             document = cclutils.read_ccl(f'{corpus_path}/{domain}/{doc_id}.xml')
             sentence_map[(domain, doc_id)] = {
-                int(sentence.sentence_id().replace('sent', '')): [token.orth_utf8() for token in sentence.tokens()]
+                int(sentence.id().replace('sent', '')): [token.orth_utf8() for token in sentence.tokens()]
                 for par in document.paragraphs()
                 for sentence in par.sentences()
             }
@@ -48,7 +48,7 @@ def make_vectors(relations_file, s2v):
     rel_map = {}
     sentence_map = make_sentence_map(relations_file)
 
-    for domain, _label, doc_id, f_sent_id, _f_lemma, _f_channel, _, f_indices, _, t_sent_id, _t_lemma, _t_channel, _, t_indices, _ in file_rows(s2v):
+    for domain, _label, doc_id, f_sent_id, _f_lemma, _f_channel, _, f_indices, _, t_sent_id, _t_lemma, _t_channel, _, t_indices, _ in file_rows(relations_file):
         if len(eval(f_indices)) > 5 or len(eval(t_indices)) > 5:
             continue
 

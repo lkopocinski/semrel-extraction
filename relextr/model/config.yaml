@@ -1,5 +1,5 @@
 batch_size: 20
-epochs: 5
+epochs: 30
 
 model:
   name: 'relextr_model.pt'

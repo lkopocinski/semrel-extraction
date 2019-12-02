@@ -12,7 +12,8 @@ SCRIPTS_DIR="./data/scripts"
 #                                 --fasttext-map "./data/maps/1xx.corpus.fasttext.map" \
 #                                 --retrofit-map "./data/maps/1xx.corpus.retrofit.map"
 
-${SCRIPTS_DIR}/vectors_map_sent2vec.py --relations-file ${DATA_IN}/relations.112.114.115.context.uniq \
+#${SCRIPTS_DIR}/vectors_map_sent2vec.py --relations-file ${DATA_IN}/relations.112.114.115.context.uniq \
+${SCRIPTS_DIR}/draft/vectors_map_sent2vec.py --relations-file ${DATA_IN}/tes \
                                   --sent2vec "./data/sent2vec/kgr10.bin"
 
 popd
