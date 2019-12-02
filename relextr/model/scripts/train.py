@@ -3,15 +3,15 @@
 
 import argparse
 import copy
-import traceback
+
 import argcomplete
+import mlflow
 import torch
 import torch.nn as nn
 from torch.optim import Adagrad
 from torch.utils.data import DataLoader
 
 from relextr.model.config import RUNS
-import mlflow
 from relextr.model.scripts.utils.batches import Dataset, Sampler
 from relnet import RelNet
 from utils.metrics import Metrics, save_metrics
@@ -31,8 +31,8 @@ def main(argv=None):
     config = parse_config(args.config)
     init_mlflow(config['mlflow'])
 
-    try:
-        for nr, params in RUNS.items():
+    for nr, params in RUNS.items():
+        try:
             with mlflow.start_run():
                 print(f'\nRUN:{nr} WITH {params}')
 
@@ -68,9 +68,12 @@ def main(argv=None):
                 sampler.set_type = 'test'
                 sampler_test = copy.copy(sampler)
 
-                train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_train, num_workers=8)
-                valid_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_valid, num_workers=8)
-                test_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_test, num_workers=8)
+                train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_train,
+                                             num_workers=8)
+                valid_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_valid,
+                                             num_workers=8)
+                test_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_test,
+                                            num_workers=8)
 
                 network = RelNet(in_dim=dataset.vector_size)
                 network.to(device)
@@ -91,19 +94,19 @@ def main(argv=None):
 
                 best_valid_fscore = (0.0, 0.0)
 
-                print('Epochs:', end =" ")
+                print('Epochs:', end=" ")
                 for epoch in range(config['epochs']):
-                    #print(f'Epoch: {epoch} / {config["epochs"]}')
-                    print(epoch, end =" ")
+                    # print(f'Epoch: {epoch} / {config["epochs"]}')
+                    print(epoch, end=" ")
 
                     # Train
                     train_metrics = train(network, optimizer, loss_func, train_batch_gen, device)
-                    #print(f'Train:\n{train_metrics}')
+                    # print(f'Train:\n{train_metrics}')
                     log_metrics(train_metrics, 'train', epoch)
 
                     # Validate
                     valid_metrics = evaluate(network, valid_batch_gen, loss_func, device)
-                    #print(f'Valid:\n{valid_metrics}')
+                    # print(f'Valid:\n{valid_metrics}')
                     log_metrics(valid_metrics, 'valid', epoch)
 
                     # Fscore stopping
@@ -113,21 +116,21 @@ def main(argv=None):
                         mlflow.log_artifact(f'./{config["model"]["name"]}')
 
                 # Test
-                test_metrics = test(RelNet(dataset.vector_size), config['model']['name'], test_batch_gen, loss_func, device)
+                test_metrics = test(RelNet(dataset.vector_size), config['model']['name'], test_batch_gen, loss_func,
+                                    device)
                 print(f'\n\nTest: {test_metrics}')
                 save_metrics(test_metrics, 'metrics.txt')
                 log_metrics(test_metrics, 'test')
 
-    except Exception as e:
-        print(f"In {nr}'th run exception occurred", e)
-        traceback.print_tb(e.__traceback__)
-        continue
+        except Exception as e:
+            print(f"In {nr}'th run exception occurred", e.__traceback__)
+            continue
 
 
 def init_mlflow(config):
     mlflow.set_tracking_uri(config['tracking_uri'])
     mlflow.set_experiment(config['experiment_name'])
-    #mlflow.set_tags(config['tags'])
+    # mlflow.set_tags(config['tags'])
 
     print(f'\n-- mlflow --'
           f'\nserver: {mlflow.get_tracking_uri()}'
@@ -187,7 +190,7 @@ def evaluate(network, batches, loss_function, device):
 
 
 def test(network, model_path, batches, loss_function, device):
-#    import pudb; pudb.set_trace()
+    #    import pudb; pudb.set_trace()
     network.load(model_path)
     network.to(device)
     return evaluate(network, batches, loss_function, device)
