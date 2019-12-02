@@ -125,7 +125,7 @@ def main(argv=None):
 def init_mlflow(config):
     mlflow.set_tracking_uri(config['tracking_uri'])
     mlflow.set_experiment(config['experiment_name'])
-    mlflow.set_tags(config['tags'])
+    #mlflow.set_tags(config['tags'])
 
     print(f'\n-- mlflow --'
           f'\nserver: {mlflow.get_tracking_uri()}'
