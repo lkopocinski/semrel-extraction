@@ -5,6 +5,8 @@ from typing import List
 import torch
 from torch.utils import data
 
+from ordered_set import OrderedSet
+
 random.seed(42)
 
 
@@ -116,7 +118,7 @@ class Sampler(data.Sampler):
         if negatives_nns and len(negatives_nns) >= len(positives):
             negatives_nns = random.sample(negatives_nns, len(positives))
 
-        negatives = set.union(set(negatives_bps), set(negatives_nns))
+        negatives = OrderedSet.union(OrderedSet(negatives_bps), OrderedSet(negatives_nns))
         if not lexical_split:
             return self._split(list(positives.union(negatives)))
 
@@ -189,7 +191,7 @@ class Sampler(data.Sampler):
         negatives = {idx for idx in in_domain if self.ds.keys[idx][1] == 'no_relation'}
 
         # take the negatives connected with Bs or Ps
-        negatives_bps = set(self._filter_indices_by_channels(
+        negatives_bps = OrderedSet(self._filter_indices_by_channels(
             negatives, ('BRAND_NAME', 'PRODUCT_NAME')))
         negatives_nns = negatives.difference(negatives_bps)
 
@@ -199,7 +201,7 @@ class Sampler(data.Sampler):
         if negatives_nns and len(negatives_nns) >= len(positives):
             negatives_nns = random.sample(negatives_nns, len(positives))
 
-        negatives = set.union(set(negatives_bps), set(negatives_nns))
+        negatives = OrderedSet.union(OrderedSet(negatives_bps), OrderedSet(negatives_nns))
         in_domain_train, in_domain_valid, in_domain_test = self._split(list(positives.union(negatives)))
 
         train = in_domain_train
