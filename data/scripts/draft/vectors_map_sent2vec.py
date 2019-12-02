@@ -3,11 +3,11 @@
 import argparse
 import sys
 from pathlib import Path
+import torch
+import sent2vec
 
 import numpy as np
 from corpus_ccl import cclutils
-
-from corpus import get_annotation_indices
 
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -37,63 +37,71 @@ def make_sentence_map(path):
                 for par in document.paragraphs()
                 for sentence in par.sentences()
             }
-
-        elif (domain, doc_id, t_sent_id) not in sentence_map:
-            document = cclutils.read_ccl(
-                f'/data6/lukaszkopocinski/repos/semrel-extraction/data/corpora/{domain}/{doc_id}.xml')
-            for par in document.paragraphs():
-                for sentence in par.sentences():
-                    sentence_map[(domain, doc_id, t_sent_id_int)] = [token.orth_utf8() for token in sentence.tokens()]
-
-        if f_sent_id_int > t_sent_id_int:
-
     return sentence_map
 
 
+def mask_tokens(tokes, indices):
+    return [token if idx in indices else 'MASK' for idx, token in enumerate(tokes)]
+
+
 def make_vectors(relations_file, s2v):
+    rel_map = {}
     sentence_map = make_sentence_map(relations_file)
 
-    for domain, _, doc_id, f_sent_id, _, _, _, f_indices, _, t_sent_id, _, _, _, t_indices, _ in file_rows(s2v):
+    for domain, _label, doc_id, f_sent_id, _f_lemma, _f_channel, _, f_indices, _, t_sent_id, _t_lemma, _t_channel, _, t_indices, _ in file_rows(s2v):
+        if len(eval(f_indices)) > 5 or len(eval(t_indices)) > 5:
+            continue
 
         f_sent_id_int = int(f_sent_id.replace('sent', ''))
         t_sent_id_int = int(t_sent_id.replace('sent', ''))
 
         if f_sent_id_int > t_sent_id_int:
-            # zamienic
-            pass
+            f_sent_id_int = int(t_sent_id.replace('sent', ''))
+            t_sent_id_int = int(f_sent_id.replace('sent', ''))
+            f_indices_int = eval(t_indices)
+            t_indices_int = eval(f_indices)
+        else:
+            f_indices_int = eval(f_indices)
+            t_indices_int = eval(t_indices)
 
         if f_sent_id_int == t_sent_id_int:
-            f_indices = get_annotation_indices(sentences[f_sent_id_int], f_ann_num, f_ann_chan)
-            t_indices = get_annotation_indices(sentences[t_sent_id_int], t_ann_num, t_ann_chan)
-
-            ctx_left = list(sentences[f_sent_id_int - 1].tokens()) if (
-                                                                              f_sent_id_int - 1) in sentences else []
-            ctx_between.extend(mask_tokens(sentences[f_sent_id_int], f_indices + t_indices))
-            ctx_right = list(sentences[t_sent_id_int + 1].tokens()) if (
-                                                                               t_sent_id_int + 1) in sentences else []
-        elif (t_sent_id_int - f_sent_id_int) > 1:
-            # be sure the indices are swaped
-            f_indices = get_annotation_indices(sentences[f_sent_id_int], f_ann_num, f_ann_chan)
-            t_indices = get_annotation_indices(sentences[t_sent_id_int], t_ann_num, t_ann_chan)
-
-            ctx_left = list(sentences[f_sent_id_int - 1].tokens()) if (
-                                                                              f_sent_id_int - 1) in sentences else []
-            ctx_between.extend(mask_tokens([f_sent_id_int], f_indices))
+            ctx_left = sentence_map[(domain, doc_id)].get(f_sent_id_int - 1, [])
+            ctx_between = mask_tokens(sentence_map[(domain, doc_id)][f_sent_id_int], f_indices_int + t_indices_int)
+            ctx_right = sentence_map[(domain, doc_id)].get(t_sent_id_int + 1, [])
+        elif (t_sent_id_int - f_sent_id_int) > 0:
+            # be sure the indices are swapped
+            ctx_between = []
+            ctx_left = sentence_map[(domain, doc_id)].get(f_sent_id_int - 1, [])
+            ctx_between.extend(mask_tokens(sentence_map[(domain, doc_id)][f_sent_id_int], f_indices_int))
 
             for i in range(f_sent_id_int + 1, t_sent_id_int):
-                ctx_between.append(sentences[i])
+                ctx_between.append(sentence_map[(domain, doc_id)].get(i, []))
 
-            ctx_between.append(mask_tokens(sentences[t_sent_id_int], t_indices))
-            ctx_right = list(sentences[t_sent_id_int + 1].tokens()) if (
-                                                                               t_sent_id_int + 1) in sentences else []
+            ctx_between.extend(mask_tokens(sentence_map[(domain, doc_id)][t_sent_id_int], t_indices_int))
+            ctx_right = sentence_map[(domain, doc_id)].get(t_sent_id_int + 1, [])
 
-    tokens = [token.orth_utf8() for token in ctx_left + ctx_between + ctx_right]
-    sent = ' '.join(tokens)
-    value = s2v.embed_sentence(sent).flatten()
+        tokens = ctx_left + ctx_between + ctx_right
+        sentence = ' '.join(tokens)
+
+        rel_key = (domain, _label, doc_id, f_sent_id, t_sent_id, _f_channel, _t_channel, f_indices, t_indices, _f_lemma, _t_lemma)
+        rel_map[rel_key] = torch.FloatTensor(s2v.embed_sentence(sentence).flatten())
+
+    return rel_map
 
 
 def main(argv=None):
     args = get_args(argv)
+
+    model = sent2vec.Sent2vecModel()
+    model.load_model(args.sent2vec, inference_mode=True)
+
+    rel_map = make_vectors(args.relations_file, model)
+    keys, vec = zip(*rel_map.items())
+    torch.save(vec, 'sen2vec.rel.pt')
+
+    with open('sen2vec.rel.pt.keys', 'w', encoding='utf-8') as f:
+        for key in keys:
+            f.write(f'{key}\n')
 
 
 if __name__ == '__main__':
