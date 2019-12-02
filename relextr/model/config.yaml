@@ -6,22 +6,8 @@ model:
 
 mlflow:
   tracking_uri: 'http://10.17.50.132:8080'
-  experiment_name: 'LREC_3'
+  experiment_name: 'LREC_4'
   tags:
     files: 112, 114, 115
 
-
-lexical_split: False
-#in_domain: '112'
-#in_domain: '114'
-#in_domain: '115'
-
-#out_domain: '112'
-#out_domain: '114'
-#out_domain: '115'
-
-keys: 'elmo.rel.pt.keys'
-methods:
-  - 'elmo.rel.pt'
-#  - 'fasttext.rel.pt'
-#  - 'retrofit.rel.pt'
+keys: 'keys.txt'
