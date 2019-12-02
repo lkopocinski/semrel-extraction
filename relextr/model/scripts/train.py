@@ -37,8 +37,8 @@ def main(argv=None):
                 print(f'\nRUN:{nr} WITH {params}')
 
                 lexical_split = params['lexical_split']
-                in_domain = params['in_domain'] if 'in_domain' in config.keys() else None
-                out_domain = params['out_domain'] if 'out_domain' in config.keys() else None
+                in_domain = params['in_domain'] if 'in_domain' in params.keys() else None
+                out_domain = params['out_domain'] if 'out_domain' in params.keys() else None
                 methods = params['methods']
 
                 mlflow.set_tags({
