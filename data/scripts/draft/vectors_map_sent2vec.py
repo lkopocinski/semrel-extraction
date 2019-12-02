@@ -56,6 +56,7 @@ def make_vectors(relations_file, s2v):
         t_sent_id_int = int(t_sent_id.replace('sent', ''))
 
         if f_sent_id_int > t_sent_id_int:
+            # swap
             f_sent_id_int = int(t_sent_id.replace('sent', ''))
             t_sent_id_int = int(f_sent_id.replace('sent', ''))
             f_indices_int = eval(t_indices)
