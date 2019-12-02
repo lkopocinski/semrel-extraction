@@ -10,7 +10,7 @@ import torch.nn as nn
 from torch.optim import Adagrad
 from torch.utils.data import DataLoader
 
-from config import RUNS
+from relextr.model.config import RUNS
 import mlflow
 from relextr.model.scripts.utils.batches import Dataset, Sampler
 from relnet import RelNet
@@ -33,6 +33,8 @@ def main(argv=None):
 
     try:
         for nr, params in RUNS.items():
+            print(f'\nRUN:{nr} WITH {params}')
+
             lexical_split = params['lexical_split']
             in_domain = params['in_domain'] if 'in_domain' in config.keys() else None
             out_domain = params['out_domain'] if 'out_domain' in config.keys() else None
@@ -87,18 +89,20 @@ def main(argv=None):
             })
 
             best_valid_fscore = (0.0, 0.0)
-
+            
+            print('Epochs:', end =" ")
             for epoch in range(config['epochs']):
-                print(f'\nEpoch: {epoch} / {config["epochs"]}')
+                #print(f'Epoch: {epoch} / {config["epochs"]}')
+                print(epoch, end =" ")
 
                 # Train
                 train_metrics = train(network, optimizer, loss_func, train_batch_gen, device)
-                print(f'Train:\n{train_metrics}')
+                #print(f'Train:\n{train_metrics}')
                 log_metrics(train_metrics, 'train', epoch)
 
                 # Validate
                 valid_metrics = evaluate(network, valid_batch_gen, loss_func, device)
-                print(f'Valid:\n{valid_metrics}')
+                #print(f'Valid:\n{valid_metrics}')
                 log_metrics(valid_metrics, 'valid', epoch)
 
                 # Fscore stopping
