@@ -3,7 +3,7 @@
 
 import argparse
 import copy
-
+import traceback
 import argcomplete
 import torch
 import torch.nn as nn
@@ -120,6 +120,8 @@ def main(argv=None):
 
     except Exception as e:
         print(f"In {nr}'th run exception occurred", e)
+        traceback.print_tb(e.__traceback__)
+        continue
 
 
 def init_mlflow(config):
@@ -185,6 +187,7 @@ def evaluate(network, batches, loss_function, device):
 
 
 def test(network, model_path, batches, loss_function, device):
+#    import pudb; pudb.set_trace()
     network.load(model_path)
     network.to(device)
     return evaluate(network, batches, loss_function, device)
