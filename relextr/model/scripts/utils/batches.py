@@ -136,7 +136,7 @@ class Sampler(data.Sampler):
         nns_and_nps_indices = list()
 
         brand_indices = defaultdict(list)
-        for idx in positives.union(negatives):
+        for idx in sorted(positives.union(negatives)):
             brand = None
             if self.ds.keys[idx][5] == 'BRAND_NAME':
                 brand = self.ds.keys[idx][9]
