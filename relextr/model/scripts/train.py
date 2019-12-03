@@ -37,7 +37,7 @@ def main(argv=None):
     for nr, params in runs.items():
         try:
             with mlflow.start_run():
-                print(f'\nRUN:{nr} WITH {params}')
+                print(f'\nRUN: {nr} WITH {params}')
 
                 lexical_split = params['lexical_split']
                 in_domain = params['in_domain'] if 'in_domain' in params.keys() else None

@@ -10,5 +10,5 @@ mlflow:
 keys: 'keys.txt'
 
 model:
-  name: 'all.pt'
-runs: 'all'
+  name: '115_out.pt'
+runs: '115_out'
