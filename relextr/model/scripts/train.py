@@ -32,6 +32,7 @@ def main(argv=None):
     config = parse_config(args.config)
     init_mlflow(config['mlflow'])
 
+    model_name = config['runs'] + '.pt'
     runs = RUNS[config['runs']]
 
     for nr, params in runs.items():
@@ -116,11 +117,11 @@ def main(argv=None):
                     # Loss stopping
                     if is_better_loss(valid_metrics.loss, best_valid_loss):
                         best_valid_loss = valid_metrics.loss
-                        torch.save(network.state_dict(), config["model"]["name"])
-                        mlflow.log_artifact(f'./{config["model"]["name"]}')
+                        torch.save(network.state_dict(), model_name)
+                        mlflow.log_artifact(f'./{model_name}')
 
                 # Test
-                test_metrics = test(RelNet(dataset.vector_size), config['model']['name'], test_batch_gen, loss_func,
+                test_metrics = test(RelNet(dataset.vector_size), model_name, test_batch_gen, loss_func,
                                     device)
                 print(f'\n\nTest: {test_metrics}')
                 save_metrics(test_metrics, 'metrics.txt')
@@ -135,7 +136,7 @@ def main(argv=None):
 def init_mlflow(config):
     mlflow.set_tracking_uri(config['tracking_uri'])
     mlflow.set_experiment(config['experiment_name'])
-    # mlflow.set_tags(config['tags'])
+    mlflow.set_tags(config['tags'])
 
     print(f'\n-- mlflow --'
           f'\nserver: {mlflow.get_tracking_uri()}'
@@ -195,7 +196,6 @@ def evaluate(network, batches, loss_function, device):
 
 
 def test(network, model_path, batches, loss_function, device):
-    #    import pudb; pudb.set_trace()
     network.load(model_path)
     network.to(device)
     return evaluate(network, batches, loss_function, device)
