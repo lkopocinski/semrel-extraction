@@ -5,6 +5,7 @@ from typing import List
 import torch
 from torch.utils import data
 
+from collections import OrderedDict
 from ordered_set import OrderedSet
 
 random.seed(42)
@@ -18,7 +19,7 @@ class Dataset(data.Dataset):
 
     @staticmethod
     def load_keys(path):
-        keys = {}
+        keys = OrderedDict()
         with open(path, 'r', encoding='utf-8') as f:
             for idx, line in enumerate(f):
                 keys[idx] = eval(line.strip())
