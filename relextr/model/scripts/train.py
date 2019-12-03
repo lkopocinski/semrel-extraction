@@ -96,7 +96,7 @@ def main(argv=None):
                 })
 
                 best_valid_fscore = (0.0, 0.0)
-                best_valid_loss = 0.0
+                best_valid_loss = None
 
                 print('Epochs:', end=" ")
                 for epoch in range(config['epochs']):
