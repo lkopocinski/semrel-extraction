@@ -32,7 +32,9 @@ def main(argv=None):
     config = parse_config(args.config)
     init_mlflow(config['mlflow'])
 
-    for nr, params in RUNS.items():
+    runs = RUNS[config['runs']]
+
+    for nr, params in runs.items():
         try:
             with mlflow.start_run():
                 print(f'\nRUN:{nr} WITH {params}')
