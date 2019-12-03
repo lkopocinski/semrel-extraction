@@ -25,40 +25,40 @@ RUNS = {
 #    18: {'in_domain': '112', 'lexical_split': False, 'methods': ['elmo', 'retrofit', 'sent2vec']},
 
 #    19: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo']},
-    20: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'fasttext']},
-    21: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'sent2vec']},
-    22: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'retrofit']},
-    23: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'fasttext', 'sent2vec']},
-    24: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'retrofit', 'sent2vec']},
+#    20: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'fasttext']},
+#    21: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'sent2vec']},
+###    22: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'retrofit']},
+#    23: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'fasttext', 'sent2vec']},
+###    24: {'in_domain': '112', 'lexical_split': True, 'methods': ['elmo', 'retrofit', 'sent2vec']},
 
 
 
     # in domain 114
     # 25: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo']},
     # 26: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo', 'fasttext']},
-    27: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo', 'sent2vec']},
+#    27: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo', 'sent2vec']},
     # 28: {'in_domain': '112', 'lexical_split': False, 'methods': ['elmo', 'retrofit']},
-    29: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo', 'fasttext', 'sent2vec']},
-    30: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo', 'retrofit', 'sent2vec']},
+#    29: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo', 'fasttext', 'sent2vec']},
+#    30: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo', 'retrofit', 'sent2vec']},
 
-    31: {'in_domain': '114', 'lexical_split': True, 'methods': ['elmo']},
-    32: {'in_domain': '114', 'lexical_split': True, 'methods': ['elmo', 'fasttext']},
-    33: {'in_domain': '114', 'lexical_split': True, 'methods': ['elmo', 'sent2vec']},
-    34: {'in_domain': '114', 'lexical_split': True, 'methods': ['elmo', 'retrofit']},
-    35: {'in_domain': '114', 'lexical_split': True, 'methods': ['elmo', 'fasttext', 'sent2vec']},
-    36: {'in_domain': '114', 'lexical_split': True, 'methods': ['elmo', 'retrofit', 'sent2vec']},
+#    31: {'in_domain': '114', 'lexical_split': True, 'methods': ['elmo']},
+#    32: {'in_domain': '114', 'lexical_split': True, 'methods': ['elmo', 'fasttext']},
+###    33: {'in_domain': '114', 'lexical_split': True, 'methods': ['elmo', 'sent2vec']},
+###    34: {'in_domain': '114', 'lexical_split': True, 'methods': ['elmo', 'retrofit']},
+###    35: {'in_domain': '114', 'lexical_split': True, 'methods': ['elmo', 'fasttext', 'sent2vec']},
+###    36: {'in_domain': '114', 'lexical_split': True, 'methods': ['elmo', 'retrofit', 'sent2vec']},
 
 
 
     # in domain 115
     # 37: {'in_domain': '115', 'lexical_split': False, 'methods': ['elmo']},
     # 38: {'in_domain': '115', 'lexical_split': False, 'methods': ['elmo', 'fasttext']},
-    39: {'in_domain': '115', 'lexical_split': False, 'methods': ['elmo', 'sent2vec']},
+#    39: {'in_domain': '115', 'lexical_split': False, 'methods': ['elmo', 'sent2vec']},
     # 40: {'in_domain': '115', 'lexical_split': False, 'methods': ['elmo', 'retrofit']},
-    41: {'in_domain': '115', 'lexical_split': False, 'methods': ['elmo', 'fasttext', 'sent2vec']},
-    42: {'in_domain': '115', 'lexical_split': False, 'methods': ['elmo', 'retrofit', 'sent2vec']},
+#    41: {'in_domain': '115', 'lexical_split': False, 'methods': ['elmo', 'fasttext', 'sent2vec']},
+#    42: {'in_domain': '115', 'lexical_split': False, 'methods': ['elmo', 'retrofit', 'sent2vec']},
 
-    43: {'in_domain': '115', 'lexical_split': True, 'methods': ['elmo']},
+#    43: {'in_domain': '115', 'lexical_split': True, 'methods': ['elmo']},
     44: {'in_domain': '115', 'lexical_split': True, 'methods': ['elmo', 'fasttext']},
     45: {'in_domain': '115', 'lexical_split': True, 'methods': ['elmo', 'sent2vec']},
     46: {'in_domain': '115', 'lexical_split': True, 'methods': ['elmo', 'retrofit']},
