@@ -7,6 +7,7 @@ import copy
 import argcomplete
 import mlflow
 import torch
+import traceback
 import torch.nn as nn
 from torch.optim import Adagrad
 from torch.utils.data import DataLoader
@@ -123,7 +124,8 @@ def main(argv=None):
                 log_metrics(test_metrics, 'test')
 
         except Exception as e:
-            print(f"In {nr}'th run exception occurred", e.__traceback__)
+            print(f"\nIn {nr}'th run exception occurred", e)
+            traceback.print_tb(e.__traceback__)
             continue
 
 
