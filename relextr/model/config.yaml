@@ -1,9 +1,6 @@
 batch_size: 20
 epochs: 30
 
-model:
-  name: 'relextr_model.pt'
-
 mlflow:
   tracking_uri: 'http://10.17.50.132:8080'
   experiment_name: 'LREC_4'
@@ -11,4 +8,7 @@ mlflow:
     files: 112, 114, 115
 
 keys: 'keys.txt'
-runs: '114'
+
+model:
+  name: 'all.pt'
+runs: 'all'
