@@ -7,6 +7,7 @@ from torch.utils import data
 
 from collections import OrderedDict
 from ordered_set import OrderedSet
+from collections import OrderedDict
 
 random.seed(42)
 
@@ -115,9 +116,9 @@ class Sampler(data.Sampler):
 
         # balance the data (take 2 times #positives of negative examples)
         if negatives_bps and len(negatives_bps) >= len(positives):
-            negatives_bps = random.sample(negatives_bps, len(positives))
+            negatives_bps = random.sample(sorted(negatives_bps), len(positives))
         if negatives_nns and len(negatives_nns) >= len(positives):
-            negatives_nns = random.sample(negatives_nns, len(positives))
+            negatives_nns = random.sample(sorted(negatives_nns), len(positives))
 
         negatives = OrderedSet.union(OrderedSet(negatives_bps), OrderedSet(negatives_nns))
         if not lexical_split:
