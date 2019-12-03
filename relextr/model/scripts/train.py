@@ -16,7 +16,7 @@ from relextr.model.config import RUNS
 from relextr.model.scripts.utils.batches import Dataset, Sampler
 from relnet import RelNet
 from utils.metrics import Metrics, save_metrics
-from utils.utils import is_better_fscore, parse_config, get_device
+from utils.utils import is_better_fscore, parse_config, get_device, is_better_loss
 
 
 def get_args(argv=None):
@@ -96,6 +96,7 @@ def main(argv=None):
                 })
 
                 best_valid_fscore = (0.0, 0.0)
+                best_valid_loss = 0.0
 
                 print('Epochs:', end=" ")
                 for epoch in range(config['epochs']):
@@ -112,9 +113,9 @@ def main(argv=None):
                     # print(f'Valid:\n{valid_metrics}')
                     log_metrics(valid_metrics, 'valid', epoch)
 
-                    # Fscore stopping
-                    if is_better_fscore(valid_metrics.fscore, best_valid_fscore):
-                        best_valid_fscore = valid_metrics.fscore
+                    # Loss stopping
+                    if is_better_loss(valid_metrics.loss, best_valid_loss):
+                        best_valid_loss = valid_metrics.loss
                         torch.save(network.state_dict(), config["model"]["name"])
                         mlflow.log_artifact(f'./{config["model"]["name"]}')
 

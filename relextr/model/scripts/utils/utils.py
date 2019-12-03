@@ -6,6 +6,10 @@ def is_better_fscore(fscore, best_fscore):
     return fscore[0] > best_fscore[0] and fscore[1] > best_fscore[1]
 
 
+def is_better_loss(loss, best_loss):
+    return loss < best_loss
+
+
 def parse_config(path):
     with open(path, 'r', encoding='utf-8') as stream:
         try:
