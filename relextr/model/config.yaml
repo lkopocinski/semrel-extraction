@@ -1,14 +1,9 @@
-batch_size: 20
-epochs: 200
-
 mlflow:
   tracking_uri: 'http://10.17.50.132:8080'
   experiment_name: 'LREC_5_loss_stop'
-  tags:
-    files: 112, 114, 115
 
 keys: 'keys.txt'
 
-model:
-  name: '114_in_loss.pt'
+batch_size: 20
+epochs: 200
 runs: '114_in'
