@@ -1,5 +1,5 @@
 batch_size: 20
-epochs: 30
+epochs: 15
 
 mlflow:
   tracking_uri: 'http://10.17.50.132:8080'
