@@ -7,7 +7,7 @@ def is_better_fscore(fscore, best_fscore):
 
 
 def is_better_loss(loss, best_loss):
-    return loss < best_loss
+    return loss < best_loss if loss else True
 
 
 def parse_config(path):
