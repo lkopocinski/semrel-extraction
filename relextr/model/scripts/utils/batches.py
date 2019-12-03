@@ -50,6 +50,7 @@ class Dataset(data.Dataset):
 class Sampler(data.Sampler):
 
     def __init__(self, dataset, balanced=False, lexical_split=True, in_domain=None, out_domain=None):
+        random.seed(42)
         self.ds = dataset
         self._set_type = None
 
