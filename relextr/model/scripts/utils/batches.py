@@ -104,11 +104,11 @@ class Sampler(data.Sampler):
             return self._split(indices)
         # ok, lets try to balance the data (positives vs negatives)
         # 2 cases to cover: i) B-N, P-N, and ii) N-N
-        positives = {idx for idx in indices if self.ds.keys[idx][1] == 'in_relation'}
-        negatives = {idx for idx in indices if self.ds.keys[idx][1] == 'no_relation'}
+        positives = OrderedSet([idx for idx in indices if self.ds.keys[idx][1] == 'in_relation'])
+        negatives = OrderedSet([idx for idx in indices if self.ds.keys[idx][1] == 'no_relation'])
 
         # take the negatives connected with Bs or Ps
-        negatives_bps = set(self._filter_indices_by_channels(
+        negatives_bps = OrderedSet(self._filter_indices_by_channels(
             negatives, ('BRAND_NAME', 'PRODUCT_NAME')))
         negatives_nns = negatives.difference(negatives_bps)
 
