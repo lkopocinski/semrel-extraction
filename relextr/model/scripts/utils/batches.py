@@ -5,7 +5,7 @@ from typing import List
 import torch
 from torch.utils import data
 
-from collections import OrderedDict
+
 from ordered_set import OrderedSet
 from collections import OrderedDict
 

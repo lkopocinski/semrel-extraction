@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 
 from itertools import permutations, product
+from pathlib import Path
+from typing import List
 
 from model.models import Relation
 from utils.corpus import id_to_sent_dict, is_ner_relation, is_in_channel, get_relation_element, get_nouns_idx, \
-    get_lemma, corpora_documents, get_document_name
+    get_lemma, documents_gen, get_document_ids
 
 
-def generate_positive(files, channels):
-    for document in corpora_documents(files):
+def generate_positive(relation_files: List[Path], channels):
+    for document in documents_gen(relation_files):
         sentences = id_to_sent_dict(document)
 
         for relation in document.relations():
@@ -18,13 +20,13 @@ def generate_positive(files, channels):
                     element_to = get_relation_element(relation.rel_to(), sentences)
 
                     if element_from and element_to:
-                        dir_id, document_id = get_document_name(document)
-                        rel = Relation(document_id, element_from, element_to)
-                        yield f'{dir_id}\tin_relation\t{rel}'
+                        id_dir, id_doc = get_document_ids(document)
+                        rel = Relation(id_doc, element_from, element_to)
+                        yield f'{id_dir}\tin_relation\t{rel}'
 
 
 def generate_negative(files, channels):
-    for document in corpora_documents(files):
+    for document in documents_gen(files):
         sentences = id_to_sent_dict(document)
 
         relations = {}
@@ -90,6 +92,6 @@ def generate_negative(files, channels):
                 element_from = Relation.Element(f_sent_id, f_lemma, _f_channel_name, _f_ne, [f_idx], f_context)
                 element_to = Relation.Element(t_sent_id, t_lemma, _t_channel_name, _t_ne, [t_idx], t_context)
 
-                dir_id, document_id = get_document_name(document)
-                rel = Relation(document_id, element_from, element_to)
-                yield f'{dir_id}\tno_relation\t{rel}'
+                id_dir, id_doc = get_document_ids(document)
+                rel = Relation(id_doc, element_from, element_to)
+                yield f'{id_dir}\tno_relation\t{rel}'

@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 
 from data.scripts.utils.corpus import id_to_sent_dict, is_ner_relation, is_in_channel, get_relation_element, \
-    corpora_documents
+    documents_gen
 
 
 def distance_hist(relation_files, channels, nr):
@@ -13,7 +13,7 @@ def distance_hist(relation_files, channels, nr):
         for line in f:
             files.append(Path(line.strip()))
 
-    for document in corpora_documents(files):
+    for document in documents_gen(files):
         sentences = id_to_sent_dict(document)
 
         for relation in document.relations():
