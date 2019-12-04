@@ -1,9 +1,10 @@
 mlflow:
   tracking_uri: 'http://10.17.50.132:8080'
-  experiment_name: 'LREC_5_loss_stop'
+  experiment_name: 'LREC_dropout_test'
 
 keys: 'keys.txt'
 
-batch_size: 20
-epochs: 200
-runs: '114_in'
+# set it to BS * #number_of_devices (nn.DataParallel)
+batch_size: 100
+epochs: 50
+runs: '115_in_lexical'

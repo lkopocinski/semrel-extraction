@@ -80,8 +80,10 @@ def main(argv=None):
                                             num_workers=8)
 
                 network = RelNet(in_dim=dataset.vector_size)
+                if torch.cuda.device_count() > 1:
+                    network = nn.DataParallel(network)
                 network.to(device)
-                optimizer = Adagrad(network.parameters())
+                optimizer = Adagrad(network.parameters(), lr=0.001)
                 loss_func = nn.CrossEntropyLoss()
 
                 # Log learning params

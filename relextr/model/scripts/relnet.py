@@ -3,6 +3,8 @@
 import torch
 import torch.nn as nn
 
+from collections import OrderedDict
+
 
 class RelNet(nn.Module):
     """
@@ -18,6 +20,7 @@ class RelNet(nn.Module):
             nn.Dropout(p=dropout),
             nn.ReLU(),
             nn.Linear(hidden_dim, hidden_dim),
+            nn.Dropout(p=dropout),
             nn.ReLU(),
             nn.Linear(hidden_dim, out_dim)
         )
@@ -31,7 +34,15 @@ class RelNet(nn.Module):
         return layer.weight.data.numpy()
 
     def load(self, model_path):
-        self.load_state_dict(torch.load(model_path))
+        state_dict = torch.load(model_path)
+        try:
+            self.load_state_dict(state_dict)
+        except Exception:
+            new_state_dict = OrderedDict()
+            for k, v in state_dict.items():
+                name = k[7:] # remove `module.`
+                new_state_dict[name] = v
+            self.load_state_dict(new_state_dict)
 
     def predict(self, data):
         output = self(torch.FloatTensor([data]))
