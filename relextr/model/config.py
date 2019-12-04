@@ -314,10 +314,10 @@ IN_DOMAIN_112 = {
 
 IN_DOMAIN_114 = {
     371: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo']},
-#    372: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo']},
-#    373: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo']},
-#    374: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo']},
-#    375: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo']},
+    372: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo']},
+    373: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo']},
+    374: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo']},
+    375: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo']},
 #
 #    381: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo', 'fasttext']},
 #    382: {'in_domain': '114', 'lexical_split': False, 'methods': ['elmo', 'fasttext']},
