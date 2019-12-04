@@ -8,7 +8,7 @@ from corpus_ccl import token_utils as tou
 from data.scripts.model.models import Relation
 
 
-def corpora_documents(relation_files: List[Path]):
+def documents_gen(relation_files: List[Path]):
     for rel_path in relation_files:
         ccl_path = Path(str(rel_path).replace('.rel', ''))
         if rel_path.is_file() and ccl_path.is_file():
@@ -66,7 +66,7 @@ def get_lemma(sent, index):
         return ''
 
 
-def get_document_name(document):
+def get_document_ids(document):
     ccl_path, rel_path = document.path().split(';')
     ccl_path = Path(ccl_path)
     return ccl_path.parent.stem, ccl_path.stem.split('.')[0]

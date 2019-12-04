@@ -1,12 +1,9 @@
 #!/bin/bash -eux
 
-# Script takes previously split data and generate examples used to train classifier.
-# Returns files in context style data format.
-
 pushd "$(git rev-parse --show-toplevel)"
 
 DATA_IN="./data/corpora"
-OUTPUT_PATH="./data/generations"
+OUTPUT_PATH="./data/relations"
 SCRIPTS_DIR="./data/scripts"
 
 mkdir -p ${OUTPUT_PATH}
