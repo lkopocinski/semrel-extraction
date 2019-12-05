@@ -1,67 +1,72 @@
 #!/usr/bin/env python3
 
 import argparse
-import os
-import sys
 from pathlib import Path
 
-import numpy as np
+import torch
 from allennlp.modules.elmo import Elmo, batch_to_ids
-from corpus_ccl import cclutils
 
-np.set_printoptions(threshold=sys.maxsize)
+from io import save_lines, save_tensor
+from utils.corpus import documents_gen, get_document_ids, get_context
 
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--indexfiles', required=True, help='File with corpus documents paths.')
+    parser.add_argument('--corpusfiles', required=True, help='File with corpus documents paths.')
     parser.add_argument('--weights', required=True, help="File with weights to elmo model.")
     parser.add_argument('--options', required=True, help="File with options to elmo model.")
+    parser.add_argument('--output-path', required=True, help='Directory for saving map files.')
     return parser.parse_args(argv)
 
 
-def load_documents(fileindex):
-    with open(fileindex, 'r', encoding='utf-8') as f:
-        for line in f:
-            filepath = line.strip()
-            if not os.path.exists(filepath):
-                continue
-            cclpath = filepath
-            relpath = filepath.replace('.xml', '.rel.xml')
-            yield cclutils.read_ccl_and_rel_ccl(cclpath, relpath)
+class ElmoVectorizer():
+
+    def __init__(self, options, weights):
+        self.model = Elmo(options, weights, 1, dropout=0)
+
+    def embed(self, context):
+        character_ids = batch_to_ids([context])
+        embeddings = self.model(character_ids)
+        tensor = embeddings['elmo_representations'][0]
+        return tensor.squeeze()
 
 
-def get_doc_id(document):
-    ccl_path, rel_path = document.path().split(';')
-    return Path(ccl_path).stem
+def get_key(document, sentence):
+    id_domain, id_doc = get_document_ids(document)
+    id_sent = sentence.id()
+    context = get_context(sentence)
+    return id_domain, id_doc, id_sent, context
 
 
-def embedd(idx, context, elmo):
-    character_ids = batch_to_ids([context])
-    embeddings = elmo(character_ids)
-    v = embeddings['elmo_representations'][0].data.numpy()
-    value = v[:, idx, :].flatten()
-    return np.array2string(value, separator=', ').replace('\n', '')
+def make_map(corpus_files: Path, vectorizer: ElmoVectorizer):
+    keys = []
+    vectors = torch.FloatTensor()
 
+    key_context = [
+        get_key(document, sentence)
+        for document in documents_gen(corpus_files)
+        for paragraph in document.paragraphs()
+        for sentence in paragraph.sentences()
+    ]
 
-def create_map(list_file, elmo):
-    for document in load_documents(list_file):
-        for paragraph in document.paragraphs():
-            for sentence in paragraph.sentences():
-                id_doc = get_doc_id(document)
-                id_sent = sentence.id()
-                context = [token.orth_utf8() for token in sentence.tokens()]
+    for id_domain, id_doc, id_sent, context in key_context:
+        keys.extend([
+            (id_domain, id_doc, id_sent, str(id_tok), orth)
+            for id_tok, orth in enumerate(context)
+        ])
+        context_tensor = vectorizer.embed(context)
+        torch.cat([vectors, context_tensor])
 
-                for id_tok, token in enumerate(sentence.tokens()):
-                    orth = token.orth_utf8()
-                    vector = embedd(id_tok, context, elmo)
-                    print(f'{id_doc}\t{id_sent}\t{id_tok}\t{orth}\t{vector}')
+    return keys, vectors
 
 
 def main(argv=None):
     args = get_args(argv)
-    elmo = Elmo(args.options, args.weights, 1, dropout=0)
-    create_map(args.indexfiles, elmo)
+    elmo = ElmoVectorizer(args.weights, args.options)
+    keys, vectors = make_map(Path(args.corpusfiles), elmo)
+
+    save_lines(Path(f'{args.output_path}/elmo.map.keys'), keys)
+    save_tensor(Path(f'{args.output_path}/elmo.map.pt'), vectors)
 
 
 if __name__ == '__main__':

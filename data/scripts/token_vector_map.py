@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 
 import torch
-from allennlp.modules.elmo import Elmo, batch_to_ids
+from gensim.models.fasttext import load_facebook_model
 
 from io import save_lines, save_tensor
 from utils.corpus import documents_gen, get_document_ids, get_context
@@ -11,22 +11,18 @@ from utils.corpus import documents_gen, get_document_ids, get_context
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--corpusfiles', required=True, help='File with corpus documents paths.')
-    parser.add_argument('--weights', required=True, help="File with weights to elmo model.")
-    parser.add_argument('--options', required=True, help="File with options to elmo model.")
+    parser.add_argument('--model', required=True, help="File with fasttext model.")
     parser.add_argument('--output-path', required=True, help='Directory for saving map files.')
     return parser.parse_args(argv)
 
 
-class ElmoVectorizer():
+class FastTextVectorizer():
 
-    def __init__(self, options, weights):
-        self.model = Elmo(options, weights, 1, dropout=0)
+    def __init__(self, model_path):
+        self.model = load_facebook_model(model_path)
 
     def embed(self, context):
-        character_ids = batch_to_ids([context])
-        embeddings = self.model(character_ids)
-        tensor = embeddings['elmo_representations'][0]
-        return tensor.squeeze()
+        return torch.FloatTensor(self.model.wv[context])
 
 
 def get_key(document, sentence):
@@ -36,7 +32,7 @@ def get_key(document, sentence):
     return id_domain, id_doc, id_sent, context
 
 
-def make_map(corpus_files: Path, vectorizer: ElmoVectorizer):
+def make_map(corpus_files: Path, vectorizer: FastTextVectorizer):
     keys = []
     vectors = torch.FloatTensor()
 
@@ -60,11 +56,11 @@ def make_map(corpus_files: Path, vectorizer: ElmoVectorizer):
 
 def main(argv=None):
     args = get_args(argv)
-    elmo = ElmoVectorizer(args.weights, args.options)
+    elmo = FastTextVectorizer(args.model)
     keys, vectors = make_map(Path(args.corpusfiles), elmo)
 
-    save_lines(Path(f'{args.output_path}/elmo.map.keys'), keys)
-    save_tensor(Path(f'{args.output_path}/elmo.map.pt'), vectors)
+    save_lines(Path(f'{args.output_path}/fasttext.map.keys'), keys)
+    save_tensor(Path(f'{args.output_path}/fasttext.map.pt'), vectors)
 
 
 if __name__ == '__main__':
