@@ -3,7 +3,7 @@ from pathlib import Path
 from collections import defaultdict
 
 from data.scripts.utils.corpus import id_to_sent_dict, is_ner_relation, is_in_channel, get_relation_element, \
-    documents_gen
+    relations_documents_gen
 
 
 def same_brand_hist(relation_files, channels, nr):
@@ -14,7 +14,7 @@ def same_brand_hist(relation_files, channels, nr):
         for line in f:
             files.append(Path(line.strip()))
 
-    for document in documents_gen(files):
+    for document in relations_documents_gen(files):
         brand_dict = defaultdict(int)
 
         sentences = id_to_sent_dict(document)

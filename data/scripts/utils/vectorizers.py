@@ -13,7 +13,7 @@ from model.models import Relation, Vector
 class Vectorizer(abc.ABC):
 
     @abc.abstractmethod
-    def make_vectors(self, relation: Relation):
+    def embedd(self, relation: Relation):
         pass
 
 
@@ -25,11 +25,11 @@ class ElmoVectorizer(Vectorizer):
     def _make_vector(self, context, idx):
         character_ids = batch_to_ids([context])
         embeddings = self.model(character_ids)
-        v = embeddings['elmo_representations'][0].data.numpy()
+        v = embeddings['elmo_representations'][0]
         value = v[:, idx, :].flatten()
         return Vector(value)
 
-    def make_vectors(self, relation: Relation):
+    def embedd(self, relation: Relation):
         v1 = self._make_vector(relation.source.context, relation.source.start_idx)
         v2 = self._make_vector(relation.dest.context, relation.dest.start_idx)
         return v1, v2
@@ -47,7 +47,7 @@ class ElmoConvolutionVectorizer(Vectorizer):
         value = v[:, idx, :].flatten()
         return Vector(value)
 
-    def make_vectors(self, relation: Relation):
+    def embedd(self, relation: Relation):
         v1 = self._make_vector(relation.source.context, relation.source.start_idx)
         v2 = self._make_vector(relation.dest.context, relation.dest.start_idx)
         return v1, v2
@@ -78,7 +78,7 @@ class Sent2VecVectorizer(Vectorizer):
         value = self.model.embed_sentence(sentence).flatten()
         return Vector(value)
 
-    def make_vectors(self, relation: Relation):
+    def embedd(self, relation: Relation):
         sentence1, sentence2 = self.mask_sentences(
             relation.source.start_idx,
             relation.source.context,
@@ -110,7 +110,7 @@ class FastTextVectorizer(Vectorizer):
         value = np.average(embeddings, axis=0, weights=weights)
         return Vector(value)
 
-    def make_vectors(self, relation: Relation):
+    def embedd(self, relation: Relation):
         v1 = self._make_vector(relation.source.lemma)
         v2 = self._make_vector(relation.dest.lemma)
         return v1, v2
@@ -132,7 +132,7 @@ class RetrofitVectorizer(Vectorizer):
         finally:
             return Vector(value)
 
-    def make_vectors(self, relation: Relation):
+    def embedd(self, relation: Relation):
         term1 = relation.source.context[relation.source.start_idx]
         term2 = relation.dest.context[relation.dest.start_idx]
 
@@ -147,7 +147,7 @@ class NamedEntityVectorizer(Vectorizer):
         value = [float(value)]
         return Vector(value)
 
-    def make_vectors(self, relation):
+    def embedd(self, relation):
         v1 = self._make_vector(relation.source.ne)
         v2 = self._make_vector(relation.dest.ne)
         return v1, v2

@@ -8,7 +8,15 @@ from corpus_ccl import token_utils as tou
 from data.scripts.model.models import Relation
 
 
-def documents_gen(relation_files: List[Path]):
+def documents_gen(corpus_files: Path):
+    with corpus_files.open('r', encoding='utf-8') as f:
+        corpus_paths = [line.strip() for line in f if Path(line.strip()).is_file()]
+
+    for path in corpus_paths:
+        yield ccl.read_ccl(path)
+
+
+def relations_documents_gen(relation_files: List[Path]):
     for rel_path in relation_files:
         ccl_path = Path(str(rel_path).replace('.rel', ''))
         if rel_path.is_file() and ccl_path.is_file():
@@ -73,7 +81,8 @@ def get_document_ids(document):
 
 
 def is_named_entity(sent, indices):
-    annotations = [tou.get_annotation(sent, token, 'NE', index, default=0) for index, token in enumerate(sent.tokens()) if index in indices]
+    annotations = [tou.get_annotation(sent, token, 'NE', index, default=0) for index, token in enumerate(sent.tokens())
+                   if index in indices]
     return all(annotations)
 
 
