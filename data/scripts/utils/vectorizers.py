@@ -1,11 +1,8 @@
 import abc
 
-import numpy as np
+
 import sent2vec
 from allennlp.modules.elmo import Elmo, batch_to_ids
-from gensim.models import KeyedVectors
-from gensim.models.fasttext import load_facebook_model
-from wordfreq import zipf_frequency
 
 from model.models import Relation, Vector
 
@@ -15,24 +12,6 @@ class Vectorizer(abc.ABC):
     @abc.abstractmethod
     def embedd(self, relation: Relation):
         pass
-
-
-class ElmoVectorizer(Vectorizer):
-
-    def __init__(self, options, weights):
-        self.model = Elmo(options, weights, 1, dropout=0)
-
-    def _make_vector(self, context, idx):
-        character_ids = batch_to_ids([context])
-        embeddings = self.model(character_ids)
-        v = embeddings['elmo_representations'][0]
-        value = v[:, idx, :].flatten()
-        return Vector(value)
-
-    def embedd(self, relation: Relation):
-        v1 = self._make_vector(relation.source.context, relation.source.start_idx)
-        v2 = self._make_vector(relation.dest.context, relation.dest.start_idx)
-        return v1, v2
 
 
 class ElmoConvolutionVectorizer(Vectorizer):
@@ -88,56 +67,6 @@ class Sent2VecVectorizer(Vectorizer):
 
         v1 = self._make_vector(sentence1)
         v2 = self._make_vector(sentence2)
-        return v1, v2
-
-
-class FastTextVectorizer(Vectorizer):
-
-    def __init__(self, model_path):
-        self.model = load_facebook_model(model_path)
-
-    def _make_vector(self, term):
-        words = term.strip().split('_')
-        embeddings = []
-        weights = []
-
-        for word in words:
-            vec = self.model[word]
-            embeddings.append(vec)
-            zipf_freq = zipf_frequency(word, 'pl')
-            weights.append(1 / (zipf_freq if zipf_freq > 0 else 1))
-
-        value = np.average(embeddings, axis=0, weights=weights)
-        return Vector(value)
-
-    def embedd(self, relation: Relation):
-        v1 = self._make_vector(relation.source.lemma)
-        v2 = self._make_vector(relation.dest.lemma)
-        return v1, v2
-
-
-class RetrofitVectorizer(Vectorizer):
-
-    def __init__(self, retrofitted_model_path, general_model_path):
-        self.model_retrofit = KeyedVectors.load_word2vec_format(retrofitted_model_path)
-        self.model_general = load_facebook_model(general_model_path)
-
-    def _make_vector(self, term):
-        value = []
-        try:
-            value = self.model_retrofit[term]
-        except KeyError:
-            print("Term not found in retrofit model: ", term)
-            value = self.model_general[term]
-        finally:
-            return Vector(value)
-
-    def embedd(self, relation: Relation):
-        term1 = relation.source.context[relation.source.start_idx]
-        term2 = relation.dest.context[relation.dest.start_idx]
-
-        v1 = self._make_vector(term1)
-        v2 = self._make_vector(term2)
         return v1, v2
 
 

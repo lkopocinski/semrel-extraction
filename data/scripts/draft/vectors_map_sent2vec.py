@@ -98,7 +98,6 @@ def main(argv=None):
 
     rel_map = make_vectors(args.relations_file, model)
     keys, vec = zip(*rel_map.items())
-#    import pudb; pudb.set_trace()
     torch.save(torch.cat(vec), 'sen2vec.rel.pt')
 
     with open('sen2vec.rel.pt.keys', 'w', encoding='utf-8') as f:
