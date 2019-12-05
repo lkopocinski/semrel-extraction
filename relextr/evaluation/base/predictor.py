@@ -10,8 +10,8 @@ class Predictor(object):
     def predict(self, data):
         (f_idx, f_ctx), (s_idx, s_ctx) = data
 
-        f_v = self._emb_model.embedd(f_ctx, f_idx)
-        s_v = self._emb_model.embedd(s_ctx, s_idx)
+        f_v = self._emb_model.embed(f_ctx, f_idx)
+        s_v = self._emb_model.embed(s_ctx, s_idx)
 
         v = np.concatenate([f_v, s_v])
 

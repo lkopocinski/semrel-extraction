@@ -1,4 +1,5 @@
 from pathlib import Path
+import torch
 
 
 def save_lines(path: Path, lines):
@@ -13,3 +14,7 @@ def save_lines(path: Path, lines):
 def load_file(path):
     with path.open('r', encoding='utf-8') as f:
         return [line.strip() for line in f]
+
+
+def save_tensor(path: Path, tensor):
+    torch.save(tensor, str(path))

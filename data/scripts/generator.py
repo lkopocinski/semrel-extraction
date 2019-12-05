@@ -6,11 +6,11 @@ from typing import List
 
 from model.models import Relation
 from utils.corpus import id_to_sent_dict, is_ner_relation, is_in_channel, get_relation_element, get_nouns_idx, \
-    get_lemma, documents_gen, get_document_ids
+    get_lemma, relations_documents_gen, get_document_ids
 
 
 def generate_positive(relation_files: List[Path], channels):
-    for document in documents_gen(relation_files):
+    for document in relations_documents_gen(relation_files):
         sentences = id_to_sent_dict(document)
 
         for relation in document.relations():
@@ -26,7 +26,7 @@ def generate_positive(relation_files: List[Path], channels):
 
 
 def generate_negative(files, channels):
-    for document in documents_gen(files):
+    for document in relations_documents_gen(files):
         sentences = id_to_sent_dict(document)
 
         relations = {}
