@@ -16,7 +16,7 @@ def get_args(argv=None):
     return parser.parse_args(argv)
 
 
-class FastTextVectorizer():
+class FastTextVectorizer:
 
     def __init__(self, model_path):
         self.model = load_facebook_model(model_path)
