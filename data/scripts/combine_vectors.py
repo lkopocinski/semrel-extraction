@@ -10,13 +10,11 @@ import torch.nn as nn
 
 def get_args(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-in', required=True, help='Directory with sampled datasets.')
+    parser.add_argument('--data-in', required=True, help='File with relations.')
     parser.add_argument('--output-path', required=True, help='Directory to save vectors.')
-    parser.add_argument('--elmo-map', required=True, help="Map file with elmo vectors")
-    parser.add_argument('--fasttext-map', required=True, help="Map file with fasttext vectors")
-    parser.add_argument('--retrofit-map', required=True, help="Map file with retrofitted fasttext vectors")
-    # parser.add_argument('--elmoconv-map', required=True, help="Map file with elmoconv vectors")
-    # parser.add_argument('--sent2vec-map', required=True, help="Map file with sent2vec vectors")
+    parser.add_argument('--elmo-map', required=True, nargs=2, metavar='elmo.map.pt elmo.map.keys', help="Elmo vectors and keys files.")
+    parser.add_argument('--fasttext-map', required=True, nargs=2, metavar='fasttext.map.pt fasttext.map.keys', help="Fasttext vectors and keys files.")
+    parser.add_argument('--retrofit-map', required=True, nargs=2, metavar='retrofit.map.pt retrofit.map.keys', help="Retrofit vectors and keys files.")
 
     argcomplete.autocomplete(parser)
 
@@ -29,16 +27,10 @@ def file_rows(path: Path):
             yield line.strip().split('\t')
 
 
-def load_map(map_path):
-    vec_map = {}
-    for row in file_rows(Path(map_path)):
-        try:
-            doc_id, sent_id, tok_id = row[0:3]
-            vec = eval(row[4])
-            vec_map[(doc_id, sent_id, int(tok_id))] = vec
-        except ValueError:
-            continue
-    return vec_map
+def load_map(vectors_file, keys_file):
+    with open(vectors_file, 'r', encoding='utf-8') as f:
+        for line in f
+
 
 
 def max_pool(tensor):
@@ -89,11 +81,11 @@ def make_tensors_map(path: Path, vec_map, vec_size):
 
 def main(argv=None):
     args = get_args(argv)
-    elmo_map = load_map(args.elmo_map)
-    fasttext_map = load_map(args.fasttext_map)
-    retrofit_map = load_map(args.retrofit_map)
-    # elmoconv_map = load_map(args.elmoconv_map)
-    # sent2vec_map = load_map(args.sent2vec_map)
+    elmo_map = load_map(*args.elmo_map)
+    fasttext_map = load_map(*args.fasttext_map)
+    retrofit_map = load_map(*args.retrofit_map)
+
+
 
     source_path = Path(f'{args.data_in}/relations.112.114.115.context.uniq')
     for vec_map, vec_size, save_name in [(elmo_map, 1024, 'elmo.rel.pt'), (fasttext_map, 300, 'fasttext.rel.pt'), (retrofit_map, 300, 'retrofit.rel.pt')]:
