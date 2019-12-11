@@ -19,7 +19,7 @@ def get_args(argv=None):
     return parser.parse_args(argv)
 
 
-class ElmoVectorizer():
+class ElmoVectorizer:
 
     def __init__(self, options, weights):
         self.model = Elmo(options, weights, 1, dropout=0)
