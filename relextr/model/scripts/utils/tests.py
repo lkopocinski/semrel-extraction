@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from batches import Dataset, Sampler
+from data_loader import BrandProductDataset, DatasetGenerator
 from torch.utils.data import DataLoader
 
 
@@ -28,8 +28,8 @@ def main():
 
     models = None
 
-    dataset = Dataset(models, keys)
-    sampler = Sampler(dataset)
+    dataset = BrandProductDataset(models, keys)
+    sampler = DatasetGenerator(dataset)
 
     sampler.set_type = 'train'
     batch_gen = DataLoader(dataset, batch_size=2, sampler=sampler)

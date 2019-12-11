@@ -1,6 +1,8 @@
 import torch
 import yaml
 
+from contextlib import contextmanager
+
 
 def is_better_fscore(fscore, best_fscore):
     return fscore[0] > best_fscore[0] and fscore[1] > best_fscore[1]
@@ -22,3 +24,17 @@ def get_device():
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     print(f'Runing on: {device}.')
     return device
+
+
+@contextmanager
+def ignored(exception):
+    """
+    A simple try/except wrapper useful for scraping.
+    Example usage:
+        with ignored(Exception):
+            do_something()
+    """
+    try:
+        yield
+    except exception as e:
+        logger.exception("Exception has been raised.", e)

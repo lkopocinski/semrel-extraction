@@ -1,119 +1,95 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import argparse
-import copy
+import logging
 
-import argcomplete
-import mlflow
+import click
 import torch
-import traceback
 import torch.nn as nn
 from torch.optim import Adagrad
-from torch.utils.data import DataLoader
 
-from relextr.model.config import RUNS
-from relextr.model.scripts.utils.batches import Dataset, Sampler
+import mlflow
+from data_loader import get_loaders
+from relextr.model.runs import RUNS
 from relnet import RelNet
-from utils.metrics import Metrics, save_metrics
-from utils.utils import is_better_fscore, parse_config, get_device, is_better_loss
+from utils.metrics import Metrics
+from utils.utils import parse_config, get_device, is_better_loss, ignored
+
+logger = logging.getLogger(__name__)
 
 
-def get_args(argv=None):
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--config', required=True, type=str, help="Config file path")
-    argcomplete.autocomplete(parser)
-    return parser.parse_args(argv)
-
-
-def main(argv=None):
+@click.command()
+@click.option('--config',
+              required=True,
+              type=click.Path(exists=True),
+              help='File with training params.')
+def main(config):
     device = get_device()
-    args = get_args(argv)
-    config = parse_config(args.config)
-    init_mlflow(config['mlflow'])
+    config = parse_config(config)
 
-    model_name = config['runs'] + '.pt'
     runs = RUNS[config['runs']]
+    model_name = f'{config["runs"]}.pt'
 
-    for nr, params in runs.items():
-        try:
+    mlflow.set_tracking_uri(config['tracking_uri'])
+    mlflow.set_experiment(config['experiment_name'])
+
+    for idx, params in runs.items():
+        with ignored(Exception):
             with mlflow.start_run():
-                print(f'\nRUN: {nr} WITH {params}')
+                logger.info(f'\nRUN: {idx} WITH {params}')
 
-                lexical_split = params['lexical_split']
-                in_domain = params['in_domain'] if 'in_domain' in params.keys() else None
-                out_domain = params['out_domain'] if 'out_domain' in params.keys() else None
-                methods = params['methods']
+                in_domain = params.get('in_domain')
+                out_domain = params.get('out_domain')
+                lexical_split = params.get('lexical_split', False)
+                methods = params.get('methods', [])
 
                 mlflow.set_tags({
-                    'lexical_split': lexical_split,
                     'in_domain': in_domain,
                     'out_domain': out_domain,
+                    'lexical_split': lexical_split,
                     'methods': ', '.join(methods),
                 })
 
-                dataset = Dataset(
-                    vectors_models=[m + '.rel.pt' for m in methods],
-                    keys=Dataset.load_keys(config['keys'])
-                )
-
-                sampler = Sampler(
-                    dataset,
+                train_loader, valid_loader, test_loader, vector_size = get_loaders(
+                    data_dir=config['dataset']['dir'],
+                    keys_file=config['dataset']['keys'],
+                    vectors_files=[f'{m}.rel.pt' for m in methods],
+                    batch_size=config['batch_size'],
                     balanced=True,
                     lexical_split=lexical_split,
                     in_domain=in_domain,
                     out_domain=out_domain
                 )
 
-                sampler.set_type = 'train'
-                sampler_train = copy.copy(sampler)
-                sampler.set_type = 'valid'
-                sampler_valid = copy.copy(sampler)
-                sampler.set_type = 'test'
-                sampler_test = copy.copy(sampler)
-
-                train_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_train,
-                                             num_workers=8)
-                valid_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_valid,
-                                             num_workers=8)
-                test_batch_gen = DataLoader(dataset, batch_size=config['batch_size'], sampler=sampler_test,
-                                            num_workers=8)
-
-                network = RelNet(in_dim=dataset.vector_size)
-                if torch.cuda.device_count() > 1:
-                    network = nn.DataParallel(network)
+                network = RelNet(in_dim=vector_size, **config['net_params'])
                 network.to(device)
                 optimizer = Adagrad(network.parameters(), lr=0.001)
                 loss_func = nn.CrossEntropyLoss()
 
                 # Log learning params
                 mlflow.log_params({
-                    'batch_size': config['batch_size'],
-                    'train_set_size': len(train_batch_gen.sampler),
-                    'valid_set_size': len(valid_batch_gen.sampler),
-                    'test_set_size': len(test_batch_gen.sampler),
-                    'vector_size': dataset.vector_size,
-                    'epochs': config['epochs'],
+                    'train size': len(train_loader),
+                    'valid size': len(valid_loader),
+                    'test size': len(test_loader),
+                    'vector size': vector_size,
                     'optimizer': optimizer.__class__.__name__,
-                    'loss_function': loss_func.__class__.__name__
+                    'loss function': loss_func.__class__.__name__,
+                    **config['learn_params'],
+                    **config['net_params']
                 })
 
-                best_valid_fscore = (0.0, 0.0)
                 best_valid_loss = None
 
-                print('Epochs:', end=" ")
+                logger.info('Epochs:', end=" ")
                 for epoch in range(config['epochs']):
-                    # print(f'Epoch: {epoch} / {config["epochs"]}')
-                    print(epoch, end=" ")
+                    logger.info(epoch, end=" ")
 
                     # Train
-                    train_metrics = train(network, optimizer, loss_func, train_batch_gen, device)
-                    # print(f'Train:\n{train_metrics}')
+                    train_metrics = train(network, optimizer, loss_func, train_loader, device)
                     log_metrics(train_metrics, 'train', epoch)
 
                     # Validate
-                    valid_metrics = evaluate(network, valid_batch_gen, loss_func, device)
-                    # print(f'Valid:\n{valid_metrics}')
+                    valid_metrics = evaluate(network, valid_loader, loss_func, device)
                     log_metrics(valid_metrics, 'valid', epoch)
 
                     # Loss stopping
@@ -123,26 +99,10 @@ def main(argv=None):
                         mlflow.log_artifact(f'./{model_name}')
 
                 # Test
-                test_metrics = test(RelNet(dataset.vector_size), model_name, test_batch_gen, loss_func,
-                                    device)
+                test_network = RelNet(in_dim=vector_size, **config['net_params'])
+                test_metrics = test(test_network, model_name, test_loader, loss_func, device)
                 print(f'\n\nTest: {test_metrics}')
-                save_metrics(test_metrics, 'metrics.txt')
                 log_metrics(test_metrics, 'test')
-
-        except Exception as e:
-            print(f"\nIn {nr}'th run exception occurred", e)
-            traceback.print_tb(e.__traceback__)
-            continue
-
-
-def init_mlflow(config):
-    mlflow.set_tracking_uri(config['tracking_uri'])
-    mlflow.set_experiment(config['experiment_name'])
-    #mlflow.set_tags(config['tags'])
-
-    print(f'\n-- mlflow --'
-          f'\nserver: {mlflow.get_tracking_uri()}'
-          f'\nexperiment: {config["experiment_name"]}')
 
 
 def log_metrics(metrics, prefix, step=0):
