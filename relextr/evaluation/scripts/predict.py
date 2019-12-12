@@ -36,14 +36,22 @@ def documents(fileindex):
     return (cclutils.read_ccl(path) for path in paths)
 
 
+def get_device():
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    print(f'Runing on: {device}.')
+    return device
+
+
 @click.command()
 @click.option('--net_model', required=True, type=str, help="A neural model for BRAND - PRODUCT recognition")
 @click.option('--elmo_model', required=True, type=(str, str), help="A path to elmo model options, weight")
 @click.option('--fasttext_model', required=True, type=str, help="A path to fasttext model")
 @click.option('--fileindex', required=True, type=str, help="A path to the list of CCL files to process")
 def main(net_model, elmo_model, fasttext_model, fileindex):
+    device = get_device()
     net = RelNet(in_dim=2648)
     net.load(net_model)
+    net.to(device)
 
     elmo = ElmoVectorizer(*elmo_model)
     fasttext = FastTextVectorizer(fasttext_model)
@@ -57,7 +65,8 @@ def main(net_model, elmo_model, fasttext_model, fileindex):
 
         with open(out_path, 'w', encoding='utf-8') as f:
             for sample in parser(doc):
-                decision = predictor.predict(sample)
+                with torch.no_grad():
+                    decision = predictor.predict(sample)
                 (f_idx, f_ctx), (s_idx, s_ctx) = sample
                 f.write(f'{f_ctx[f_idx]}\t{s_ctx[s_idx]}: {decision}\n')
 
