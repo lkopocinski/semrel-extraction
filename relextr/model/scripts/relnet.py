@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from collections import OrderedDict
+
 import torch
 import torch.nn as nn
-
-from collections import OrderedDict
 
 
 class RelNet(nn.Module):
@@ -40,7 +40,7 @@ class RelNet(nn.Module):
         except Exception:
             new_state_dict = OrderedDict()
             for k, v in state_dict.items():
-                name = k[7:] # remove `module.`
+                name = k[7:]  # remove `module.`
                 new_state_dict[name] = v
             self.load_state_dict(new_state_dict)
 

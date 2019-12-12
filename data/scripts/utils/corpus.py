@@ -5,7 +5,7 @@ from corpus_ccl import cclutils as ccl
 from corpus_ccl import corpus_object_utils as cou
 from corpus_ccl import token_utils as tou
 
-from data.scripts.model.models import Relation
+from models import Relation
 
 
 def documents_gen(corpus_files: Path):
