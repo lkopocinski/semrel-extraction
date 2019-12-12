@@ -2,11 +2,11 @@ from pathlib import Path
 import torch
 
 
-def save_lines(path: Path, lines):
+def save_lines(path: Path, lines, mode='w+'):
     if not path.parent.exists():
         path.parent.mkdir(parents=True, exist_ok=True)
 
-    with path.open('w', encoding='utf-8') as f:
+    with path.open(mode, encoding='utf-8') as f:
         for line in lines:
             f.write(f'{line}\n')
 

@@ -9,50 +9,53 @@ from utils.corpus import id_to_sent_dict, is_ner_relation, is_in_channel, get_re
     get_lemma, relations_documents_gen, get_document_ids
 
 
-def generate_positive(relation_files: List[Path], channels):
+def generate(relation_files: List[Path], channels):
     for document in relations_documents_gen(relation_files):
         sentences = id_to_sent_dict(document)
 
-        for relation in document.relations():
-            if is_ner_relation(relation):
-                if is_in_channel(relation, channels):
-                    element_from = get_relation_element(relation.rel_from(), sentences)
-                    element_to = get_relation_element(relation.rel_to(), sentences)
-
-                    if element_from and element_to:
-                        id_dir, id_doc = get_document_ids(document)
-                        rel = Relation(id_doc, element_from, element_to)
-                        yield f'{id_dir}\tin_relation\t{rel}'
+        yield generate_positive(document, sentences, channels)
+        yield generate_negative(document, sentences, channels)
 
 
-def generate_negative(files, channels):
-    for document in relations_documents_gen(files):
-        sentences = id_to_sent_dict(document)
+def generate_positive(document, sentences, channels):
+    lines = []
+    for relation in document.relations():
+        if is_ner_relation(relation) and is_in_channel(relation, channels):
+            element_from = get_relation_element(relation.rel_from(), sentences)
+            element_to = get_relation_element(relation.rel_to(), sentences)
 
+            if element_from and element_to:
+                id_dir, id_doc = get_document_ids(document)
+                rel = Relation(id_doc, element_from, element_to)
+                lines.append(f'{id_dir}\tin_relation\t{rel}')
+    return lines
+
+
+def generate_negative(document, sentences, channels):
+        lines = []
         relations = {}
         relidxs = {}
         for relation in document.relations():
-            if is_ner_relation(relation):
-                if is_in_channel(relation, channels):
-                    f = relation.rel_from()
-                    t = relation.rel_to()
-                    f_sent_id = f.sentence_id()
-                    t_sent_id = t.sentence_id()
+            if is_ner_relation(relation) and is_in_channel(relation, channels):
+                f = relation.rel_from()
+                t = relation.rel_to()
+                f_sent_id = f.sentence_id()
+                t_sent_id = t.sentence_id()
 
-                    f_element = get_relation_element(f, sentences)
-                    t_element = get_relation_element(t, sentences)
-                    f_indices = tuple(f_element.indices)
-                    t_indices = tuple(t_element.indices)
+                f_element = get_relation_element(f, sentences)
+                t_element = get_relation_element(t, sentences)
+                f_indices = tuple(f_element.indices)
+                t_indices = tuple(t_element.indices)
 
-                    relations[((f_sent_id, f_indices), (t_sent_id, t_indices))] = (
-                        relation, f_element.context, t_element.context)
-                    relations[((t_sent_id, t_indices), (f_sent_id, f_indices))] = (
-                        relation, t_element.context, f_element.context)
+                relations[((f_sent_id, f_indices), (t_sent_id, t_indices))] = (
+                    relation, f_element.context, t_element.context)
+                relations[((t_sent_id, t_indices), (f_sent_id, f_indices))] = (
+                    relation, t_element.context, f_element.context)
 
-                    for f_idx in f_indices:
-                        relidxs[(f_sent_id, f_idx)] = (f_indices, f_element.channel, f_element.ne)
-                    for t_idx in t_indices:
-                        relidxs[(t_sent_id, t_idx)] = (t_indices, t_element.channel, t_element.ne)
+                for f_idx in f_indices:
+                    relidxs[(f_sent_id, f_idx)] = (f_indices, f_element.channel, f_element.ne)
+                for t_idx in t_indices:
+                    relidxs[(t_sent_id, t_idx)] = (t_indices, t_element.channel, t_element.ne)
 
         for rel, rel_value in relations.items():
             relation, f_context, t_context = rel_value
@@ -83,9 +86,8 @@ def generate_negative(files, channels):
                     _t_ne = 0.0
                     pass
 
-                if _t_idxs and _f_idxs:
-                    if ((t_sent_id, _t_idxs), (f_sent_id, _f_idxs)) in relations:
-                        continue
+                if _t_idxs and _f_idxs and ((t_sent_id, _t_idxs), (f_sent_id, _f_idxs)) in relations:
+                    continue
 
                 f_lemma = get_lemma(sentences[f_sent_id], f_idx)
                 t_lemma = get_lemma(sentences[t_sent_id], t_idx)
@@ -94,4 +96,5 @@ def generate_negative(files, channels):
 
                 id_dir, id_doc = get_document_ids(document)
                 rel = Relation(id_doc, element_from, element_to)
-                yield f'{id_dir}\tno_relation\t{rel}'
+                lines.append(f'{id_dir}\tno_relation\t{rel}')
+        return lines

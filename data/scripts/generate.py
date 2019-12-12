@@ -1,39 +1,26 @@
 #!/usr/bin/env python3
-import argparse
-from itertools import chain
 from pathlib import Path
 
-import argcomplete
+import click
 
-from generator import generate_positive, generate_negative
+from generator import generate
 from utils.io import save_lines
 
 
-def get_args(argv=None):
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--data-in', required=True, help='Directory with corpora.')
-    parser.add_argument('--directories', nargs='+', required=True, help='Directories names with corpus files.')
-    parser.add_argument('--output-path', required=True, help='Directory for saving generated relations file.')
+@click.command()
+@click.option('--data-in', required=True, type=str, help='Directory with corpora.')
+@click.option('--directories', required=True, nargs='+', help='Directories names with corpus files.')
+@click.option('--output-path', required=True, type=str, help='Directory for saving generated relations file.')
+def main(data_in, directories, output_path):
+    source_paths = [dir_path
+                    for dir_path in Path(data_in).iterdir()
+                    if dir_path.stem in directories]
+    out_path = Path(f'{output_path}/relations.tsv')
 
-    argcomplete.autocomplete(parser)
-
-    return parser.parse_args(argv)
-
-
-def main(argv=None):
-    args = get_args(argv)
-
-    lines = []
-    out_file_path = Path(f'{args.output_path}/relations.tsv')
-    for directory in args.directories:
-        source_path = Path(f'{args.data_in}/{directory}')
-        if source_path.is_dir():
-            relations_files = list(source_path.glob('*.ne.rel.xml'))
-            positive_lines = generate_positive(relations_files, ('BRAND_NAME', 'PRODUCT_NAME'))
-            negative_lines = generate_negative(relations_files, ('BRAND_NAME', 'PRODUCT_NAME'))
-            lines.extend([positive_lines, negative_lines])
-
-    save_lines(out_file_path, chain(*lines))
+    for path in source_paths:
+        relations_files = list(path.glob('*.ne.rel.xml'))
+        lines = generate(relations_files, ('BRAND_NAME', 'PRODUCT_NAME'))
+        save_lines(out_path, lines, 'a')
 
 
 if __name__ == "__main__":
