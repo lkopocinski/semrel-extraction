@@ -1,24 +1,13 @@
 #!/usr/bin/env python3
 
-import argparse
 from pathlib import Path
 
+import click
 import torch
 
 from io import save_lines, save_tensor
 from utils.corpus import documents_gen, get_document_ids, get_context
 from vectorizers import Vectorizer, ElmoVectorizer, FastTextVectorizer, RetrofitVectorizer
-
-
-def get_args(argv=None):
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--corpusfiles', required=True, help='File with corpus documents paths.')
-    parser.add_argument('--elmo-weights', required=True, help="File with weights to elmo model.")
-    parser.add_argument('--elmo-options', required=True, help="File with options to elmo model.")
-    parser.add_argument('--fasttext-model', required=True, help="File with fasttext model.")
-    parser.add_argument('--retrofit-model', required=True, help="File with retrofitted fasttext model.")
-    parser.add_argument('--output-path', required=True, help='Directory for saving map files.')
-    return parser.parse_args(argv)
 
 
 def get_key(document, sentence):
@@ -50,17 +39,22 @@ def make_map(corpus_files: Path, vectorizer: Vectorizer):
     return keys, vectors
 
 
-def main(argv=None):
-    args = get_args(argv)
-    elmo = ElmoVectorizer(args.weights, args.options)
-    fasttext = FastTextVectorizer(args.fasttext_model)
-    retrofit = RetrofitVectorizer(args.retrofit_model, args.fasttext_model)
+@click.command()
+@click.option('--corpusfiles', required=True, type=str, help='File with corpus documents paths.')
+@click.option('--elmo_model', required=True, type=(str, str), help="A path to elmo model options, weight")
+@click.option('--fasttext_model', required=True, type=str, help="A path to fasttext model")
+@click.option('--retrofit-model', required=True, help="File with retrofitted fasttext model.")
+@click.option('--output-path', required=True, help='Directory for saving map files.')
+def main(corpusfiles, elmo_model, fasttext_model, retrofit_model, output_path):
+    elmo = ElmoVectorizer(*elmo_model)
+    fasttext = FastTextVectorizer(fasttext_model)
+    retrofit = RetrofitVectorizer(retrofit_model, fasttext_model)
 
     for vectorizer, save_name in [(elmo, 'elmo'), (fasttext, 'fasttext'), (retrofit, 'retrofit')]:
-        keys, vectors = make_map(Path(args.corpusfiles), vectorizer)
+        keys, vectors = make_map(Path(corpusfiles), vectorizer)
 
-        save_lines(Path(f'{args.output_path}/{save_name}.map.keys'), keys)
-        save_tensor(Path(f'{args.output_path}/{save_name}.map.pt'), vectors)
+        save_lines(Path(f'{output_path}/{save_name}.map.keys'), keys)
+        save_tensor(Path(f'{output_path}/{save_name}.map.pt'), vectors)
 
 
 if __name__ == '__main__':

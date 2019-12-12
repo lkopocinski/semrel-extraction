@@ -3,6 +3,7 @@ argcomplete==1.10.2
 boto==2.49.0
 boto3==1.10.27
 botocore==1.13.27
+click==7.0.0
 dvc==0.70.0
 gensim==3.8.1
 matplotlib==3.1.2
