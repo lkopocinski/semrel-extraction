@@ -4,7 +4,7 @@ from itertools import permutations, product
 from pathlib import Path
 from typing import List
 
-from model.models import Relation
+from models import Relation
 from utils.corpus import id_to_sent_dict, is_ner_relation, is_in_channel, get_relation_element, get_nouns_idx, \
     get_lemma, relations_documents_gen, get_document_ids
 

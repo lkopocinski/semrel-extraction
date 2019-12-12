@@ -4,12 +4,10 @@ import argparse
 from pathlib import Path
 
 import torch
-from allennlp.modules.elmo import Elmo, batch_to_ids
-from gensim.models import KeyedVectors
-from gensim.models.fasttext import load_facebook_model
 
 from io import save_lines, save_tensor
 from utils.corpus import documents_gen, get_document_ids, get_context
+from vectorizers import Vectorizer, ElmoVectorizer, FastTextVectorizer, RetrofitVectorizer
 
 
 def get_args(argv=None):
@@ -23,45 +21,6 @@ def get_args(argv=None):
     return parser.parse_args(argv)
 
 
-class ElmoVectorizer:
-
-    def __init__(self, options, weights):
-        self.model = Elmo(options, weights, 1, dropout=0)
-
-    def embed(self, context):
-        character_ids = batch_to_ids([context])
-        embeddings = self.model(character_ids)
-        tensor = embeddings['elmo_representations'][0]
-        return tensor.squeeze()
-
-
-class FastTextVectorizer:
-
-    def __init__(self, model_path):
-        self.model = load_facebook_model(model_path)
-
-    def embed(self, context):
-        return torch.FloatTensor(self.model.wv[context])
-
-
-class RetrofitVectorizer:
-
-    def __init__(self, retrofitted_model_path, fasttext_model_path):
-        self.model_retrofit = KeyedVectors.load_word2vec_format(retrofitted_model_path)
-        self.model_fasttext = load_facebook_model(fasttext_model_path)
-
-    def _embed_word(self, word):
-        try:
-            return torch.FloatTensor(self.model_retrofit[word])
-        except KeyError:
-            print("Term not found in retrofit model: ", word)
-            return torch.FloatTensor(self.model_fasttext.wv[word])
-
-    def embed(self, context):
-        tensors = [self._embed_word(word) for word in context]
-        return torch.stack(tensors)
-
-
 def get_key(document, sentence):
     id_domain, id_doc = get_document_ids(document)
     id_sent = sentence.id()
@@ -69,7 +28,7 @@ def get_key(document, sentence):
     return id_domain, id_doc, id_sent, context
 
 
-def make_map(corpus_files: Path, vectorizer: ElmoVectorizer):
+def make_map(corpus_files: Path, vectorizer: Vectorizer):
     keys = []
     vectors = torch.FloatTensor()
 

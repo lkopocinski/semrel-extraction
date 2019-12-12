@@ -14,7 +14,7 @@ class Parser(object):
 
     def __call__(self, document):
         for context in self._slicer.contextify(document):
-            for first, second in self._extractor.extract(context, attr='BRAND'):
+            for first, second in self._extractor.extract(context, attr='NE'):
                 yield first, second
 
 
@@ -68,8 +68,7 @@ class NounExtractor(ExtractorType):
         super(NounExtractor, self).__init__(name)
 
     def _extract(self, context):
-        matched = list()
-
+        matched = []
         for sentence in context:
             for ind, token in enumerate(sentence.tokens()):
                 if self.is_noun(token):
