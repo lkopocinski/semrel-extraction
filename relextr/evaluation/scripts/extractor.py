@@ -4,6 +4,7 @@ from itertools import product
 
 from corpus_ccl import cclutils as ccl
 from corpus_ccl import corpus_object_utils as cou
+from corpus_ccl import token_utils as tou
 
 
 class Parser(object):
@@ -37,16 +38,12 @@ class ExtractorType(object):
         self._tagset = ccl.get_tagset(tagset)
 
     def find_attribute_tokens(self, context, attr='default'):
-        found = list()
+        found = []
         for sentence in context:
             for ind, token in enumerate(sentence.tokens()):
-                if not token.has_metadata():
-                    continue
-                metadata = token.get_metadata()
-                if not metadata.has_attribute(attr):
-                    continue
-                ctx = [t.orth_utf8() for t in sentence.tokens()]
-                found.append((ind, ctx))
+                if tou.get_annotation(sentence, token, attr, ind, default=0):
+                    ctx = [t.orth_utf8() for t in sentence.tokens()]
+                    found.append((ind, ctx))
         return found
 
     def is_noun(self, token):
