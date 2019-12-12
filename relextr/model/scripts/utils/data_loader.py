@@ -20,7 +20,7 @@ class BrandProductDataset(data.Dataset):
     @staticmethod
     def _load_keys(path: str):
         with open(path, 'r', encoding='utf-8') as f:
-            return {idx: line.strip().split('\t') for idx, line in enumerate(f)}
+            return {idx: tuple(line.strip().split('\t')) for idx, line in enumerate(f)}
 
     @property
     def vector_size(self):
@@ -87,8 +87,7 @@ class DatasetGenerator:
         # 5 - channel name for left argument
         # 6 - channel name for right argument
         train, valid, test = [], [], []
-        nns_and_nps_indices = list()
-
+        nns_and_nps_indices = []
         brand_indices = defaultdict(list)
         for idx in sorted(positives | negatives):
             brand = None
