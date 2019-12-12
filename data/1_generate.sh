@@ -12,9 +12,10 @@ dvc run \
 -d ${DATA_IN} \
 -d ${SCRIPTS_DIR}/generate.py \
 -d ${SCRIPTS_DIR}/generator.py \
+-d ${SCRIPTS_DIR}/make_maps.py \
 -o ${OUTPUT_PATH} \
 ${SCRIPTS_DIR}/generate.py --data-in ${DATA_IN} \
-                           --output-path ${OUTPUT_PATH} \
+                           --output-path "${OUTPUT_PATH}/relations.tsv" \
                            --directories 112 114 115
 
 popd

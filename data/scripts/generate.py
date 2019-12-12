@@ -15,7 +15,7 @@ def main(data_in, directories, output_path):
     source_paths = [dir_path
                     for dir_path in Path(data_in).iterdir()
                     if dir_path.stem in directories]
-    out_path = Path(f'{output_path}/relations.tsv')
+    out_path = Path(output_path)
 
     for path in source_paths:
         relations_files = list(path.glob('*.ne.rel.xml'))
