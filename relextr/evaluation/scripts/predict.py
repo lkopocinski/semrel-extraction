@@ -16,7 +16,7 @@ class Predictor(object):
         self._elmo = elmo
         self._fasttext = fasttext
 
-    def predict(self, data):
+    def predict(self, data, device):
         (idx1, ctx1), (idx2, ctx2) = data
 
         ev1 = self._elmo.embed(ctx1)[idx1]
@@ -26,6 +26,7 @@ class Predictor(object):
         fv2 = self._fasttext.embed(ctx2)[idx2]
 
         v = torch.cat([ev1, ev2, fv1, fv2])
+        v.to(device)
 
         return self._net_model.predict(v)
 
@@ -66,7 +67,7 @@ def main(net_model, elmo_model, fasttext_model, fileindex):
         with open(out_path, 'w', encoding='utf-8') as f:
             for sample in parser(doc):
                 with torch.no_grad():
-                    decision = predictor.predict(sample)
+                    decision = predictor.predict(sample, device)
                 (f_idx, f_ctx), (s_idx, s_ctx) = sample
                 f.write(f'{f_ctx[f_idx]}\t{s_ctx[s_idx]}: {decision}\n')
 
