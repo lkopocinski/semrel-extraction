@@ -1,7 +1,10 @@
+import logging
+from contextlib import contextmanager
+
 import torch
 import yaml
 
-from contextlib import contextmanager
+logger = logging.getLogger(__name__)
 
 
 def is_better_fscore(fscore, best_fscore):

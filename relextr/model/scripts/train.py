@@ -101,7 +101,7 @@ def main(config):
                 # Test
                 test_network = RelNet(in_dim=vector_size, **config['net_params'])
                 test_metrics = test(test_network, model_name, test_loader, loss_func, device)
-                print(f'\n\nTest: {test_metrics}')
+                logger.info(f'\n\nTest: {test_metrics}')
                 log_metrics(test_metrics, 'test')
 
 

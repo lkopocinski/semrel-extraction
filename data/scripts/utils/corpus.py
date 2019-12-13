@@ -1,19 +1,22 @@
 from pathlib import Path
+from typing import Generator
 from typing import List
 
+import corpus2
 from corpus_ccl import cclutils as ccl
 from corpus_ccl import corpus_object_utils as cou
 from corpus_ccl import token_utils as tou
 
+from io import read_lines
 from models import Relation
 
 
-def documents_gen(corpus_files: Path):
-    with corpus_files.open('r', encoding='utf-8') as f:
-        corpus_paths = [line.strip() for line in f if Path(line.strip()).is_file()]
-
-    for path in corpus_paths:
-        yield ccl.read_ccl(path)
+def documents_gen(corpus_files: Path) -> Generator[corpus2.Document]:
+    return (
+        ccl.read_ccl(path)
+        for path in read_lines(corpus_files)
+        if Path(path).is_file()
+    )
 
 
 def relations_documents_gen(relation_files: List[Path]):
@@ -24,7 +27,8 @@ def relations_documents_gen(relation_files: List[Path]):
 
 
 def id_to_sent_dict(document):
-    return {sentence.id(): sentence for par in document.paragraphs() for sentence in par.sentences()}
+    return {sentence.id(): sentence for par in document.paragraphs() for
+            sentence in par.sentences()}
 
 
 def is_ner_relation(relation):
@@ -42,7 +46,8 @@ def get_relation_element(rel, sentences):
     sent_id = rel.sentence_id()
     sent = sentences[sent_id]
     channel_name = rel.channel_name()
-    indices = get_annotation_indices(sent, rel.annotation_number(), channel_name)
+    indices = get_annotation_indices(sent, rel.annotation_number(),
+                                     channel_name)
 
     if not indices:
         return None
@@ -74,14 +79,22 @@ def get_lemma(sent, index):
         return ''
 
 
-def get_document_ids(document):
-    ccl_path, rel_path = document.path().split(';')
-    ccl_path = Path(ccl_path)
-    return ccl_path.parent.stem, ccl_path.stem.split('.')[0]
+def get_document_dir(document):
+    ccl_path, __ = document.path().split(';')
+    return Path(ccl_path).parent.stem
 
+
+def get_document_file_name(document):
+    ccl_path, __ = document.path().split(';')
+    return Path(ccl_path).stem.split('.')[0]
+
+
+def get_sentence_id(sentence):
+    return sentence.id()
 
 def is_named_entity(sent, indices):
-    annotations = [tou.get_annotation(sent, token, 'NE', index, default=0) for index, token in enumerate(sent.tokens())
+    annotations = [tou.get_annotation(sent, token, 'NE', index, default=0) for
+                   index, token in enumerate(sent.tokens())
                    if index in indices]
     return all(annotations)
 

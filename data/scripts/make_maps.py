@@ -5,53 +5,100 @@ from pathlib import Path
 import click
 import torch
 
+import utils.corpus as corp
+import vectorizers as vec
 from io import save_lines, save_tensor
-from utils.corpus import documents_gen, get_document_ids, get_context
-from vectorizers import Vectorizer, ElmoVectorizer, FastTextVectorizer, RetrofitVectorizer
 
 
-def get_key(document, sentence):
-    id_domain, id_doc = get_document_ids(document)
-    id_sent = sentence.id()
-    context = get_context(sentence)
-    return id_domain, id_doc, id_sent, context
+class MapMaker:
 
+    def __init__(self, vectorizer: vec.Vectorizer):
+        self._vectorizer = vectorizer
 
-def make_map(corpus_files: Path, vectorizer: Vectorizer):
-    keys = []
-    vectors = torch.FloatTensor()
+    def _make_sentence_map(self, sentence, document):
+        keys = []
+        vectors = []
 
-    key_context = [
-        get_key(document, sentence)
-        for document in documents_gen(corpus_files)
-        for paragraph in document.paragraphs()
-        for sentence in paragraph.sentences()
-    ]
+        context = corp.get_context(sentence)
+        for idx, orth in enumerate(context):
+            id_domain = corp.get_document_dir(document)
+            id_document = corp.get_document_file_name(document)
+            id_sentence = corp.get_sentence_id(sentence)
+            id_token = str(idx)
 
-    for id_domain, id_doc, id_sent, context in key_context:
-        keys.extend([
-            (id_domain, id_doc, id_sent, str(id_tok), orth)
-            for id_tok, orth in enumerate(context)
-        ])
-        context_tensor = vectorizer.embed(context)
-        torch.cat([vectors, context_tensor])
+            key = (id_domain, id_document, id_sentence, id_token, orth)
+            vector = self._vectorizer.embed(context)
 
-    return keys, vectors
+            keys.append(key)
+            vectors.append(vector)
+
+        return keys, vectors
+
+    def make_map(self, corpus_files: Path):
+        sentences_documents = (
+            sentence, document
+            for document in corp.documents_gen(corpus_files)
+            for paragraph in document.paragraphs()
+            for sentence in paragraph.sentences()
+        )
+
+        keys = []
+        vectors = []
+
+        for sentence, document in sentences_documents:
+            _keys, _vectors = self._make_sentence_map(self, sentence, document)
+            keys.extend(_keys)
+            vectors.extend(_vectors)
+
+        return keys, torch.cat(vectors)
 
 
 @click.command()
-@click.option('--corpusfiles', required=True, type=str, help='File with corpus documents paths.')
-@click.option('--elmo_model', required=True, type=(str, str), help="A path to elmo model options, weight")
-@click.option('--fasttext_model', required=True, type=str, help="A path to fasttext model")
-@click.option('--retrofit-model', required=True, help="File with retrofitted fasttext model.")
-@click.option('--output-path', required=True, help='Directory for saving map files.')
-def main(corpusfiles, elmo_model, fasttext_model, retrofit_model, output_path):
-    elmo = ElmoVectorizer(*elmo_model)
-    fasttext = FastTextVectorizer(fasttext_model)
-    retrofit = RetrofitVectorizer(retrofit_model, fasttext_model)
+@click.option(
+    '--corpus-files',
+    required=True,
+    type=str,
+    help='File with corpus documents paths.'
+)
+@click.option(
+    '--elmo_model',
+    required=True,
+    type=(str, str),
+    help="A path to elmo model options, weight"
+)
+@click.option(
+    '--fasttext_model',
+    required=True,
+    type=str,
+    help="A path to fasttext model"
+)
+@click.option(
+    '--retrofit-model',
+    required=True,
+    help="File with retrofitted fasttext model."
+)
+@click.option(
+    '--output-path',
+    required=True,
+    help='Directory for saving map files.'
+)
+def main(corpus_files, elmo_model, fasttext_model,
+         retrofit_model, output_path):
+    elmo = MapMaker(
+        vectorizer=vec.ElmoVectorizer(*elmo_model)
+    )
+    fasttext = MapMaker(
+        vectorizer=vec.FastTextVectorizer(fasttext_model)
+    )
+    retrofit = MapMaker(
+        vectorizer=vec.RetrofitVectorizer(retrofit_model, fasttext_model)
+    )
+    corpus_files = Path(corpus_files)
 
-    for vectorizer, save_name in [(elmo, 'elmo'), (fasttext, 'fasttext'), (retrofit, 'retrofit')]:
-        keys, vectors = make_map(Path(corpusfiles), vectorizer)
+    for mapmaker, save_name in [
+        (elmo, 'elmo'), (fasttext, 'fasttext'), (retrofit, 'retrofit')
+    ]:
+        keys, vectors = mapmaker.make_map(corpus_files)
 
         save_lines(Path(f'{output_path}/{save_name}.map.keys'), keys)
         save_tensor(Path(f'{output_path}/{save_name}.map.pt'), vectors)

@@ -26,7 +26,7 @@ class ElmoVectorizer(Vectorizer):
         return tensor.squeeze()
 
 
-class FastTextVectorizer:
+class FastTextVectorizer(Vectorizer):
 
     def __init__(self, model_path):
         self.model = load_facebook_model(model_path)
@@ -35,7 +35,7 @@ class FastTextVectorizer:
         return torch.FloatTensor(self.model.wv[context])
 
 
-class RetrofitVectorizer:
+class RetrofitVectorizer(Vectorizer):
 
     def __init__(self, retrofitted_model_path, fasttext_model_path):
         self.model_retrofit = KeyedVectors.load_word2vec_format(retrofitted_model_path)

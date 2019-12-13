@@ -10,6 +10,7 @@ MAPS_DIR="./data/maps"
 dvc run \
 -d ${DATA_IN} \
 -d ${MAPS_DIR} \
+-d ${SCRIPTS_DIR}/combine_vectors.py \
 -o ${OUTPUT_PATH} \
 
 ${SCRIPTS_DIR}/combine_vectors.py --data-in "${DATA_IN}/relations." \
