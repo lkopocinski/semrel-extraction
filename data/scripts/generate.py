@@ -8,13 +8,30 @@ from utils.io import save_lines
 
 
 @click.command()
-@click.option('--data-in', required=True, type=str, help='Directory with corpora.')
-@click.option('--directories', required=True, nargs='+', help='Directories names with corpus files.')
-@click.option('--output-path', required=True, type=str, help='Directory for saving generated relations file.')
+@click.option(
+    '--data-in',
+    required=True,
+    type=str,
+    help='Directory with corpora.'
+)
+@click.option(
+    '--directories',
+    required=True,
+    nargs='+',
+    help='Directories names with corpus files.'
+)
+@click.option(
+    '--output-path',
+    required=True,
+    type=str,
+    help='Directory for saving generated relations file.'
+)
 def main(data_in, directories, output_path):
-    source_paths = [dir_path
-                    for dir_path in Path(data_in).iterdir()
-                    if dir_path.stem in directories]
+    source_paths = [
+        dir_path
+        for dir_path in Path(data_in).iterdir()
+        if dir_path.stem in directories
+    ]
     out_path = Path(output_path)
 
     for path in source_paths:
