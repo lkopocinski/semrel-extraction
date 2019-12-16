@@ -43,8 +43,3 @@ class RelNet(nn.Module):
                 name = k[7:]  # remove `module.`
                 new_state_dict[name] = v
             self.load_state_dict(new_state_dict)
-
-    def predict(self, data):
-        output = self(data)
-        predicted = torch.max(output)
-        return predicted.item()
