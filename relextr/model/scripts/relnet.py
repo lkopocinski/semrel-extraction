@@ -45,6 +45,6 @@ class RelNet(nn.Module):
             self.load_state_dict(new_state_dict)
 
     def predict(self, data):
-        output = self(torch.FloatTensor(data))
-        _, predicted = torch.max(output, dim=1)
+        output = self(data)
+        predicted = torch.max(output)
         return predicted.item()
