@@ -36,7 +36,7 @@ class MapMaker:
 
     def make_map(self, corpus_files: Path):
         sentences_documents = (
-            sentence, document
+            (sentence, document)
             for document in corp.documents_gen(corpus_files)
             for paragraph in document.paragraphs()
             for sentence in paragraph.sentences()

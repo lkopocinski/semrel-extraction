@@ -26,8 +26,14 @@ class Predictor(object):
         fv2 = self._fasttext.embed(ctx2)[idx2]
 
         v = torch.cat([ev1, ev2, fv1, fv2])
-        v.to(device)
+        v = v.to(device)
+        print(v.is_cuda)
 
+        return self._net_model.predict(v)
+
+    def predict_test(self, data, device):
+        v = torch.FloatTensor(2648)
+        v = v.to(device)
         return self._net_model.predict(v)
 
 
@@ -53,9 +59,13 @@ def main(net_model, elmo_model, fasttext_model, fileindex):
     net = RelNet(in_dim=2648)
     net.load(net_model)
     net.to(device)
+    net.eval()
 
-    elmo = ElmoVectorizer(*elmo_model)
-    fasttext = FastTextVectorizer(fasttext_model)
+#    elmo = ElmoVectorizer(*elmo_model)
+#    fasttext = FastTextVectorizer(fasttext_model)
+
+    elmo = None
+    fasttext = None
 
     predictor = Predictor(net, elmo, fasttext)
     parser = Parser()
@@ -67,7 +77,7 @@ def main(net_model, elmo_model, fasttext_model, fileindex):
         with open(out_path, 'w', encoding='utf-8') as f:
             for sample in parser(doc):
                 with torch.no_grad():
-                    decision = predictor.predict(sample, device)
+                    decision = predictor.predict_test(sample, device)
                 (f_idx, f_ctx), (s_idx, s_ctx) = sample
                 f.write(f'{f_ctx[f_idx]}\t{s_ctx[s_idx]}: {decision}\n')
 
