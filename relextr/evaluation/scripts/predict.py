@@ -6,6 +6,7 @@ from corpus_ccl import cclutils
 
 from relextr.evaluation.scripts.extractor import Parser
 from relextr.model.scripts.relnet import RelNet
+from data.scripts.utils.vectorizers import ElmoVectorizer, FastTextVectorizer
 
 
 class Predictor(object):
@@ -18,7 +19,7 @@ class Predictor(object):
 
     def _make_vectors(self, pair):
         (idx1, ctx1), (idx2, ctx2) = pair
-
+        print(pair)
         ev1 = self._elmo.embed(ctx1)[idx1]
         ev2 = self._elmo.embed(ctx2)[idx2]
 
@@ -35,8 +36,7 @@ class Predictor(object):
             return prediction.item()
 
     def predict(self, pair):
-        # vectors = self._make_vectors(pair)
-        vectors = torch.FloatTensor(2648)
+        vectors = self._make_vectors(pair)
         predictions = self._predict(vectors)
         return predictions
 
@@ -89,11 +89,8 @@ def main(net_model, elmo_model, fasttext_model, fileindex):
     device = get_device()
     net = load_model(net_model)
     net.to(device)
-    #    elmo = ElmoVectorizer(*elmo_model)
-    #    fasttext = FastTextVectorizer(fasttext_model)
-
-    elmo = None
-    fasttext = None
+    elmo = ElmoVectorizer(*elmo_model)
+    fasttext = FastTextVectorizer(fasttext_model)
 
     predictor = Predictor(net, elmo, fasttext)
     predictor.device = device
