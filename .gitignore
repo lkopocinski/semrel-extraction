@@ -13,3 +13,5 @@ dist
 *.pt
 /fasttext.rel.pt
 /retrofit.rel.pt
+
+credentials
