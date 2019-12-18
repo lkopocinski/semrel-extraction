@@ -117,13 +117,16 @@ RUN locale-gen en_US.UTF-8
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
-COPY ../requirements.txt /
+COPY ./requirements.txt /
 RUN pip install -r /requirements.txt
 
 WORKDIR /home/projects/
 RUN git clone https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction.git && \
     cd semrel-extraction && \
     git checkout --track origin/lkopocinski-refactoring
+
+
+COPY ./credentials /root/.aws/credentials
 
 WORKDIR /home/projects/semrel-extraction/data
 RUN dvc pull elmo.dvc
