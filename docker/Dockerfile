@@ -1,5 +1,5 @@
 FROM nvidia/cuda:10.0-runtime-ubuntu16.04
-LABEL maintainer "Łukasz Kopociński <lkopocinski@gmail.com>"
+LABEL maintainer "Łukasz Kopocinski <lkopocinski@gmail.com>"
 
 RUN apt update && apt install -y software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa
@@ -65,7 +65,7 @@ RUN git clone http://nlp.pwr.edu.pl/corpus2.git && \
     mkdir bin && \
     cd bin/ && \
     cmake -D CORPUS2_BUILD_POLIQARP:BOOL=True .. && \
-    make -j && \
+    make -j 4 && \
     make install && \
     ldconfig && \
     cd /home/install && \
@@ -79,7 +79,7 @@ RUN git clone http://nlp.pwr.edu.pl/toki.git && \
     mkdir bin && \
     cd bin/ && \
     cmake .. && \
-    make -j && \
+    make -j 4 && \
     make install && \
     ldconfig && \
     cd /home/install && \
@@ -92,7 +92,7 @@ RUN git clone https://gitlab.clarin-pl.eu/analysers/maca.git && \
     mkdir bin && \
     cd bin && \
     cmake .. && \
-    make -j && \
+    make -j 4 && \
     make install && \
     ldconfig && \
     cd /home/install && \
@@ -106,7 +106,7 @@ RUN git clone http://nlp.pwr.edu.pl/wccl.git && \
     mkdir bin && \
     cd bin && \
     cmake .. && \
-    make -j && \
+    make -j 4 && \
     make install && \
     ldconfig && \
     cd /home/install && \
@@ -118,7 +118,7 @@ ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 ENV MLFLOW_TRACKING_URI "http://10.17.50.132:8080"
 
-COPY ../requirements.txt /
+COPY requirements.txt /
 RUN pip install -r /requirements.txt
 
 WORKDIR /home/projects/
