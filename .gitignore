@@ -15,3 +15,5 @@ dist
 /retrofit.rel.pt
 
 credentials
+
+.DS_Store
