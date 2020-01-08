@@ -121,9 +121,5 @@ ENV MLFLOW_TRACKING_URI "http://10.17.50.132:8080"
 COPY requirements.txt /
 RUN pip install -r /requirements.txt
 
-WORKDIR /home/projects/
-RUN git clone https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction.git && \
-    cd semrel-extraction && \
-    git checkout --track origin/develop
-
+WORKDIR /
 ENTRYPOINT ["/bin/bash"]
