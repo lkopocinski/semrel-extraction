@@ -12,7 +12,7 @@ dvc run \
 -d ${DATA_IN} \
 -d ${SCRIPTS_DIR}/make_maps.py \
 -o ${OUTPUT_PATH} \
-CUDA_VISIBLE_DEVICES=0 ${SCRIPTS_DIR}/make_maps --data-in ${DATA_IN} \
+CUDA_VISIBLE_DEVICES=0 ${SCRIPTS_DIR}/make_maps.py --data-in ${DATA_IN} \
                          --output-path ${OUTPUT_PATH} \
                          --directories 112 114 115
 
