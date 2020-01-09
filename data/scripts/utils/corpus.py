@@ -7,11 +7,11 @@ from corpus_ccl import cclutils as ccl
 from corpus_ccl import corpus_object_utils as cou
 from corpus_ccl import token_utils as tou
 
-from io import read_lines
-from models import Relation
+from data.scripts.utils.io import read_lines
+from data.scripts.models import Relation
 
 
-def documents_gen(corpus_files: Path) -> Generator[corpus2.Document]:
+def documents_gen(corpus_files: Path) -> Generator[corpus2.Document, None, None]:
     return (
         ccl.read_ccl(path)
         for path in read_lines(corpus_files)
@@ -91,6 +91,7 @@ def get_document_file_name(document):
 
 def get_sentence_id(sentence):
     return sentence.id()
+
 
 def is_named_entity(sent, indices):
     annotations = [tou.get_annotation(sent, token, 'NE', index, default=0) for

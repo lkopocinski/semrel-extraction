@@ -13,9 +13,10 @@ def save_lines(path: Path, lines, mode='w+'):
             f.write(f'{line}\n')
 
 
-def read_lines(path: Path) -> Generator[str]:
+def read_lines(path: Path) -> Generator[str, None, None]:
     with path.open('r', encoding='utf-8') as f:
-        return (line.strip() for line in f)
+        for line in f:
+            yield line.strip()
 
 
 def save_tensor(path: Path, tensor):
