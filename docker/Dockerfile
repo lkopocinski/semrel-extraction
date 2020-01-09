@@ -117,6 +117,7 @@ RUN locale-gen en_US.UTF-8
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 ENV MLFLOW_TRACKING_URI "http://10.17.50.132:8080"
+ENV PIP_EXTRA_INDEX_URL "https://pypi.clarin-pl.eu/"
 
 COPY requirements.txt /
 RUN pip install -r /requirements.txt
