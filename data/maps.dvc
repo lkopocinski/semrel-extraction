@@ -1,7 +1,0 @@
-md5: 5ca6ac5e07268669ce2a5f127179253d
-outs:
-- md5: 9d29765f377b2daa00a92968814eb65a.dir
-  path: maps
-  cache: true
-  metric: false
-  persist: false
