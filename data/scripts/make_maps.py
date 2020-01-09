@@ -5,9 +5,9 @@ from pathlib import Path
 import click
 import torch
 
-import utils.corpus as corp
-import vectorizers as vec
-from io import save_lines, save_tensor
+import data.scripts.utils.corpus as corp
+import data.scripts.utils.vectorizers as vec
+from data.scripts.utils.io import save_lines, save_tensor
 
 
 class MapMaker:
@@ -87,16 +87,16 @@ def main(corpus_files, elmo_model, fasttext_model,
     elmo = MapMaker(
         vectorizer=vec.ElmoVectorizer(*elmo_model)
     )
-    fasttext = MapMaker(
-        vectorizer=vec.FastTextVectorizer(fasttext_model)
-    )
-    retrofit = MapMaker(
-        vectorizer=vec.RetrofitVectorizer(retrofit_model, fasttext_model)
-    )
-    corpus_files = Path(corpus_files)
+    # fasttext = MapMaker(
+    #     vectorizer=vec.FastTextVectorizer(fasttext_model)
+    # )
+    # retrofit = MapMaker(
+    #     vectorizer=vec.RetrofitVectorizer(retrofit_model, fasttext_model)
+    # )
+    # corpus_files = Path(corpus_files)
 
     for mapmaker, save_name in [
-        (elmo, 'elmo'), (fasttext, 'fasttext'), (retrofit, 'retrofit')
+        (elmo, 'elmo') #, (fasttext, 'fasttext'), (retrofit, 'retrofit')
     ]:
         keys, vectors = mapmaker.make_map(corpus_files)
 
