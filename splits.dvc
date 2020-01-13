@@ -1,8 +1,8 @@
-md5: 8e6d67b9e7444c9634378213475e39f5
+md5: cfa0aa24620d86687c68dd85f35e5880
 cmd: ./data/scripts/split.py --data-in ./data/corpora --output-path ./data/splits
   --directories 81 82 83
 deps:
-- md5: 4198a1e87b884ec968ad7dfe6ea32aa5.dir
+- md5: 844d860753c0d4cd451e664c23baa17f.dir
   path: data/corpora
 outs:
 - md5: 5a66b071d2796ec92e4e2f91833ea4f7.dir
