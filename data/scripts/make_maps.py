@@ -1,6 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.6
 
 from pathlib import Path
+from typing import List
 
 import click
 import torch
@@ -34,7 +35,7 @@ class MapMaker:
 
         return keys, vectors
 
-    def make_map(self, corpus_files: Path):
+    def make_map(self, corpus_files: List[str]):
         sentences_documents = (
             (sentence, document)
             for document in corp.documents_gen(corpus_files)
@@ -53,50 +54,46 @@ class MapMaker:
         return keys, torch.cat(vectors)
 
 
+def corpus_files_paths(input_path: str, directories: List[int]) -> List[Path]:
+    corpus_files = []
+    for directory in directories:
+        corpus_files.extend(
+            list(Path(f'{input_path}/{directory}').glob('**/*.rel.xml'))
+        )
+    return corpus_files
+
+
 @click.command()
-@click.option(
-    '--corpus-files',
-    required=True,
-    type=str,
-    help='File with corpus documents paths.'
-)
-@click.option(
-    '--elmo_model',
-    required=True,
-    type=(str, str),
-    help="A path to elmo model options, weight"
-)
-@click.option(
-    '--fasttext_model',
-    required=True,
-    type=str,
-    help="A path to fasttext model"
-)
-@click.option(
-    '--retrofit-model',
-    required=True,
-    help="File with retrofitted fasttext model."
-)
-@click.option(
-    '--output-path',
-    required=True,
-    help='Directory for saving map files.'
-)
-def main(corpus_files, elmo_model, fasttext_model,
-         retrofit_model, output_path):
+@click.option('--input-path', required=True, type=str,
+              help='Path to corpora files.')
+@click.option('--directories', required=True, nargs=3,
+              help='Directories names with corpus files.')
+@click.option('--elmo-model', required=True, type=(str, str),
+              help="A path to elmo model options, weights.")
+@click.option('--fasttext-model', required=True, type=str,
+              help="A path to fasttext model.")
+@click.option('--retrofit-model', required=True, type=str,
+              help="File with retrofitted fasttext model.")
+@click.option('--output-path', required=True, type=str,
+              help='Directory for saving map files.')
+def main(input_path, directories, elmo_model,
+         fasttext_model, retrofit_model, output_path):
+
+    elmo_options, elmo_weights = elmo_model
     elmo = MapMaker(
-        vectorizer=vec.ElmoVectorizer(*elmo_model)
+        vectorizer=vec.ElmoVectorizer(elmo_options, elmo_weights)
     )
-    # fasttext = MapMaker(
-    #     vectorizer=vec.FastTextVectorizer(fasttext_model)
-    # )
-    # retrofit = MapMaker(
-    #     vectorizer=vec.RetrofitVectorizer(retrofit_model, fasttext_model)
-    # )
-    # corpus_files = Path(corpus_files)
+    fasttext = MapMaker(
+        vectorizer=vec.FastTextVectorizer(fasttext_model)
+    )
+    retrofit = MapMaker(
+        vectorizer=vec.RetrofitVectorizer(retrofit_model, fasttext_model)
+    )
+
+    corpus_files = corpus_files_paths(input_path, directories)
 
     for mapmaker, save_name in [
-        (elmo, 'elmo') #, (fasttext, 'fasttext'), (retrofit, 'retrofit')
+        (elmo, 'elmo'), (fasttext, 'fasttext'), (retrofit, 'retrofit')
     ]:
         keys, vectors = mapmaker.make_map(corpus_files)
 
