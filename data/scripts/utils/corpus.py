@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Generator
+from typing import Generator, Iterator
 from typing import List
 
 import corpus2
@@ -7,11 +7,11 @@ from corpus_ccl import cclutils as ccl
 from corpus_ccl import corpus_object_utils as cou
 from corpus_ccl import token_utils as tou
 
-from data.scripts.utils.io import read_lines
 from data.scripts.models import Relation
 
 
-def documents_gen(corpus_files: List[str]) -> Generator[corpus2.Document, None, None]:
+def documents_gen(corpus_files: List[Path]) -> Generator[
+    corpus2.Document, None, None]:
     return (
         ccl.read_ccl(path)
         for path in corpus_files
@@ -19,7 +19,7 @@ def documents_gen(corpus_files: List[str]) -> Generator[corpus2.Document, None, 
     )
 
 
-def relations_documents_gen(relation_files: List[Path]):
+def relations_documents_gen(relation_files: Iterator[Path]):
     for rel_path in relation_files:
         ccl_path = Path(str(rel_path).replace('.rel', ''))
         if rel_path.is_file() and ccl_path.is_file():
@@ -27,8 +27,9 @@ def relations_documents_gen(relation_files: List[Path]):
 
 
 def id_to_sent_dict(document):
-    return {sentence.id(): sentence for par in document.paragraphs() for
-            sentence in par.sentences()}
+    return {sentence.id(): sentence
+            for par in document.paragraphs()
+            for sentence in par.sentences()}
 
 
 def is_ner_relation(relation):
