@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.6
-
+from itertools import chain
 from pathlib import Path
-from typing import List
+from typing import List, Iterator
 
 import click
 import torch
@@ -35,7 +35,7 @@ class MapMaker:
 
         return keys, vectors
 
-    def make_map(self, corpus_files: List[str]):
+    def make_map(self, corpus_files: List[Path]):
         sentences_documents = (
             (sentence, document)
             for document in corp.documents_gen(corpus_files)
@@ -54,13 +54,11 @@ class MapMaker:
         return keys, torch.cat(vectors)
 
 
-def corpus_files_paths(input_path: str, directories: List[int]) -> List[Path]:
-    corpus_files = []
-    for directory in directories:
-        corpus_files.extend(
-            list(Path(f'{input_path}/{directory}').glob('**/*.rel.xml'))
-        )
-    return corpus_files
+def relations_file_paths(input_path: str, directories: List) -> Iterator[Path]:
+    return chain.from_iterable(
+        dir_path.glob('*.rel.xml')
+        for dir_path in Path(input_path).iterdir()
+        if dir_path.stem in directories)
 
 
 @click.command()

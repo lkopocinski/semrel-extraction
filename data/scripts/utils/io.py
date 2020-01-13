@@ -1,10 +1,10 @@
 from pathlib import Path
-from typing import Generator
+from typing import Generator, Iterator
 
 import torch
 
 
-def save_lines(path: Path, lines, mode='w+'):
+def save_lines(path: Path, lines: Iterator[str], mode='w+'):
     if not path.parent.exists():
         path.parent.mkdir(parents=True, exist_ok=True)
 

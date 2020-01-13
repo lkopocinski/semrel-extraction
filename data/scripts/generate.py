@@ -1,43 +1,34 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.6
+from itertools import chain
 from pathlib import Path
+from typing import List, Iterator
 
 import click
 
-from generator import generate
-from utils.io import save_lines
+from data.scripts.generator import generate
+from data.scripts.utils.io import save_lines
+
+
+def relations_file_paths(input_path: str, directories: List) -> Iterator[Path]:
+    return chain.from_iterable(
+        dir_path.glob('*.rel.xml')
+        for dir_path in Path(input_path).iterdir()
+        if dir_path.stem in directories)
 
 
 @click.command()
-@click.option(
-    '--data-in',
-    required=True,
-    type=str,
-    help='Directory with corpora.'
-)
-@click.option(
-    '--directories',
-    required=True,
-    nargs='+',
-    help='Directories names with corpus files.'
-)
-@click.option(
-    '--output-path',
-    required=True,
-    type=str,
-    help='Directory for saving generated relations file.'
-)
-def main(data_in, directories, output_path):
-    source_paths = [
-        dir_path
-        for dir_path in Path(data_in).iterdir()
-        if dir_path.stem in directories
-    ]
+@click.option('--input-path', required=True, type=str,
+              help='Path to corpora files.')
+@click.option('--directories', required=True, nargs=3,
+              help='Directories names with corpus files.')
+@click.option('--output-path', required=True, type=str,
+              help='Directory for saving generated relations files.')
+def main(input_path, directories, output_path):
+    relations_files = relations_file_paths(input_path, directories)
     out_path = Path(output_path)
 
-    for path in source_paths:
-        relations_files = list(path.glob('*.ne.rel.xml'))
-        lines = generate(relations_files, ('BRAND_NAME', 'PRODUCT_NAME'))
-        save_lines(out_path, lines, 'a')
+    lines = chain.from_iterable(generate(relations_files))
+    save_lines(out_path, lines, mode='a')
 
 
 if __name__ == "__main__":
