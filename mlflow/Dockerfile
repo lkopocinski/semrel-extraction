@@ -1,5 +1,5 @@
 FROM python:3.7
-LABEL maintainer "Łukasz Kopociński <lkopoci@gmail.com>"
+LABEL maintainer="Łukasz Kopociński <lkopocinski@gmail.com>"
 
 RUN pip install --upgrade pip && \
     pip install mlflow==1.4.0 && \
