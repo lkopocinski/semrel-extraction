@@ -38,8 +38,9 @@ def generate_positive(document, sentences, channels):
 
 def generate_negative(document, sentences, channels):
     lines = []
+
     relations = {}
-    relation_indices = {}
+    relation_tokens_indices = {}
 
     for relation in document.relations():
         if is_ner_relation(relation) and is_in_channel(relation, channels):
@@ -58,12 +59,12 @@ def generate_negative(document, sentences, channels):
 
             # We add the same metadata to all indices in phrase
             for idx_from in element_from.indices:
-                relation_indices[(element_from.sent_id, idx_from)] = (
+                relation_tokens_indices[(element_from.sent_id, idx_from)] = (
                     element_from.indices, element_from.channel, element_from.ne
                 )
 
             for idx_to in element_to.indices:
-                relation_indices[(element_to.sent_id, idx_to)] = (
+                relation_tokens_indices[(element_to.sent_id, idx_to)] = (
                     element_to.indices, element_to.channel, element_to.ne
                 )
 
@@ -71,32 +72,15 @@ def generate_negative(document, sentences, channels):
         ((sent_id_from, indices_from), (sent_id_to, indices_to)) = relation
         context_from, context_to = relation_contexts
 
-        nouns_indices_from = get_nouns_idx(sentences[sent_id_from])
-        nouns_indices_to = get_nouns_idx(sentences[sent_id_to])
-
-        if sent_id_from == sent_id_to:
-            nouns_indices_pairs = permutations(nouns_indices_from, 2)
-        else:
-            nouns_indices_pairs = product(nouns_indices_from, nouns_indices_to)
+        nouns_indices_pairs = get_nouns_indices_pairs(
+            sent_id_from, sent_id_to, sentences)
 
         for idx_from, idx_to in nouns_indices_pairs:
-            try:
-                _f_idxs, _f_channel_name, _f_ne = relation_indices[
-                    (sent_id_from, idx_from)]
-            except KeyError:
-                _f_idxs = None
-                _f_channel_name = ''
-                _f_ne = False
-                pass
+            _f_idxs, _f_channel_name, _f_ne = relation_tokens_indices.get(
+                (sent_id_from, idx_from), (None, '', False))
 
-            try:
-                _t_idxs, _t_channel_name, _t_ne = relation_indices[
-                    (sent_id_to, idx_to)]
-            except KeyError:
-                _t_idxs = None
-                _t_channel_name = ''
-                _t_ne = False
-                pass
+            _t_idxs, _t_channel_name, _t_ne = relation_tokens_indices.get(
+                (sent_id_to, idx_to), (None, '', False))
 
             # If two nouns are part of phrases in relation
             if _t_idxs \
@@ -107,6 +91,7 @@ def generate_negative(document, sentences, channels):
 
             f_lemma = get_lemma(sentences[sent_id_from], idx_from)
             t_lemma = get_lemma(sentences[sent_id_to], idx_to)
+
             element_from = Relation.Element(
                 sent_id_from, f_lemma, _f_channel_name,
                 _f_ne, [idx_from], context_from
@@ -123,3 +108,15 @@ def generate_negative(document, sentences, channels):
             lines.append(f'no_relation\t{id_domain}\t{relation}')
 
     return lines
+
+
+def get_nouns_indices_pairs(sent_id_from, sent_id_to, sentences):
+    nouns_indices_from = get_nouns_idx(sentences[sent_id_from])
+    nouns_indices_to = get_nouns_idx(sentences[sent_id_to])
+
+    if sent_id_from == sent_id_to:
+        nouns_indices_pairs = permutations(nouns_indices_from, 2)
+    else:
+        nouns_indices_pairs = product(nouns_indices_from, nouns_indices_to)
+
+    return nouns_indices_pairs
