@@ -63,13 +63,18 @@ def make_relations_tensors(relations_path: Path, keys, vectors):
 
 
 @click.command()
-@click.option('--data-in', required=True, type=str, help='File with relations.')
-@click.option('--output-path', required=True, type=str, help='Directory to save vectors.')
-@click.option('--elmo-map', required=True, type=(str, str), metavar='elmo.map.pt elmo.map.keys',
+@click.option('--data-in', required=True, type=str,
+              help='File with relations.')
+@click.option('--output-path', required=True, type=str,
+              help='Directory to save vectors.')
+@click.option('--elmo-map', required=True, type=(str, str),
+              metavar='elmo.map.pt elmo.map.keys',
               help="Elmo vectors and keys files.")
-@click.option('--fasttext-map', required=True, type=(str, str), metavar='fasttext.map.pt fasttext.map.keys',
+@click.option('--fasttext-map', required=True, type=(str, str),
+              metavar='fasttext.map.pt fasttext.map.keys',
               help="Fasttext vectors and keys files.")
-@click.option('--retrofit-map', required=True, type=(str, str), metavar='retrofit.map.pt retrofit.map.keys',
+@click.option('--retrofit-map', required=True, type=(str, str),
+              metavar='retrofit.map.pt retrofit.map.keys',
               help="Retrofit vectors and keys files.")
 def main(data_in, output_path, elmo_map, fasttext_map, retrofit_map):
     keys_elmo, vectors_elmo = load_map(*elmo_map)

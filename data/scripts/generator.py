@@ -66,16 +66,19 @@ def generate_negative(document, sentences, channels):
         nouns_indices_pairs = get_nouns_indices_pairs(relation, sentences)
 
         for idx_from, idx_to in nouns_indices_pairs:
-            _f_idxs, _f_channel_name, _f_ne = relation_tokens_indices.get(
-                (element_from.sent_id, idx_from), (None, '', False))
+            # _f_idxs, _f_channel_name, _f_ne = relation_tokens_indices.get(
+            #     (element_from.sent_id, idx_from), (None, '', False))
 
-            _t_idxs, _t_channel_name, _t_ne = relation_tokens_indices.get(
-                (element_to.sent_id, idx_to), (None, '', False))
+            _element_from = relation_tokens_indices.get(
+                (element_from.sent_id, idx_from), None)
+
+            _element_to = relation_tokens_indices.get(
+                (element_to.sent_id, idx_to), None)
 
             # If two nouns are part of phrases in relation
-            if _t_idxs and _f_idxs:
-                if ((element_to.sent_id, _t_idxs),
-                    (element_from.sent_id, _f_idxs)) in relations_list:
+            if _element_from and _element_to:
+                if ((element_to.sent_id, element_to.indices),
+                    (element_from.sent_id, element_from.indices)) in relations_list:
                     continue
 
             f_lemma = get_lemma(sentences[element_from.sent_id], idx_from)
