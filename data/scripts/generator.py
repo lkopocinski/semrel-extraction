@@ -39,8 +39,11 @@ def generate_positive(document, sentences, channels):
 def generate_negative(document, sentences, channels):
     lines = []
 
-    relations = {}
+    relations_list = []
+    # relations = {}
     relation_tokens_indices = {}
+
+    id_document = get_document_file_name(document)
 
     for relation in document.relations():
         if is_ner_relation(relation) and is_in_channel(relation, channels):
@@ -48,14 +51,18 @@ def generate_negative(document, sentences, channels):
             element_to = get_relation_element(relation.rel_to(), sentences)
 
             # We consider relation data in both ways
-            relations[(
-                (element_from.sent_id, element_from.indices),
-                (element_to.sent_id, element_to.indices)
-            )] = (element_from.context, element_to.context)
-            relations[(
-                (element_to.sent_id, element_to.indices),
-                (element_from.sent_id, element_from.indices)
-            )] = (element_to.context, element_from.context)
+            relations_list.extend([
+                Relation(id_document, element_from, element_to),
+                Relation(id_document, element_to, element_from),
+                ])
+            # relations[(
+            #     (element_from.sent_id, element_from.indices),
+            #     (element_to.sent_id, element_to.indices)
+            # )] = (element_from.context, element_to.context)
+            # relations[(
+            #     (element_to.sent_id, element_to.indices),
+            #     (element_from.sent_id, element_from.indices)
+            # )] = (element_to.context, element_from.context)
 
             # We add the same metadata to all indices in phrase
             for idx_from in element_from.indices:
