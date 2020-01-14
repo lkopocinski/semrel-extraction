@@ -1,8 +1,0 @@
-md5: e7667d00e2db485f902e2e855ee7dc18
-cmd: ./data/scripts/merge.sh ./data/vectors ./relextr/model/dataset
-outs:
-- md5: e21c17aa25871f229aa1b3c05ead5464.dir
-  path: relextr/model/dataset
-  cache: true
-  metric: false
-  persist: false

@@ -8,12 +8,7 @@ __pycache__/
 build
 dist
 *.egg-info
+.DS_Store
 
 *.map
 *.pt
-/fasttext.rel.pt
-/retrofit.rel.pt
-
-credentials
-
-.DS_Store
