@@ -40,32 +40,32 @@ def generate_negative(document, sentences, channels):
     lines = []
     relations = {}
     relidxs = {}
+
     for relation in document.relations():
         if is_ner_relation(relation) and is_in_channel(relation, channels):
-            sent_id_from = relation.rel_from().sentence_id()
-            sent_id_to = relation.rel_to().sentence_id()
-
             element_from = get_relation_element(relation.rel_from(), sentences)
             element_to = get_relation_element(relation.rel_to(), sentences)
 
-            indices_from = tuple(element_from.indices)
-            indices_to = tuple(element_to.indices)
-
             # We consider relation data in both ways
-            relations[
-                ((sent_id_from, indices_from), (sent_id_to, indices_to))
-            ] = (relation, element_from.context, element_to.context)
-            relations[
-                ((sent_id_to, indices_to), (sent_id_from, indices_from))
-            ] = (relation, element_to.context, element_from.context)
+            relations[(
+                (element_from.sent_id, element_from.indices),
+                (element_to.sent_id, element_to.indices)
+            )] = (element_from.context, element_to.context)
+            relations[(
+                (element_to.sent_id, element_to.indices),
+                (element_from.sent_id, element_from.indices)
+            )] = (element_to.context, element_from.context)
 
             # We add the same metadata to all indices in phrase
-            for idx_from in indices_from:
-                relidxs[(sent_id_from, idx_from)] = (
-                    indices_from, element_from.channel, element_from.ne)
-            for idx_to in indices_to:
-                relidxs[(sent_id_to, idx_to)] = (
-                    indices_to, element_to.channel, element_to.ne)
+            for idx_from in element_from.indices:
+                relidxs[(element_from.sent_id, idx_from)] = (
+                    element_from.indices, element_from.channel, element_from.ne
+                )
+
+            for idx_to in element_to.indices:
+                relidxs[(element_to.sent_id, idx_to)] = (
+                    element_to.indices, element_to.channel, element_to.ne
+                )
 
     for rel, rel_value in relations.items():
         relation, context_from, context_to = rel_value

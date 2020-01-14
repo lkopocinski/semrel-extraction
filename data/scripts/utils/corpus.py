@@ -65,7 +65,7 @@ def get_annotation_indices(sent, ann_number, ann_channel):
         number = tou.get_annotation(sent, token, ann_channel, index, default=0)
         if number == ann_number:
             indices.append(index)
-    return indices
+    return tuple(indices)
 
 
 def get_context(sent):
