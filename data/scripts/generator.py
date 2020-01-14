@@ -39,7 +39,7 @@ def generate_positive(document, sentences, channels):
 def generate_negative(document, sentences, channels):
     lines = []
     relations = {}
-    relidxs = {}
+    relation_indices = {}
 
     for relation in document.relations():
         if is_ner_relation(relation) and is_in_channel(relation, channels):
@@ -58,18 +58,18 @@ def generate_negative(document, sentences, channels):
 
             # We add the same metadata to all indices in phrase
             for idx_from in element_from.indices:
-                relidxs[(element_from.sent_id, idx_from)] = (
+                relation_indices[(element_from.sent_id, idx_from)] = (
                     element_from.indices, element_from.channel, element_from.ne
                 )
 
             for idx_to in element_to.indices:
-                relidxs[(element_to.sent_id, idx_to)] = (
+                relation_indices[(element_to.sent_id, idx_to)] = (
                     element_to.indices, element_to.channel, element_to.ne
                 )
 
-    for rel, rel_value in relations.items():
-        relation, context_from, context_to = rel_value
-        ((sent_id_from, indices_from), (sent_id_to, indices_to)) = rel
+    for relation, relation_contexts in relations.items():
+        ((sent_id_from, indices_from), (sent_id_to, indices_to)) = relation
+        context_from, context_to = relation_contexts
 
         nouns_indices_from = get_nouns_idx(sentences[sent_id_from])
         nouns_indices_to = get_nouns_idx(sentences[sent_id_to])
@@ -81,7 +81,7 @@ def generate_negative(document, sentences, channels):
 
         for idx_from, idx_to in nouns_indices_pairs:
             try:
-                _f_idxs, _f_channel_name, _f_ne = relidxs[
+                _f_idxs, _f_channel_name, _f_ne = relation_indices[
                     (sent_id_from, idx_from)]
             except KeyError:
                 _f_idxs = None
@@ -90,7 +90,8 @@ def generate_negative(document, sentences, channels):
                 pass
 
             try:
-                _t_idxs, _t_channel_name, _t_ne = relidxs[(sent_id_to, idx_to)]
+                _t_idxs, _t_channel_name, _t_ne = relation_indices[
+                    (sent_id_to, idx_to)]
             except KeyError:
                 _t_idxs = None
                 _t_channel_name = ''
@@ -117,8 +118,8 @@ def generate_negative(document, sentences, channels):
 
             id_domain = get_document_dir(document)
             id_document = get_document_file_name(document)
-            rel = Relation(id_document, element_from, element_to)
+            relation = Relation(id_document, element_from, element_to)
 
-            lines.append(f'no_relation\t{id_domain}\t{rel}')
+            lines.append(f'no_relation\t{id_domain}\t{relation}')
 
     return lines
