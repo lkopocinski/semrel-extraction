@@ -40,7 +40,6 @@ def generate_negative(document, sentences, channels):
     lines = []
 
     relations_list = []
-    # relations = {}
     relation_tokens_indices = {}
 
     id_document = get_document_file_name(document)
@@ -50,62 +49,45 @@ def generate_negative(document, sentences, channels):
             element_from = get_relation_element(relation.rel_from(), sentences)
             element_to = get_relation_element(relation.rel_to(), sentences)
 
+            # We add the same metadata to all indices in phrase
+            map_indices_to_relation(element_from, relation_tokens_indices)
+            map_indices_to_relation(element_to, relation_tokens_indices)
+
             # We consider relation data in both ways
             relations_list.extend([
                 Relation(id_document, element_from, element_to),
                 Relation(id_document, element_to, element_from),
-                ])
-            # relations[(
-            #     (element_from.sent_id, element_from.indices),
-            #     (element_to.sent_id, element_to.indices)
-            # )] = (element_from.context, element_to.context)
-            # relations[(
-            #     (element_to.sent_id, element_to.indices),
-            #     (element_from.sent_id, element_from.indices)
-            # )] = (element_to.context, element_from.context)
+            ])
 
-            # We add the same metadata to all indices in phrase
-            for idx_from in element_from.indices:
-                relation_tokens_indices[(element_from.sent_id, idx_from)] = (
-                    element_from.indices, element_from.channel, element_from.ne
-                )
+    for relation in relations_list:
+        element_from = relation.source
+        element_to = relation.dest
 
-            for idx_to in element_to.indices:
-                relation_tokens_indices[(element_to.sent_id, idx_to)] = (
-                    element_to.indices, element_to.channel, element_to.ne
-                )
-
-    for relation, relation_contexts in relations.items():
-        ((sent_id_from, indices_from), (sent_id_to, indices_to)) = relation
-        context_from, context_to = relation_contexts
-
-        nouns_indices_pairs = get_nouns_indices_pairs(
-            sent_id_from, sent_id_to, sentences)
+        nouns_indices_pairs = get_nouns_indices_pairs(relation, sentences)
 
         for idx_from, idx_to in nouns_indices_pairs:
             _f_idxs, _f_channel_name, _f_ne = relation_tokens_indices.get(
-                (sent_id_from, idx_from), (None, '', False))
+                (element_from.sent_id, idx_from), (None, '', False))
 
             _t_idxs, _t_channel_name, _t_ne = relation_tokens_indices.get(
-                (sent_id_to, idx_to), (None, '', False))
+                (element_to.sent_id, idx_to), (None, '', False))
 
             # If two nouns are part of phrases in relation
-            if _t_idxs \
-                    and _f_idxs \
-                    and ((sent_id_to, _t_idxs), (sent_id_from, _f_idxs)) \
-                    in relations:
-                continue
+            if _t_idxs and _f_idxs:
+                if ((element_to.sent_id, _t_idxs),
+                    (element_from.sent_id, _f_idxs)) in relations_list:
+                    continue
 
-            f_lemma = get_lemma(sentences[sent_id_from], idx_from)
-            t_lemma = get_lemma(sentences[sent_id_to], idx_to)
+            f_lemma = get_lemma(sentences[element_from.sent_id], idx_from)
+            t_lemma = get_lemma(sentences[element_to.sent_id], idx_to)
 
             element_from = Relation.Element(
-                sent_id_from, f_lemma, _f_channel_name,
-                _f_ne, [idx_from], context_from
+                element_from.sent_id, f_lemma, _f_channel_name,
+                _f_ne, [idx_from], element_from.context
             )
             element_to = Relation.Element(
-                sent_id_to, t_lemma, _t_channel_name,
-                _t_ne, [idx_to], context_to
+                element_to.sent_id, t_lemma, _t_channel_name,
+                _t_ne, [idx_to], element_to.context
             )
 
             id_domain = get_document_dir(document)
@@ -117,7 +99,15 @@ def generate_negative(document, sentences, channels):
     return lines
 
 
-def get_nouns_indices_pairs(sent_id_from, sent_id_to, sentences):
+def map_indices_to_relation(element, tokens_indices):
+    for idx_from in element.indices:
+        tokens_indices[(element.sent_id, idx_from)] = element
+
+
+def get_nouns_indices_pairs(relation, sentences):
+    sent_id_from = relation.source.sent_id
+    sent_id_to = relation.dest.sent_id
+
     nouns_indices_from = get_nouns_idx(sentences[sent_id_from])
     nouns_indices_to = get_nouns_idx(sentences[sent_id_to])
 
