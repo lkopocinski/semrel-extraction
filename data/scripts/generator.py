@@ -58,7 +58,7 @@ def generate_negative(document, sentences, channels):
             ])
 
     for element_from, element_to in relations_list:
-        nouns_indices_pairs = get_nouns_indices_pairs(relation, sentences)
+        nouns_indices_pairs = get_nouns_indices_pairs(element_from, element_to, sentences)
 
         for idx_from, idx_to in nouns_indices_pairs:
             _element_from = relation_tokens_indices.get(
@@ -112,9 +112,9 @@ def map_indices_to_relation(element, tokens_indices):
         tokens_indices[(element.sent_id, idx_from)] = element
 
 
-def get_nouns_indices_pairs(relation, sentences):
-    sent_id_from = relation.source.sent_id
-    sent_id_to = relation.dest.sent_id
+def get_nouns_indices_pairs(element_from, element_to, sentences):
+    sent_id_from = element_from.sent_id
+    sent_id_to = element_to.sent_id
 
     nouns_indices_from = get_nouns_idx(sentences[sent_id_from])
     nouns_indices_to = get_nouns_idx(sentences[sent_id_to])
