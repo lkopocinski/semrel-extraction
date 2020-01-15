@@ -88,12 +88,12 @@ def main(input_path, directories, elmo_model,
         vectorizer=vec.RetrofitVectorizer(retrofit_model, fasttext_model)
     )
 
-    corpus_files = corpus_files_paths(input_path, directories)
+    relations_files = relations_file_paths(input_path, directories)
 
     for mapmaker, save_name in [
         (elmo, 'elmo'), (fasttext, 'fasttext'), (retrofit, 'retrofit')
     ]:
-        keys, vectors = mapmaker.make_map(corpus_files)
+        keys, vectors = mapmaker.make_map(relations_files)
 
         save_lines(Path(f'{output_path}/{save_name}.map.keys'), keys)
         save_tensor(Path(f'{output_path}/{save_name}.map.pt'), vectors)
