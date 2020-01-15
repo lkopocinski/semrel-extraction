@@ -42,8 +42,6 @@ def generate_negative(document, sentences, channels):
     relations_list = []
     relation_tokens_indices = {}
 
-    id_document = get_document_file_name(document)
-
     for relation in document.relations():
         if is_ner_relation(relation) and is_in_channel(relation, channels):
             element_from = get_relation_element(relation.rel_from(), sentences)
@@ -55,20 +53,14 @@ def generate_negative(document, sentences, channels):
 
             # We consider relation data in both ways
             relations_list.extend([
-                Relation(id_document, element_from, element_to),
-                Relation(id_document, element_to, element_from),
+                (element_from, element_to),
+                (element_to, element_from),
             ])
 
-    for relation in relations_list:
-        element_from = relation.source
-        element_to = relation.dest
-
+    for element_from, element_to in relations_list:
         nouns_indices_pairs = get_nouns_indices_pairs(relation, sentences)
 
         for idx_from, idx_to in nouns_indices_pairs:
-            # _f_idxs, _f_channel_name, _f_ne = relation_tokens_indices.get(
-            #     (element_from.sent_id, idx_from), (None, '', False))
-
             _element_from = relation_tokens_indices.get(
                 (element_from.sent_id, idx_from), None)
 
@@ -77,20 +69,27 @@ def generate_negative(document, sentences, channels):
 
             # If two nouns are part of phrases in relation
             if _element_from and _element_to:
-                if ((element_to.sent_id, element_to.indices),
-                    (element_from.sent_id, element_from.indices)) in relations_list:
+                if are_in_relation(_element_to, _element_from, relations_list):
                     continue
 
             f_lemma = get_lemma(sentences[element_from.sent_id], idx_from)
             t_lemma = get_lemma(sentences[element_to.sent_id], idx_to)
 
             element_from = Relation.Element(
-                element_from.sent_id, f_lemma, _f_channel_name,
-                _f_ne, [idx_from], element_from.context
+                element_from.sent_id,
+                f_lemma,
+                _element_from.channel if _element_from else '',
+                _element_from.ne if _element_from else False,
+                [idx_from],
+                element_from.context
             )
             element_to = Relation.Element(
-                element_to.sent_id, t_lemma, _t_channel_name,
-                _t_ne, [idx_to], element_to.context
+                element_to.sent_id,
+                t_lemma,
+                _element_to.channel if _element_to else '',
+                _element_from.ne if _element_from else False,
+                [idx_to],
+                element_to.context
             )
 
             id_domain = get_document_dir(document)
@@ -100,6 +99,12 @@ def generate_negative(document, sentences, channels):
             lines.append(f'no_relation\t{id_domain}\t{relation}')
 
     return lines
+
+
+def are_in_relation(element_from, element_to, relations_list):
+    # Must be hashed or data classes like
+    # This is not gonna work unless is set
+    return (element_from, element_to) in relations_list
 
 
 def map_indices_to_relation(element, tokens_indices):
