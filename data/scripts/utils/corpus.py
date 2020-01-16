@@ -10,6 +10,29 @@ from corpus_ccl import token_utils as tou
 from data.scripts.models import Relation
 
 
+class Document:
+
+    def __init__(self, document: corpus2.Document):
+        self._document = document
+        self._id = self._get_document_name()
+
+    @property
+    def id(self):
+        return self._id
+
+    def _get_document_name(self):
+        ccl_path, __ = self._document.path().split(';')
+        return Path(ccl_path).stem.split('.')[0]
+
+    def __hash__(self):
+        return hash(self._id)
+
+    def __eq__(self, other):
+        if isinstance(other, Document):
+            return self._id == other._id
+        return False
+
+
 def documents_gen(corpus_files: List[Path]) -> Generator[
     corpus2.Document, None, None]:
     return (
@@ -23,7 +46,7 @@ def relations_documents_gen(relation_files: Iterator[Path]):
     for rel_path in relation_files:
         ccl_path = Path(str(rel_path).replace('.rel', ''))
         if rel_path.is_file() and ccl_path.is_file():
-            yield ccl.read_ccl_and_rel_ccl(str(ccl_path), str(rel_path))
+            yield Document(ccl.read_ccl_and_rel_ccl(str(ccl_path), str(rel_path)))
 
 
 def id_to_sent_dict(document):

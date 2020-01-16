@@ -1,0 +1,951 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chunkList SYSTEM "ccl.dtd">
+<chunkList>
+ <chunk id="ch1" type="">
+  <sentence id="sent1">
+   <tok>
+    <orth>Myślę</orth>
+    <lex disamb="1"><base>myśleć</base><ctag>fin:sg:pri:imperf</ctag></lex>
+    <lex disamb="1"><base>myślić</base><ctag>fin:sg:pri:imperf</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>,</orth>
+    <lex disamb="1"><base>,</base><ctag>interp</ctag></lex>
+   </tok>
+   <tok>
+    <orth>że</orth>
+    <lex disamb="1"><base>że</base><ctag>comp</ctag></lex>
+   </tok>
+   <tok>
+    <orth>90</orth>
+    <lex disamb="1"><base>90</base><ctag>num:pl:nom:m2:congr</ctag></lex>
+   </tok>
+   <tok>
+    <orth>zł</orth>
+    <lex disamb="1"><base>złoty</base><ctag>brev:npun</ctag></lex>
+   </tok>
+   <tok>
+    <orth>to</orth>
+    <lex disamb="1"><base>to</base><ctag>pred</ctag></lex>
+   </tok>
+   <tok>
+    <orth>strasznie</orth>
+    <lex disamb="1"><base>strasznie</base><ctag>adv:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>wysoka</orth>
+    <lex disamb="1"><base>wysoki</base><ctag>adj:sg:nom:f:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>cena</orth>
+    <lex disamb="1"><base>cena</base><ctag>subst:sg:nom:f</ctag></lex>
+   </tok>
+   <tok>
+    <orth>jak</orth>
+    <lex disamb="1"><base>jak</base><ctag>adv</ctag></lex>
+   </tok>
+   <tok>
+    <orth>za</orth>
+    <lex disamb="1"><base>za</base><ctag>prep:acc</ctag></lex>
+   </tok>
+   <tok>
+    <orth>szampon</orth>
+    <lex disamb="1"><base>szampon</base><ctag>subst:sg:acc:m3</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>.</orth>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+   </tok>
+  </sentence>
+  <sentence id="sent2">
+   <tok>
+    <orth>Jest</orth>
+    <lex disamb="1"><base>być</base><ctag>fin:sg:ter:imperf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>dużo</orth>
+    <lex disamb="1"><base>dużo</base><ctag>num:pl:nom:m3:rec</ctag></lex>
+   </tok>
+   <tok>
+    <orth>kosmetyków</orth>
+    <lex disamb="1"><base>kosmetyk</base><ctag>subst:pl:gen:m3</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>,</orth>
+    <lex disamb="1"><base>,</base><ctag>interp</ctag></lex>
+   </tok>
+   <tok>
+    <orth>które</orth>
+    <lex disamb="1"><base>który</base><ctag>adj:pl:nom:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>są</orth>
+    <lex disamb="1"><base>być</base><ctag>fin:pl:ter:imperf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>tanie</orth>
+    <lex disamb="1"><base>tani</base><ctag>adj:pl:nom:f:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>i</orth>
+    <lex disamb="1"><base>i</base><ctag>conj</ctag></lex>
+   </tok>
+   <tok>
+    <orth>mają</orth>
+    <lex disamb="1"><base>maić</base><ctag>fin:pl:ter:imperf</ctag></lex>
+    <lex disamb="1"><base>mieć</base><ctag>fin:pl:ter:imperf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>proste</orth>
+    <lex disamb="1"><base>prosty</base><ctag>adj:pl:acc:n:pos</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>,</orth>
+    <lex disamb="1"><base>,</base><ctag>interp</ctag></lex>
+   </tok>
+   <tok>
+    <orth>dobre</orth>
+    <lex disamb="1"><base>dobry</base><ctag>adj:pl:acc:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>składy</orth>
+    <lex disamb="1"><base>skład</base><ctag>subst:pl:acc:m3</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>.</orth>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+   </tok>
+  </sentence>
+  <sentence id="sent3">
+   <tok>
+    <orth>Akurat</orth>
+    <lex disamb="1"><base>akurat</base><ctag>qub</ctag></lex>
+   </tok>
+   <tok>
+    <orth>jeśli</orth>
+    <lex disamb="1"><base>jeśli</base><ctag>comp</ctag></lex>
+   </tok>
+   <tok>
+    <orth>chodzi</orth>
+    <lex disamb="1"><base>chodzić</base><ctag>fin:sg:ter:imperf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>o</orth>
+    <lex disamb="1"><base>o</base><ctag>prep:acc</ctag></lex>
+   </tok>
+   <tok>
+    <orth>szampony</orth>
+    <lex disamb="1"><base>szampon</base><ctag>subst:pl:acc:m3</ctag></lex>
+   </tok>
+   <tok>
+    <orth>to</orth>
+    <lex disamb="1"><base>to</base><ctag>pred</ctag></lex>
+   </tok>
+   <tok>
+    <orth>wyższa</orth>
+    <lex disamb="1"><base>wysoki</base><ctag>adj:sg:nom:f:com</ctag></lex>
+   </tok>
+   <tok>
+    <orth>cena</orth>
+    <lex disamb="1"><base>cena</base><ctag>subst:sg:nom:f</ctag></lex>
+   </tok>
+   <tok>
+    <orth>niekoniecznie</orth>
+    <lex disamb="1"><base>niekoniecznie</base><ctag>adv:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>idzie</orth>
+    <lex disamb="1"><base>iść</base><ctag>fin:sg:ter:imperf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>w</orth>
+    <lex disamb="1"><base>w</base><ctag>prep:loc:nwok</ctag></lex>
+   </tok>
+   <tok>
+    <orth>parze</orth>
+    <lex disamb="1"><base>para</base><ctag>subst:sg:loc:f</ctag></lex>
+   </tok>
+   <tok>
+    <orth>z</orth>
+    <lex disamb="1"><base>z</base><ctag>prep:inst:nwok</ctag></lex>
+   </tok>
+   <tok>
+    <orth>jakością</orth>
+    <lex disamb="1"><base>jakość</base><ctag>subst:sg:inst:f</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>.</orth>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+   </tok>
+  </sentence>
+  <sentence id="sent4">
+   <tok>
+    <orth>Nie</orth>
+    <lex disamb="1"><base>nie</base><ctag>qub</ctag></lex>
+   </tok>
+   <tok>
+    <orth>mówię</orth>
+    <lex disamb="1"><base>mówić</base><ctag>fin:sg:pri:imperf</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>,</orth>
+    <lex disamb="1"><base>,</base><ctag>interp</ctag></lex>
+   </tok>
+   <tok>
+    <orth>że</orth>
+    <lex disamb="1"><base>że</base><ctag>comp</ctag></lex>
+   </tok>
+   <tok>
+    <orth>ten</orth>
+    <lex disamb="1"><base>ten</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>szampon</orth>
+    <lex disamb="1"><base>szampon</base><ctag>subst:sg:nom:m3</ctag></lex>
+   </tok>
+   <tok>
+    <orth>jest</orth>
+    <lex disamb="1"><base>być</base><ctag>fin:sg:ter:imperf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>zły</orth>
+    <lex disamb="1"><base>zły</base><ctag>adj:sg:nom:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>bo</orth>
+    <lex disamb="1"><base>bo</base><ctag>comp</ctag></lex>
+   </tok>
+   <tok>
+    <orth>go</orth>
+    <lex disamb="1"><base>on</base><ctag>ppron3:sg:gen:m1:ter:nakc:npraep</ctag></lex>
+   </tok>
+   <tok>
+    <orth>nie</orth>
+    <lex disamb="1"><base>nie</base><ctag>qub</ctag></lex>
+   </tok>
+   <tok>
+    <orth>znam</orth>
+    <lex disamb="1"><base>znać</base><ctag>fin:sg:pri:imperf</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>,</orth>
+    <lex disamb="1"><base>,</base><ctag>interp</ctag></lex>
+   </tok>
+   <tok>
+    <orth>ale</orth>
+    <lex disamb="1"><base>ale</base><ctag>conj</ctag></lex>
+   </tok>
+   <tok>
+    <orth>płacenie</orth>
+    <lex disamb="1"><base>płacić</base><ctag>ger:sg:nom:n:imperf:aff</ctag></lex>
+   </tok>
+   <tok>
+    <orth>9</orth>
+    <lex disamb="1"><base>9</base><ctag>num:pl:gen:f:congr</ctag></lex>
+   </tok>
+   <tok>
+    <orth>dych</orth>
+    <lex disamb="1"><base>dycha</base><ctag>subst:pl:gen:f</ctag></lex>
+   </tok>
+   <tok>
+    <orth>za</orth>
+    <lex disamb="1"><base>za</base><ctag>prep:acc</ctag></lex>
+   </tok>
+   <tok>
+    <orth>szampon</orth>
+    <lex disamb="1"><base>szampon</base><ctag>subst:sg:acc:m3</ctag></lex>
+   </tok>
+   <tok>
+    <orth>to</orth>
+    <lex disamb="1"><base>to</base><ctag>pred</ctag></lex>
+   </tok>
+   <tok>
+    <orth>trochę</orth>
+    <lex disamb="1"><base>trochę</base><ctag>adv</ctag></lex>
+   </tok>
+   <tok>
+    <orth>przesada</orth>
+    <lex disamb="1"><base>przesada</base><ctag>subst:sg:nom:f</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>.</orth>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+   </tok>
+  </sentence>
+  <sentence id="sent5">
+   <tok>
+    <orth>Chyba</orth>
+    <lex disamb="1"><base>chyba</base><ctag>qub</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>,</orth>
+    <lex disamb="1"><base>,</base><ctag>interp</ctag></lex>
+   </tok>
+   <tok>
+    <orth>że</orth>
+    <lex disamb="1"><base>że</base><ctag>comp</ctag></lex>
+   </tok>
+   <tok>
+    <orth>miał</orth>
+    <lex disamb="1"><base>mieć</base><ctag>praet:sg:m3:imperf</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>by</orth>
+    <lex disamb="1"><base>by</base><ctag>qub</ctag></lex>
+   </tok>
+   <tok>
+    <orth>jakieś</orth>
+    <lex disamb="1"><base>jakiś</base><ctag>adj:sg:nom:n:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>naprawdę</orth>
+    <lex disamb="1"><base>naprawdę</base><ctag>qub</ctag></lex>
+   </tok>
+   <tok>
+    <orth>cudowne</orth>
+    <lex disamb="1"><base>cudowny</base><ctag>adj:pl:nom:f:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>właściwości</orth>
+    <lex disamb="1"><base>właściwość</base><ctag>subst:pl:nom:f</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>.</orth>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+   </tok>
+  </sentence>
+  <sentence id="sent6">
+   <tok>
+    <orth>Jeśli</orth>
+    <lex disamb="1"><base>jeśli</base><ctag>comp</ctag></lex>
+   </tok>
+   <tok>
+    <orth>szukasz</orth>
+    <lex disamb="1"><base>szukać</base><ctag>fin:sg:sec:imperf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>delikatnych</orth>
+    <lex disamb="1"><base>delikatny</base><ctag>adj:pl:gen:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>szamponów</orth>
+    <lex disamb="1"><base>szampon</base><ctag>subst:pl:gen:m3</ctag></lex>
+   </tok>
+   <tok>
+    <orth>to</orth>
+    <lex disamb="1"><base>to</base><ctag>conj</ctag></lex>
+   </tok>
+   <tok>
+    <orth>patrz</orth>
+    <lex disamb="1"><base>patrzeć</base><ctag>impt:sg:sec:imperf</ctag></lex>
+    <lex disamb="1"><base>patrzyć</base><ctag>impt:sg:sec:imperf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>za</orth>
+    <lex disamb="1"><base>za</base><ctag>prep:inst</ctag></lex>
+   </tok>
+   <tok>
+    <orth>takimi</orth>
+    <lex disamb="1"><base>taki</base><ctag>adj:pl:inst:f:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>bez</orth>
+    <lex disamb="1"><base>bez</base><ctag>prep:gen:nwok</ctag></lex>
+   </tok>
+   <tok>
+    <orth>sls</orth>
+    <lex disamb="1"><base>sls</base><ctag>subst:sg:gen:n</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>/</orth>
+    <lex disamb="1"><base>/</base><ctag>interp</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>sles</orth>
+    <lex disamb="1"><base>sles</base><ctag>subst:sg:nom:m3</ctag></lex>
+   </tok>
+   <tok>
+    <orth>w</orth>
+    <lex disamb="1"><base>w</base><ctag>prep:loc:nwok</ctag></lex>
+   </tok>
+   <tok>
+    <orth>składzie</orth>
+    <lex disamb="1"><base>skład</base><ctag>subst:sg:loc:m3</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>,</orth>
+    <lex disamb="1"><base>,</base><ctag>interp</ctag></lex>
+   </tok>
+   <tok>
+    <orth>chyba</orth>
+    <lex disamb="1"><base>chyba</base><ctag>qub</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>,</orth>
+    <lex disamb="1"><base>,</base><ctag>interp</ctag></lex>
+   </tok>
+   <tok>
+    <orth>że</orth>
+    <lex disamb="1"><base>że</base><ctag>comp</ctag></lex>
+   </tok>
+   <tok>
+    <orth>za</orth>
+    <lex disamb="1"><base>za</base><ctag>qub</ctag></lex>
+   </tok>
+   <tok>
+    <orth>słabo</orth>
+    <lex disamb="1"><base>słabo</base><ctag>adv:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>oczyszczają</orth>
+    <lex disamb="1"><base>oczyszczać</base><ctag>fin:pl:ter:imperf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>twoje</orth>
+    <lex disamb="1"><base>twój</base><ctag>adj:pl:nom:m3:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>włosy</orth>
+    <lex disamb="1"><base>włos</base><ctag>subst:pl:nom:m3</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>.</orth>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+   </tok>
+  </sentence>
+  <sentence id="sent7">
+   <tok>
+    <orth>Zobacz</orth>
+    <lex disamb="1"><base>zobaczyć</base><ctag>impt:sg:sec:perf</ctag></lex>
+    <ann chan="PT_FUNCTION">0</ann>
+    <ann chan="PT_GROUP">0</ann>
+   </tok>
+   <tok>
+    <orth>szampony</orth>
+    <lex disamb="1"><base>szampon</base><ctag>subst:pl:acc:m3</ctag></lex>
+    <ann chan="PT_FUNCTION">0</ann>
+    <ann chan="PT_GROUP">0</ann>
+   </tok>
+   <tok>
+    <orth>i</orth>
+    <lex disamb="1"><base>i</base><ctag>conj</ctag></lex>
+    <ann chan="PT_FUNCTION">0</ann>
+    <ann chan="PT_GROUP">0</ann>
+   </tok>
+   <tok>
+    <orth>żele</orth>
+    <lex disamb="1"><base>żele</base><ctag>subst:pl:acc:n</ctag></lex>
+    <ann chan="PT_FUNCTION">0</ann>
+    <ann chan="PT_GROUP">0</ann>
+   </tok>
+   <tok>
+    <orth>do</orth>
+    <lex disamb="1"><base>do</base><ctag>prep:gen</ctag></lex>
+    <ann chan="PT_FUNCTION">1009391</ann>
+    <ann chan="PT_GROUP">0</ann>
+   </tok>
+   <tok>
+    <orth>mycia</orth>
+    <lex disamb="1"><base>myć</base><ctag>ger:sg:gen:n:imperf:aff</ctag></lex>
+    <ann chan="PT_FUNCTION">1009391</ann>
+    <ann chan="PT_GROUP">0</ann>
+   </tok>
+   <tok>
+    <orth>dla</orth>
+    <lex disamb="1"><base>dla</base><ctag>prep:gen</ctag></lex>
+    <ann chan="PT_FUNCTION">0</ann>
+    <ann chan="PT_GROUP">1009390</ann>
+    <prop key="PT_GROUP:lemma"></prop>
+   </tok>
+   <tok>
+    <orth>dzieci</orth>
+    <lex disamb="1"><base>dziecko</base><ctag>subst:pl:gen:n</ctag></lex>
+    <ann chan="PT_FUNCTION">0</ann>
+    <ann chan="PT_GROUP">1009390</ann>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>,</orth>
+    <lex disamb="1"><base>,</base><ctag>interp</ctag></lex>
+    <ann chan="PT_FUNCTION">0</ann>
+    <ann chan="PT_GROUP">0</ann>
+   </tok>
+   <tok>
+    <orth>one</orth>
+    <lex disamb="1"><base>on</base><ctag>ppron3:pl:nom:n:ter:akc:npraep</ctag></lex>
+    <ann chan="PT_FUNCTION">0</ann>
+    <ann chan="PT_GROUP">0</ann>
+   </tok>
+   <tok>
+    <orth>zwykle</orth>
+    <lex disamb="1"><base>zwykle</base><ctag>adv:pos</ctag></lex>
+    <ann chan="PT_FUNCTION">0</ann>
+    <ann chan="PT_GROUP">0</ann>
+   </tok>
+   <tok>
+    <orth>mają</orth>
+    <lex disamb="1"><base>maić</base><ctag>fin:pl:ter:imperf</ctag></lex>
+    <lex disamb="1"><base>mieć</base><ctag>fin:pl:ter:imperf</ctag></lex>
+    <ann chan="PT_FUNCTION">0</ann>
+    <ann chan="PT_GROUP">0</ann>
+   </tok>
+   <tok>
+    <orth>delikatne</orth>
+    <lex disamb="1"><base>delikatny</base><ctag>adj:pl:acc:m3:pos</ctag></lex>
+    <ann chan="PT_FUNCTION">0</ann>
+    <ann chan="PT_GROUP">0</ann>
+   </tok>
+   <tok>
+    <orth>i</orth>
+    <lex disamb="1"><base>i</base><ctag>conj</ctag></lex>
+    <ann chan="PT_FUNCTION">0</ann>
+    <ann chan="PT_GROUP">0</ann>
+   </tok>
+   <tok>
+    <orth>przyjemne</orth>
+    <lex disamb="1"><base>przyjemny</base><ctag>adj:pl:acc:m3:pos</ctag></lex>
+    <ann chan="PT_FUNCTION">0</ann>
+    <ann chan="PT_GROUP">0</ann>
+   </tok>
+   <tok>
+    <orth>składy</orth>
+    <lex disamb="1"><base>skład</base><ctag>subst:pl:acc:m3</ctag></lex>
+    <ann chan="PT_FUNCTION">0</ann>
+    <ann chan="PT_GROUP">0</ann>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>.</orth>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+    <ann chan="PT_FUNCTION">0</ann>
+    <ann chan="PT_GROUP">0</ann>
+   </tok>
+  </sentence>
+  <sentence id="sent8">
+   <tok>
+    <orth>Ja</orth>
+    <lex disamb="1"><base>ja</base><ctag>ppron12:sg:nom:m1:pri</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>lubię</orth>
+    <lex disamb="1"><base>lubić</base><ctag>fin:sg:pri:imperf</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>szampon</orth>
+    <lex disamb="1"><base>szampon</base><ctag>subst:sg:acc:m3</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>Isana</orth>
+    <lex disamb="1"><base>isana</base><ctag>subst:sg:acc:m1</ctag></lex>
+    <ann chan="BRAND_NAME">994201</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+    <prop key="BRAND_NAME:lemma">Isana</prop>
+    <prop key="BRAND_NAME:Forma podstawowa">Isana</prop>
+   </tok>
+   <tok>
+    <orth>Med</orth>
+    <lex disamb="1"><base>med</base><ctag>subst:sg:acc:m1</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">1008479</ann>
+    <ann chan="PT_CONTENT">0</ann>
+    <prop key="PRODUCT_NAME:lemma">Med</prop>
+    <prop key="PRODUCT_NAME:Forma podstawowa">Med</prop>
+   </tok>
+   <tok>
+    <orth>z</orth>
+    <lex disamb="1"><base>z</base><ctag>prep:inst:nwok</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">1009395</ann>
+   </tok>
+   <tok>
+    <orth>mocznikiem</orth>
+    <lex disamb="1"><base>mocznik</base><ctag>subst:sg:inst:m3</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">1009395</ann>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>,</orth>
+    <lex disamb="1"><base>,</base><ctag>interp</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>ma</orth>
+    <lex disamb="1"><base>mieć</base><ctag>fin:sg:ter:imperf</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">1010626</ann>
+   </tok>
+   <tok>
+    <orth>sles</orth>
+    <lex disamb="1"><base>sles</base><ctag>subst:sg:acc:m3</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">1010626</ann>
+   </tok>
+   <tok>
+    <orth>w</orth>
+    <lex disamb="1"><base>w</base><ctag>prep:loc:nwok</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>składzie</orth>
+    <lex disamb="1"><base>skład</base><ctag>subst:sg:loc:m3</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>,</orth>
+    <lex disamb="1"><base>,</base><ctag>interp</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>ale</orth>
+    <lex disamb="1"><base>ale</base><ctag>conj</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>ma</orth>
+    <lex disamb="1"><base>mieć</base><ctag>fin:sg:ter:imperf</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>też</orth>
+    <lex disamb="1"><base>też</base><ctag>qub</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>wysoko</orth>
+    <lex disamb="1"><base>wysoko</base><ctag>adv:pos</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>mocznik</orth>
+    <lex disamb="1"><base>mocznik</base><ctag>subst:sg:nom:m3</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">1026302</ann>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>,</orth>
+    <lex disamb="1"><base>,</base><ctag>interp</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>więc</orth>
+    <lex disamb="1"><base>więc</base><ctag>conj</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>nie</orth>
+    <lex disamb="1"><base>nie</base><ctag>qub</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>wysusza</orth>
+    <lex disamb="1"><base>wysuszać</base><ctag>fin:sg:ter:imperf</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>skóry</orth>
+    <lex disamb="1"><base>skóra</base><ctag>subst:sg:gen:f</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>głowy</orth>
+    <lex disamb="1"><base>głowa</base><ctag>subst:sg:gen:f</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>(</orth>
+    <lex disamb="1"><base>(</base><ctag>interp</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>a</orth>
+    <lex disamb="1"><base>a</base><ctag>conj</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>dobrze</orth>
+    <lex disamb="1"><base>dobrze</base><ctag>adv:pos</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <tok>
+    <orth>oczyszcza</orth>
+    <lex disamb="1"><base>oczyszczać</base><ctag>fin:sg:ter:imperf</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>)</orth>
+    <lex disamb="1"><base>)</base><ctag>interp</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>.</orth>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME">0</ann>
+    <ann chan="PT_CONTENT">0</ann>
+   </tok>
+  </sentence>
+  <sentence id="sent9">
+   <tok>
+    <orth>Szampon</orth>
+    <lex disamb="1"><base>szampon</base><ctag>subst:sg:nom:m3</ctag></lex>
+    <ann chan="LOCATION_IMP">0</ann>
+    <ann chan="BRAND_NAME">0</ann>
+   </tok>
+   <tok>
+    <orth>dostaniesz</orth>
+    <lex disamb="1"><base>dostać</base><ctag>fin:sg:sec:perf</ctag></lex>
+    <ann chan="LOCATION_IMP">0</ann>
+    <ann chan="BRAND_NAME">0</ann>
+   </tok>
+   <tok>
+    <orth>w</orth>
+    <lex disamb="1"><base>w</base><ctag>prep:loc:nwok</ctag></lex>
+    <ann chan="LOCATION_IMP">1009566</ann>
+    <ann chan="BRAND_NAME">0</ann>
+    <prop key="LOCATION_IMP:lemma">Rossmann</prop>
+   </tok>
+   <tok>
+    <orth>Rossmannie</orth>
+    <lex disamb="1"><base>rossmannie</base><ctag>subst:sg:loc:f</ctag></lex>
+    <ann chan="LOCATION_IMP">1009566</ann>
+    <ann chan="BRAND_NAME">1009554</ann>
+    <prop key="BRAND_NAME:lemma">Rossmann</prop>
+    <prop key="LOCATION_IMP:lemma">Rossmann</prop>
+    <prop key="BRAND_NAME:Forma podstawowa">Rossmann</prop>
+    <prop key="LOCATION_IMP:Wartosc">Rossmann</prop>
+   </tok>
+   <tok>
+    <orth>za</orth>
+    <lex disamb="1"><base>za</base><ctag>prep:acc</ctag></lex>
+    <ann chan="LOCATION_IMP">0</ann>
+    <ann chan="BRAND_NAME">0</ann>
+   </tok>
+   <tok>
+    <orth>jakieś</orth>
+    <lex disamb="1"><base>jakiś</base><ctag>adj:pl:acc:f:pos</ctag></lex>
+    <ann chan="LOCATION_IMP">0</ann>
+    <ann chan="BRAND_NAME">0</ann>
+   </tok>
+   <tok>
+    <orth>4</orth>
+    <lex disamb="1"><base>4</base><ctag>num:pl:acc:m2:congr</ctag></lex>
+    <ann chan="LOCATION_IMP">0</ann>
+    <ann chan="BRAND_NAME">0</ann>
+   </tok>
+   <tok>
+    <orth>zł</orth>
+    <lex disamb="1"><base>złoty</base><ctag>brev:npun</ctag></lex>
+    <ann chan="LOCATION_IMP">0</ann>
+    <ann chan="BRAND_NAME">0</ann>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>.</orth>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+    <ann chan="LOCATION_IMP">0</ann>
+    <ann chan="BRAND_NAME">0</ann>
+   </tok>
+  </sentence>
+  <sentence id="sent10">
+   <tok>
+    <orth>Head</orth>
+    <lex disamb="1"><base>head</base><ctag>subst:sg:nom:m2</ctag></lex>
+    <ann chan="BRAND_NAME">994202</ann>
+    <ann chan="PRODUCT_NAME_IMP">1009405</ann>
+    <prop key="BRAND_NAME:lemma"></prop>
+    <prop key="PRODUCT_NAME_IMP:lemma">Head&amp;Shoulders</prop>
+    <prop key="PRODUCT_NAME_IMP:Wartosc">Head &amp; Shoulders</prop>
+    <prop key="BRAND_NAME:Forma podstawowa">Head &amp; Shoulders</prop>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>&amp;</orth>
+    <lex disamb="1"><base>&amp;</base><ctag>interp</ctag></lex>
+    <ann chan="BRAND_NAME">994202</ann>
+    <ann chan="PRODUCT_NAME_IMP">1009405</ann>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>Shoulders</orth>
+    <lex disamb="1"><base>shoulders</base><ctag>subst:sg:nom:m3</ctag></lex>
+    <ann chan="BRAND_NAME">994202</ann>
+    <ann chan="PRODUCT_NAME_IMP">1009405</ann>
+   </tok>
+   <tok>
+    <orth>to</orth>
+    <lex disamb="1"><base>to</base><ctag>pred</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME_IMP">0</ann>
+   </tok>
+   <tok>
+    <orth>straszne</orth>
+    <lex disamb="1"><base>straszny</base><ctag>adj:pl:nom:m3:pos</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME_IMP">0</ann>
+   </tok>
+   <tok>
+    <orth>rypacze</orth>
+    <lex disamb="1"><base>rypacze</base><ctag>subst:pl:nom:m3</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME_IMP">0</ann>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>,</orth>
+    <lex disamb="1"><base>,</base><ctag>interp</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME_IMP">0</ann>
+   </tok>
+   <tok>
+    <orth>przesuszają</orth>
+    <lex disamb="1"><base>przesuszać</base><ctag>fin:pl:ter:imperf</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME_IMP">0</ann>
+   </tok>
+   <tok>
+    <orth>włosy</orth>
+    <lex disamb="1"><base>włos</base><ctag>subst:pl:acc:m3</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME_IMP">0</ann>
+   </tok>
+   <tok>
+    <orth>i</orth>
+    <lex disamb="1"><base>i</base><ctag>conj</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME_IMP">0</ann>
+   </tok>
+   <tok>
+    <orth>skórę</orth>
+    <lex disamb="1"><base>skóra</base><ctag>subst:sg:acc:f</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME_IMP">0</ann>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>.</orth>
+    <lex disamb="1"><base>.</base><ctag>interp</ctag></lex>
+    <ann chan="BRAND_NAME">0</ann>
+    <ann chan="PRODUCT_NAME_IMP">0</ann>
+   </tok>
+  </sentence>
+  <sentence id="sent11">
+   <tok>
+    <orth>Jak</orth>
+    <lex disamb="1"><base>jak</base><ctag>adv</ctag></lex>
+   </tok>
+   <tok>
+    <orth>masz</orth>
+    <lex disamb="1"><base>mieć</base><ctag>fin:sg:sec:imperf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>delikatną</orth>
+    <lex disamb="1"><base>delikatny</base><ctag>adj:sg:acc:f:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>skórę</orth>
+    <lex disamb="1"><base>skóra</base><ctag>subst:sg:acc:f</ctag></lex>
+   </tok>
+   <tok>
+    <orth>to</orth>
+    <lex disamb="1"><base>to</base><ctag>conj</ctag></lex>
+   </tok>
+   <tok>
+    <orth>zdecydowanie</orth>
+    <lex disamb="1"><base>zdecydowanie</base><ctag>adv:pos</ctag></lex>
+   </tok>
+   <tok>
+    <orth>odradzam</orth>
+    <lex disamb="1"><base>odradzać</base><ctag>fin:sg:pri:imperf</ctag></lex>
+   </tok>
+   <tok>
+    <orth>:</orth>
+    <lex disamb="1"><base>:</base><ctag>interp</ctag></lex>
+   </tok>
+   <ns/>
+   <tok>
+    <orth>p</orth>
+    <lex disamb="1"><base>P</base><ctag>brev:pun</ctag></lex>
+    <lex disamb="1"><base>pan</base><ctag>brev:pun</ctag></lex>
+    <lex disamb="1"><base>pani</base><ctag>brev:pun</ctag></lex>
+    <lex disamb="1"><base>patrz</base><ctag>brev:pun</ctag></lex>
+    <lex disamb="1"><base>piętro</base><ctag>brev:pun</ctag></lex>
+   </tok>
+  </sentence>
+ </chunk>
+</chunkList>

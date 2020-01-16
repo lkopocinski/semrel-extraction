@@ -36,6 +36,10 @@ def generate_positive(document, sentences, channels):
     return lines
 
 
+def generate_negative2(relation_files: Iterator[Path]):
+    pass
+
+
 def generate_negative(document, sentences, channels):
     lines = []
 
