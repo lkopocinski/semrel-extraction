@@ -77,7 +77,15 @@ RUN ["chmod", "+x", "/etc/cron.hourly/clean.sh"]
 # TODO:
 COPY ./credentials /root/.aws/credentials
 
-RUN dvc pull elmo.dvc
-RUN dvc pull fasttext.dvc
+RUN dvc get https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction --rev lkopocinski-refactoring /data/elmo
+RUN dvc get https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction --rev lkopocinski-refactoring /data/fasttext
+
+ENV PREDICTION_MODEL_PATH="/model.pt"
+ENV ELMO_MODEL_PATH="/data/elmo"
+ENV FASTTEXT_MODEL_PATH="/data/fasttext"
+
+
+# Download repository and install it
+
 
 ENTRYPOINT ["/predict.sh", "~/115.files"]
