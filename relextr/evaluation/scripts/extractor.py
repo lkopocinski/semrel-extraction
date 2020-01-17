@@ -9,9 +9,9 @@ from corpus_ccl import token_utils as tou
 
 class Parser(object):
 
-    def __init__(self):
+    def __init__(self, extractor):
         self._slicer = SentenceWindow(window_size=3)
-        self._extractor = NounExtractor()
+        self._extractor = extractor
 
     def __call__(self, document):
         for context in self._slicer.contextify(document):
@@ -49,6 +49,9 @@ class ExtractorType(object):
     def is_noun(self, token):
         return cou.get_coarse_pos(token, self._tagset) == 'noun'
 
+    def is_ne(self, index, token, sentence):
+        return tou.get_annotation(sentence, token, 'NE', index, default=0)
+
     def extract(self, context, attr='default'):
         analysed = self.find_attribute_tokens(context, attr)
         to_match = self._extract(context)
@@ -69,6 +72,21 @@ class NounExtractor(ExtractorType):
         for sentence in context:
             for ind, token in enumerate(sentence.tokens()):
                 if self.is_noun(token):
+                    ctx = [t.orth_utf8() for t in sentence.tokens()]
+                    matched.append((ind, ctx))
+        return matched
+
+
+class NEExtractor(ExtractorType):
+
+    def __init__(self, name='NEExtractor'):
+        super(NEExtractor, self).__init__(name)
+
+    def _extract(self, context):
+        matched = []
+        for sentence in context:
+            for ind, token in enumerate(sentence.tokens()):
+                if self.is_ne(ind, token, sentence):
                     ctx = [t.orth_utf8() for t in sentence.tokens()]
                     matched.append((ind, ctx))
         return matched
