@@ -54,7 +54,7 @@ def load_model(model_path, vector_size=2648):
     return net
 
 
-def documents(fileindex):
+def documents(fileindex: str):
     with open(fileindex, 'r', encoding='utf-8') as f:
         paths = [line.strip() for line in f if os.path.exists(line.strip())]
     return (cclutils.read_ccl(path) for path in paths)
