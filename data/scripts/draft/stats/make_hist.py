@@ -38,8 +38,8 @@ class Relation:
     def __str__(self):
         return f'{self.source.lemma} : {self.dest.lemma}' \
                f'\t{self.source.channel} : {self.dest.channel}' \
-               f'\t{self.source.start_idx}:{self.source.context}' \
-               f'\t{self.dest.start_idx}:{self.dest.context}' \
+               f'\t{self.source.start_idx}:{self.source.orths}' \
+               f'\t{self.dest.start_idx}:{self.dest.orths}' \
                f'\t{self.source.ne}:{self.dest.ne}'
 
     class Element:
@@ -82,7 +82,7 @@ def distance_hist():
             with file_path.open('r', encoding='utf-8') as f:
                 for line in f:
                     rel = Relation.from_line(line)
-                    if rel.source.context == rel.dest.context:
+                    if rel.source.orths == rel.dest.orths:
                         if rel.dest.start_idx > rel.source.start_idx:
                             dist = rel.dest.start_idx - (rel.source.start_idx + (len(rel.source.indices) - 1))
                         else:
@@ -112,7 +112,7 @@ def distance_hist(list_file, channels, nr):
 
                     if f_element and t_element:
                         rel = Relation(f_element, t_element)
-                        if rel.source.context == rel.dest.context:
+                        if rel.source.orths == rel.dest.orths:
                             if rel.dest.start_idx > rel.source.start_idx:
                                 shift = (len(rel.source.indices) - 1) if len(rel.source.indices) > 1 else 0
                                 dist = rel.dest.start_idx - (rel.source.start_idx + shift)
@@ -200,16 +200,16 @@ def appear_in_text(list_file, channels, nr):
                                     continue
                                 else:
                                     for idx in f_element.indices:
-                                        if f_element.context[idx] == orth:
-                                            brand_dict[f_element.context[idx]] += 1
+                                        if f_element.orths[idx] == orth:
+                                            brand_dict[f_element.orths[idx]] += 1
                         elif t_element.channel == "PRODUCT_NAME":
                             for sent_id, idx, orth in token_orths:
                                 if t.sentence_id() == sent_id and idx in t_element.indices:
                                     continue
                                 else:
                                     for idx in t_element.indices:
-                                        if t_element.context[idx] == orth:
-                                            brand_dict[t_element.context[idx]] += 1
+                                        if t_element.orths[idx] == orth:
+                                            brand_dict[t_element.orths[idx]] += 1
 
         brands = set(brand_dict.keys())
         size = len(brands)

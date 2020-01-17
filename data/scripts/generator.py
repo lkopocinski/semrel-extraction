@@ -8,7 +8,19 @@ from data.scripts.models import Relation
 from data.scripts.utils.corpus import id_to_sent_dict, is_ner_relation, \
     is_in_channel, get_relation_element, get_nouns_idx, \
     get_lemma, relations_documents_gen, get_document_dir, \
-    get_document_file_name
+    get_document_file_name, Document
+
+
+class RelationsGenerator:
+
+    def __init__(self, document: Document):
+        self._document = document
+
+    def generate_negative(self, channels: tuple):
+        for relation in self._document.relations:
+            if relation.is_ner() and relation.channels in (('BRAND_NAME', 'PRODUCT_NAME'), ('PRODUCT_NAME', 'BRAND_NAME')):
+
+
 
 
 def generate(relation_files: Iterator[Path],
@@ -18,6 +30,7 @@ def generate(relation_files: Iterator[Path],
 
         # yield generate_positive(document, sentences, channels)
         yield generate_negative(document, sentences, channels)
+
 
 
 def generate_positive(document, sentences, channels):
@@ -35,9 +48,6 @@ def generate_positive(document, sentences, channels):
                 lines.append(f'in_relation\t{id_domain}\t{rel}')
     return lines
 
-
-def generate_negative2(relation_files: Iterator[Path]):
-    pass
 
 
 def generate_negative(document, sentences, channels):
