@@ -5,7 +5,8 @@ from typing import List, Iterator
 
 import click
 
-from data.scripts.generator import generate
+from corpus import relations_documents_gen
+from data.scripts.generator import RelationsGenerator
 from data.scripts.utils.io import save_lines
 
 
@@ -27,8 +28,16 @@ def main(input_path, directories, output_path):
     relations_files = relations_file_paths(input_path, directories)
     out_path = Path(output_path)
 
-    lines = chain.from_iterable(generate(relations_files))
-    save_lines(out_path, lines, mode='a')
+    for document in relations_documents_gen(relations_files):
+        relations_generator = RelationsGenerator(document)
+
+        positives = relations_generator.generate_positive()
+        positives_lines = [f'in_relation\t{document.directory}\t{relation}' for relation in positives]
+
+        negatives = relations_generator.generate_negative()
+        negatives_lines = [f'no_relation\t{document.directory}\t{relation}' for relation in negatives]
+
+        save_lines(out_path, positives_lines + negatives_lines, mode='a')
 
 
 if __name__ == "__main__":
