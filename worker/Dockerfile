@@ -21,12 +21,13 @@ ENV LANG='pl_PL.UTF-8'
 ENV LANGUAGE='pl_PL:pl'
 ENV LC_ALL='pl_PL.UTF-8'
 
+
 # install python and pip
 RUN apt update && apt install -y software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa
 
 RUN apt -y update && \
-    apt install -y python3.6 && \
+    apt install -y python3.6 python3.6-dev python3.6-venv && \
     update-alternatives --install \
     /usr/bin/python python /usr/bin/python3.6 10 && \
     wget https://bootstrap.pypa.io/get-pip.py && \
@@ -34,8 +35,10 @@ RUN apt -y update && \
     rm get-pip.py && \
     pip install --upgrade pip
 
+ENV PIP_EXTRA_INDEX_URL "https://pypi.clarin-pl.eu/"
 COPY ./requirements.txt /
 RUN pip install -r /requirements.txt
+
 
 # install corpus2
 RUN apt -y update && \
@@ -66,9 +69,6 @@ RUN mkdir /home/work
 RUN mkdir /home/work/models
 RUN mkdir /home/work/nlpworkers
 
-# cleaning
-ADD clean.sh /etc/cron.hourly/clean.sh
-RUN ["chmod", "+x", "/etc/cron.hourly/clean.sh"]
 
 # download artifacts
 COPY ./credentials /root/.aws/credentials
