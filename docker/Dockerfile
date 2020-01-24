@@ -1,5 +1,5 @@
 FROM nvidia/cuda:10.0-runtime-ubuntu16.04
-LABEL maintainer "Łukasz Kopocinski <lkopocinski@gmail.com>"
+LABEL maintainer="Łukasz Kopocinski <lkopocinski@gmail.com>"
 
 RUN apt update && apt install -y software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa
