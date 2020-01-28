@@ -219,6 +219,12 @@ def documents_gen(corpus_files: Iterator[Path]) -> Iterator[Document]:
     )
 
 
+def sentences_documents_gen(corpus_files: Iterator[Path]):
+    return ((sentence, document)
+            for document in documents_gen(corpus_files)
+            for sentence in document.sentences)
+
+
 def relations_documents_gen(relation_files: Iterator[Path]) -> Iterator[Document]:
     for rel_path in relation_files:
         ccl_path = Path(str(rel_path).replace('.rel', ''))

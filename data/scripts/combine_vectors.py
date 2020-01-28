@@ -77,14 +77,14 @@ def make_relations_tensors(relations_path: Path, keys, vectors):
               metavar='retrofit.map.pt retrofit.map.keys',
               help="Retrofit vectors and keys files.")
 def main(data_in, output_path, elmo_map, fasttext_map, retrofit_map):
-    keys_elmo, vectors_elmo = load_map(*elmo_map)
-    keys_fasttext, vectors_fasttext = load_map(*fasttext_map)
-    keys_retrofit, vectors_retrofit = load_map(*retrofit_map)
-
+    maps_dict = {
+        'elmo': load_map(*elmo_map),
+        'fasttext': load_map(*fasttext_map),
+        'retrofit': load_map(*retrofit_map)
+    }
     relations_path = Path(data_in)
-    for keys, vectors, name in [(keys_elmo, vectors_elmo, 'elmo'),
-                                (keys_fasttext, vectors_retrofit, 'fasttext'),
-                                (keys_retrofit, vectors_fasttext, 'retrofit')]:
+
+    for name, (keys, vectors) in maps_dict.items():
         keys, vectors = make_relations_tensors(relations_path, keys, vectors)
         vec1, vec2 = zip(*vectors)
         vec1, vec2 = torch.cat(vec1), torch.cat(vec2)

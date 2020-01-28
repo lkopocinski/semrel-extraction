@@ -7,7 +7,7 @@ import click
 import torch
 
 import data.scripts.utils.vectorizers as vec
-from data.scripts.utils.corpus import DocSentence, Document, documents_gen
+from data.scripts.utils.corpus import DocSentence, Document, sentences_documents_gen
 from data.scripts.utils.io import save_lines, save_tensor
 
 
@@ -35,16 +35,10 @@ class MapMaker:
         return keys, vectors
 
     def make_map(self, corpus_files: Iterator[Path]) -> [List[tuple], torch.Tensor]:
-        sentences_documents = (
-            (sentence, document)
-            for document in documents_gen(corpus_files)
-            for sentence in document.sentences
-        )
-
         keys = []
         vectors = []
 
-        for sentence, document in sentences_documents:
+        for sentence, document in sentences_documents_gen(corpus_files):
             _keys, _vectors = self._make_sentence_map(sentence, document)
             keys.extend(_keys)
             vectors.extend(_vectors)
