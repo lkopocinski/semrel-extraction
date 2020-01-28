@@ -20,6 +20,3 @@ ${SCRIPTS_DIR}/combine_vectors.py --data-in "${DATA_IN}/relations." \
                                  --retrofit-map "${MAPS_DIR}/retrofit.map.pt"
 
 popd
-
-#${SCRIPTS_DIR}/draft/vectors_map_sent2vec.py --relations-file ${DATA_IN}/relations.112.114.115.context \
-#  --sent2vec "./data/sent2vec/kgr10.bin"

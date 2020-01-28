@@ -2,7 +2,7 @@
 
 from itertools import permutations, product
 
-from data.scripts.utils.corpus import get_nouns_idx, Document, Relation, Element
+from data.scripts.utils.corpus import Document, Element
 
 
 class RelationsGenerator:
@@ -76,8 +76,8 @@ class RelationsGenerator:
         sent_id_from = member_from.sent_id
         sent_id_to = member_to.sent_id
 
-        nouns_indices_from = get_nouns_idx(self._document._sentence_dict[sent_id_from])
-        nouns_indices_to = get_nouns_idx(self._document._sentence_dict[sent_id_to])
+        nouns_indices_from = self._document._sentence_dict[sent_id_from].noun_indices
+        nouns_indices_to = self._document._sentence_dict[sent_id_to].noun_indices
 
         if sent_id_from == sent_id_to:
             nouns_indices_pairs = permutations(nouns_indices_from, 2)
