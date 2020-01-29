@@ -2,10 +2,10 @@ from typing import NamedTuple, List
 
 
 class Element(NamedTuple):
-    sent_id: str
+    id_sent: str
     lemma: str
     channel: str
-    ne: bool
+    is_named_entity: bool
     indices: tuple
     context: List[str]
 
@@ -14,13 +14,13 @@ class Element(NamedTuple):
         return self.indices[0]
 
     def __str__(self):
-        return f'{self.sent_id}\t{self.lemma}\t{self.channel}\t{self.ne}\t{self.indices}\t{self.context}'
+        return f'{self.id_sent}\t{self.lemma}\t{self.channel}\t{self.is_named_entity}\t{self.indices}\t{self.context}'
 
 
 class Relation(NamedTuple):
-    document_id: str
+    id_document: str
     member_from: Element
     member_to: Element
 
     def __str__(self):
-        return f'{self.document_id}\t{self.member_from}\t{self.member_to}'
+        return f'{self.id_document}\t{self.member_from}\t{self.member_to}'
