@@ -1,5 +1,4 @@
 #!/usr/bin/env python3.6
-from itertools import chain
 from pathlib import Path
 from typing import List, Iterator
 
@@ -7,7 +6,7 @@ import click
 import torch
 
 import data.scripts.utils.vectorizers as vec
-from data.scripts.utils.corpus import DocSentence, Document, sentences_documents_gen
+from data.scripts.utils.corpus import DocSentence, Document, sentences_documents_gen, relations_file_paths
 from data.scripts.utils.io import save_lines, save_tensor
 
 
@@ -26,7 +25,7 @@ class MapMaker:
 
         for idx, orth in enumerate(sentence.orths):
             id_token = str(idx)
-            key = (id_domain, id_document, id_sentence, id_token, orth)
+            key = (id_domain, id_document, id_sentence, id_token)
             vector = self._vectorizer.embed(sentence.orths)
 
             keys.append(key)
@@ -44,13 +43,6 @@ class MapMaker:
             vectors.extend(_vectors)
 
         return keys, torch.cat(vectors)
-
-
-def relations_file_paths(input_path: str, directories: List) -> Iterator[Path]:
-    return chain.from_iterable(
-        dir_path.glob('*.rel.xml')
-        for dir_path in Path(input_path).iterdir()
-        if dir_path.stem in directories)
 
 
 @click.command()
