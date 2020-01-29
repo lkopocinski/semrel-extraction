@@ -14,17 +14,29 @@ def file_rows(path: Path):
         for line in f:
             yield line.strip().split('\t')
 
-
-def load_keys(keys_file):
-    with open(keys_file, 'r', newline='', encoding='utf-8') as csvfile:
-        csvreader = csv.reader(csvfile, delimiter='\t')
-        return {key: idx for idx, key in enumerate(csvreader)}
+        with keys_file.open('r', newline='', encoding='utf-8') as file_csv:
+            reader_csv = csv.reader(file_csv, delimiter='\t')
+            return {key: idx for idx, key in enumerate(reader_csv)}
 
 
-def load_map(vectors_file, keys_file):
-    keys = load_keys(keys_file)
-    vectors = torch.load(vectors_file)
-    return keys, vectors
+class MapLoader:
+
+    def __init__(self, keys_file, vectors_file):
+        self._keys_path = Path(keys_file)
+        self._vectors_file = Path(vectors_file)
+
+    def _load_keys(self) -> dict:
+        with self._keys_path.open('r', encoding='utf-8') as file:
+            return {eval(line.strip()): idx
+                    for idx, line in enumerate(file)}
+
+    def _load_vectors(self) -> torch.Tensor:
+        return torch.load(self._vectors_file)
+
+    def __call__(self) -> [dict, torch.Tensor]:
+        keys = self._load_keys()
+        vectors = self._load_vectors()
+        return keys, vectors
 
 
 def max_pool(tensor):
@@ -34,39 +46,50 @@ def max_pool(tensor):
     return output.transpose(2, 1).squeeze()
 
 
-def get_tensor(id_domain, id_doc, id_sent, token_indices, keys, vectors_map):
-    vectors_indices = [keys[(id_domain, id_doc, id_sent, idx)] for idx in token_indices]
-    tensor = torch.zeros(1, 5, vectors_map.shape[-1])
-    vectors = vectors_map[vectors_indices]
-    tensor[:, 0:vectors_map.shape[1], :] = vectors
-    return tensor
+class RelationsVectorizer:
 
+    def __init__(self, keys: dict, vectors: torch.Tensor):
+        self._keys = keys
+        self._vectors = vectors
 
-def make_relations_tensors(relations_path: Path, keys, vectors):
-    rel_keys = []
-    rel_vectors = []
-    for id_domain, label, id_doc, id_sent1, lemma1, channel1, _, tokens1, _, id_sent2, lemma2, channel2, _, tokens2 in file_rows(
-            relations_path):
+    def make_tensors(self, relations_path: Path):
+        relations_keys = []
+        relations_vectors = []
 
-        if len(eval(tokens1)) > 5 or len(eval(tokens2)) > 5:
-            continue
+        for label, id_domain, id_document, \
+            id_sentence_1, lemma_1, channel_1, _, token_indices_1, _, \
+            id_sentence_2, lemma_2, channel_2, _, token_indices_2, _ \
+                in file_rows(relations_path):
 
-        rel_keys.append((
-            id_domain, label, id_doc, id_sent1, id_sent2, channel1, channel2, tokens1, tokens2, lemma1, lemma2
-        ))
-        rel_vectors.append((
-            get_tensor(id_domain, id_doc, id_sent1, eval(tokens1), keys, vectors),
-            get_tensor(id_domain, id_doc, id_sent2, eval(tokens2), keys, vectors)
-        ))
+            if len(eval(token_indices_1)) > 5 or len(eval(token_indices_2)) > 5:
+                continue
 
-    return rel_keys, rel_vectors
+            relations_keys.append((
+                label, id_domain, id_document,
+                id_sentence_1, lemma_1, channel_1, token_indices_1,
+                id_sentence_2, lemma_2, channel_2, token_indices_2
+            ))
+            relations_vectors.append((
+                self._get_tensor(id_domain, id_document, id_sentence_1, eval(token_indices_1)),
+                self._get_tensor(id_domain, id_document, id_sentence_2, eval(token_indices_2))
+            ))
+
+        return relations_keys, relations_vectors
+
+    def _get_tensor(self, id_domain, id_doc, id_sent, token_indices):
+        vectors_indices = [
+            self._keys[(id_domain, id_doc, id_sent, id_token)]
+            for id_token in token_indices
+        ]
+        tensor = torch.zeros(1, 5, self._vectors.shape[-1])
+        vectors = self._vectors[vectors_indices]
+        tensor[:, 0:self._vectors.shape[1], :] = vectors
+        return tensor
 
 
 @click.command()
-@click.option('--data-in', required=True, type=str,
-              help='File with relations.')
-@click.option('--output-path', required=True, type=str,
-              help='Directory to save vectors.')
+@click.option('--input-path', required=True, type=str,
+              help='Path to relations file.')
 @click.option('--elmo-map', required=True, type=(str, str),
               metavar='elmo.map.pt elmo.map.keys',
               help="Elmo vectors and keys files.")
@@ -76,23 +99,28 @@ def make_relations_tensors(relations_path: Path, keys, vectors):
 @click.option('--retrofit-map', required=True, type=(str, str),
               metavar='retrofit.map.pt retrofit.map.keys',
               help="Retrofit vectors and keys files.")
-def main(data_in, output_path, elmo_map, fasttext_map, retrofit_map):
+@click.option('--output-path', required=True, type=str,
+              help='Directory for saving generated relations vectors.')
+def main(input_path, output_path, elmo_map, fasttext_map, retrofit_map):
     maps_dict = {
-        'elmo': load_map(*elmo_map),
-        'fasttext': load_map(*fasttext_map),
-        'retrofit': load_map(*retrofit_map)
+        'elmo': MapLoader(*elmo_map),
+        'fasttext': MapLoader(*fasttext_map),
+        'retrofit': MapLoader(*retrofit_map)
     }
-    relations_path = Path(data_in)
+    relations_path = Path(input_path)
 
-    for name, (keys, vectors) in maps_dict.items():
-        keys, vectors = make_relations_tensors(relations_path, keys, vectors)
-        vec1, vec2 = zip(*vectors)
+    for name, load_map in maps_dict.items():
+        keys, vectors = load_map()
+        vectorizer = RelationsVectorizer(keys, vectors)
+        relations_keys, relations_vectors = vectorizer.make_tensors(relations_path)
+
+        vec1, vec2 = zip(*relations_vectors)
         vec1, vec2 = torch.cat(vec1), torch.cat(vec2)
         pooled1, pooled2 = max_pool(vec1), max_pool(vec2)
-        vectors = torch.cat([pooled1, pooled2], dim=1)
+        relations_vectors = torch.cat([pooled1, pooled2], dim=1)
 
-        save_lines(Path(f'{output_path}/{name}.rel.keys'), keys)
-        save_tensor(Path(f'{output_path}/{name}.rel.pt'), vectors)
+        save_lines(Path(f'{output_path}/{name}.rel.keys'), relations_keys)
+        save_tensor(Path(f'{output_path}/{name}.rel.pt'), relations_vectors)
 
 
 if __name__ == '__main__':
