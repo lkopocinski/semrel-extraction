@@ -1,3 +1,4 @@
+from itertools import chain
 from pathlib import Path
 from typing import Iterator
 from typing import List, Dict
@@ -104,12 +105,15 @@ class DocSentence:
 
 class DocRelation:
 
-    def __init__(self, relation: corpus2.Relation):
+    def __init__(self, relation: corpus2.Relation, sentences: Dict[str, DocSentence]):
         self._relation = relation
 
         self._is_ner = self._is_ner_relation()
         self._channel_from = self._relation.rel_from().channel_name()
         self._channel_to = self._relation.rel_to().channel_name()
+
+        self._sentence_from = sentences[self._relation.rel_from().sentence_id()]
+        self._sentence_to = sentences[self._relation.rel_to().sentence_id()]
 
     @property
     def is_ner(self):
@@ -122,9 +126,8 @@ class DocRelation:
     def _is_ner_relation(self):
         return self._relation.rel_set() == 'NER relation'
 
-    def _get_member(self, relation_member, sentences: Dict[str, DocSentence]):
+    def _get_member(self, relation_member, sentence: DocSentence):
         sentence_id = relation_member.sentence_id()
-        sentence = sentences[sentence_id]
         channel_name = relation_member.channel_name()
         indices = self._get_annotation_indices(sentence, relation_member)
 
@@ -145,9 +148,9 @@ class DocRelation:
                 indices.append(index)
         return tuple(indices)
 
-    def get_members(self, sentences: Dict[str, DocSentence]):
-        member_from = self._get_member(self._relation.rel_from(), sentences)
-        member_to = self._get_member(self._relation.rel_to(), sentences)
+    def get_members(self):
+        member_from = self._get_member(self._relation.rel_from(), self._sentence_from)
+        member_to = self._get_member(self._relation.rel_to(), self._sentence_to)
         return member_from, member_to
 
 
@@ -200,7 +203,7 @@ class Document:
                 for sentence in paragraph.sentences()]
 
     def _get_relations(self) -> List[DocRelation]:
-        return [DocRelation(relation) for relation in self._document.relations()]
+        return [DocRelation(relation, self._sentence_dict) for relation in self._document.relations()]
 
     def __hash__(self):
         return hash(self._id)
@@ -230,3 +233,10 @@ def relations_documents_gen(relation_files: Iterator[Path]) -> Iterator[Document
         ccl_path = Path(str(rel_path).replace('.rel', ''))
         if rel_path.is_file() and ccl_path.is_file():
             yield Document(ccl.read_ccl_and_rel_ccl(str(ccl_path), str(rel_path)))
+
+
+def relations_file_paths(input_path: str, directories: List) -> Iterator[Path]:
+    return chain.from_iterable(
+        dir_path.glob('*.rel.xml')
+        for dir_path in Path(input_path).iterdir()
+        if dir_path.stem in directories)

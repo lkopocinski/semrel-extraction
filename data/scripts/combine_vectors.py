@@ -39,18 +39,18 @@ class MapLoader:
         return keys, vectors
 
 
-def max_pool(tensor):
-    pool = nn.MaxPool1d(5, stride=0)
-    tensor = tensor.transpose(2, 1)
-    output = pool(tensor)
-    return output.transpose(2, 1).squeeze()
-
-
 class RelationsVectorizer:
 
     def __init__(self, keys: dict, vectors: torch.Tensor):
         self._keys = keys
         self._vectors = vectors
+
+    @staticmethod
+    def _max_pool(tensor: torch.Tensor):
+        pool = nn.MaxPool1d(5, stride=0)
+        tensor = tensor.transpose(2, 1)
+        output = pool(tensor)
+        return output.transpose(2, 1).squeeze()
 
     def make_tensors(self, relations_path: Path):
         relations_keys = []
@@ -73,6 +73,11 @@ class RelationsVectorizer:
                 self._get_tensor(id_domain, id_document, id_sentence_1, eval(token_indices_1)),
                 self._get_tensor(id_domain, id_document, id_sentence_2, eval(token_indices_2))
             ))
+
+        vec1, vec2 = zip(*relations_vectors)
+        vec1, vec2 = torch.cat(vec1), torch.cat(vec2)
+        pooled1, pooled2 = self._max_pool(vec1), self._max_pool(vec2)
+        relations_vectors = torch.cat([pooled1, pooled2], dim=1)
 
         return relations_keys, relations_vectors
 
@@ -113,11 +118,6 @@ def main(input_path, output_path, elmo_map, fasttext_map, retrofit_map):
         keys, vectors = load_map()
         vectorizer = RelationsVectorizer(keys, vectors)
         relations_keys, relations_vectors = vectorizer.make_tensors(relations_path)
-
-        vec1, vec2 = zip(*relations_vectors)
-        vec1, vec2 = torch.cat(vec1), torch.cat(vec2)
-        pooled1, pooled2 = max_pool(vec1), max_pool(vec2)
-        relations_vectors = torch.cat([pooled1, pooled2], dim=1)
 
         save_lines(Path(f'{output_path}/{name}.rel.keys'), relations_keys)
         save_tensor(Path(f'{output_path}/{name}.rel.pt'), relations_vectors)
