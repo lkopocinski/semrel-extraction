@@ -62,9 +62,10 @@ def main(input_path, directories, elmo_model,
          fasttext_model, retrofit_model, output_path):
     elmo_options, elmo_weights = elmo_model
     makers_dict = {
-        'elmo': MapMaker(vectorizer=vec.ElmoVectorizer(elmo_options, elmo_weights)),
-        'fasttext': MapMaker(vectorizer=vec.FastTextVectorizer(fasttext_model)),
-        'retrofit': MapMaker(vectorizer=vec.RetrofitVectorizer(retrofit_model, fasttext_model))
+        'test': MapMaker(vectorizer=None),
+        # 'elmo': MapMaker(vectorizer=vec.ElmoVectorizer(elmo_options, elmo_weights)),
+        # 'fasttext': MapMaker(vectorizer=vec.FastTextVectorizer(fasttext_model)),
+        # 'retrofit': MapMaker(vectorizer=vec.RetrofitVectorizer(retrofit_model, fasttext_model))
     }
     relations_files = relations_file_paths(input_path, directories)
 

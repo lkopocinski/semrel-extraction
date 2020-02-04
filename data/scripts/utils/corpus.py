@@ -156,7 +156,7 @@ class DocRelation:
 
 class Document:
 
-    def __init__(self, document: corpus2.Document):
+    def __init__(self, document: corpus2.DocumentPtr):
         self._document = document
 
         self._id = self._get_document_name()
@@ -214,17 +214,9 @@ class Document:
         return False
 
 
-def documents_gen(corpus_files: Iterator[Path]) -> Iterator[Document]:
-    return (
-        Document(ccl.read_ccl(str(path)))
-        for path in corpus_files
-        if path.is_file()
-    )
-
-
-def sentences_documents_gen(corpus_files: Iterator[Path]):
+def sentences_documents_gen(relations_files: Iterator[Path]):
     return ((sentence, document)
-            for document in documents_gen(corpus_files)
+            for document in relations_documents_gen(relations_files)
             for sentence in document.sentences)
 
 
