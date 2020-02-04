@@ -26,7 +26,7 @@ def distance_hist(relation_files, channels, nr):
                     t_element = get_relation_element(t, sentences)
 
                     if f_element and t_element:
-                        if f_element.context == t_element.context:
+                        if f_element.orths == t_element.orths:
                             if t_element.indices[0] > f_element.indices[0]:
                                 shift = (len(f_element.indices) - 1) if len(f_element.indices) > 1 else 0
                                 dist = t_element.indices[0] - (f_element.indices[0] + shift)

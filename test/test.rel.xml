@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chunkList SYSTEM "ccl.dtd">
+<relations>
+ <rel name="ner relation" set="NER relation">
+   <from sent="sent8" chan="PRODUCT_NAME">1008479</from>
+   <to sent="sent8" chan="BRAND_NAME">994201</to>
+  </rel>
+ <rel name="ner relation" set="NER relation">
+   <from sent="sent8" chan="BRAND_NAME">994201</from>
+   <to sent="sent8" chan="PRODUCT_NAME">1008479</to>
+  </rel>
+ <rel name="ner relation" set="NER relation">
+   <from sent="sent8" chan="BRAND_NAME">994201</from>
+   <to sent="sent8" chan="PRODUCT_NAME">1008479</to>
+  </rel>
+ <rel name="ner relation" set="NER relation">
+   <from sent="sent8" chan="BRAND_NAME">994201</from>
+   <to sent="sent8" chan="PRODUCT_NAME">1008479</to>
+  </rel>
+ <rel name="ner relation" set="NER relation">
+   <from sent="sent10" chan="BRAND_NAME">994202</from>
+   <to sent="sent10" chan="PRODUCT_NAME_IMP">1009405</to>
+  </rel>
+ <rel name="ner relation" set="NER relation">
+   <from sent="sent8" chan="BRAND_NAME">994201</from>
+   <to sent="sent8" chan="PRODUCT_NAME">1008479</to>
+  </rel>
+ <rel name="ner relation" set="NER relation">
+   <from sent="sent10" chan="BRAND_NAME">994202</from>
+   <to sent="sent10" chan="PRODUCT_NAME_IMP">1009405</to>
+  </rel>
+</relations>
