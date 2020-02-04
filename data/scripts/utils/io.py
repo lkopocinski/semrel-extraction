@@ -4,7 +4,7 @@ from typing import Generator, Iterator
 import torch
 
 
-def save_lines(path: Path, lines: Iterator[str], mode='w+'):
+def save_lines(path: Path, lines: Iterator, mode='w+'):
     if not path.parent.exists():
         path.parent.mkdir(parents=True, exist_ok=True)
 
