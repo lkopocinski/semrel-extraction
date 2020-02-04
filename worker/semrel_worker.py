@@ -5,7 +5,7 @@ import torch
 from corpus_ccl import cclutils
 
 from data.scripts.utils.vectorizers import ElmoVectorizer, FastTextVectorizer
-from relextr.evaluation.scripts.extractor import Parser, NounExtractor, NEExtractor
+from relextr.evaluation.scripts.extractor import Parser, NounExtractor, NERxtractor
 from relextr.model.scripts.relnet import RelNet
 
 
@@ -72,7 +72,7 @@ class SemrelWorker(nlp_ws.NLPWorker):
 
     def process(self, input_path, task_options, output_path):
         if task_options.get('ner', False):
-            extractor = NEExtractor()
+            extractor = NERxtractor()
         else:
             extractor = NounExtractor()
 
