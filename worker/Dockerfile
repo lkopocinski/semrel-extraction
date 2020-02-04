@@ -60,16 +60,6 @@ RUN git clone http://nlp.pwr.wroc.pl/corpus2.git && \
     ldconfig
 
 
-## install NLPWorkers structure
-RUN mkdir /samba
-RUN mkdir /samba/requests
-RUN mkdir /samba/requests/dir
-RUN mkdir /samba/requests/div
-RUN mkdir /home/work
-RUN mkdir /home/work/models
-RUN mkdir /home/work/nlpworkers
-
-
 # download artifacts
 COPY ./credentials /root/.aws/credentials
 RUN dvc get https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction --rev lkopocinski-worker data/elmo
@@ -86,6 +76,5 @@ RUN git clone https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction.git &
     cd semrel-extraction && \
     git checkout --track origin/lkopocinski-worker && \
     python3.6 setup.py install
-
 
 #ENTRYPOINT ["/predict.sh", "~/115.files"]
