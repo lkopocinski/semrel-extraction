@@ -21,5 +21,5 @@ CUDA_VISIBLE_DEVICES=0 ${SCRIPTS_DIR}/make_maps.py --input-path ${INPUT_PATH} \
                                                    --elmo-model "${ELMO_PATH}/options.json" "${ELMO_PATH}/weights.hdf5" \
                                                    --fasttext-model "${FASTTEXT_PATH}/kgr10.plain.skipgram.dim300.neg10.bin" \
                                                    --retrofit-model "${RETROFIT_PATH}/kgr10.plain.skipgram.dim300.neg10.retrofit-v3.vec" \
-                                                   --output-path ${OUTPUT_PATH} \
+                                                   --output-path ${OUTPUT_PATH}
 popd
