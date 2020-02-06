@@ -37,7 +37,7 @@ class MapMaker:
             keys.extend(_keys)
             vectors.extend(_vectors)
 
-        return keys, torch.cat(vectors)
+        return keys, torch.stack(vectors)
 
 
 @click.command()
