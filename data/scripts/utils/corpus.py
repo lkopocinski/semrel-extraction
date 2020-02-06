@@ -228,7 +228,7 @@ def relations_documents_gen(relation_files: Iterator[Path]) -> Iterator[Document
 
 
 def relations_file_paths(input_path: str, directories: List) -> Iterator[Path]:
-    return chain.from_iterable(
+    return list(chain.from_iterable(
         dir_path.glob('*.rel.xml')
         for dir_path in Path(input_path).iterdir()
-        if dir_path.stem in directories)
+        if dir_path.stem in directories))

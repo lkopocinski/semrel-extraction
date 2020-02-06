@@ -64,8 +64,8 @@ def main(
     elmo_options, elmo_weights = elmo_model
     makers_dict = {
         'elmo': MapMaker(vectorizer=vec.ElmoVectorizer(elmo_options, elmo_weights)),
-        # 'fasttext': MapMaker(vectorizer=vec.FastTextVectorizer(fasttext_model)),
-        # 'retrofit': MapMaker(vectorizer=vec.RetrofitVectorizer(retrofit_model, fasttext_model))
+        'fasttext': MapMaker(vectorizer=vec.FastTextVectorizer(fasttext_model)),
+        'retrofit': MapMaker(vectorizer=vec.RetrofitVectorizer(retrofit_model, fasttext_model))
     }
     relations_files = relations_file_paths(input_path, directories)
 
