@@ -16,20 +16,15 @@ class MapMaker:
         self._vectorizer = vectorizer
 
     def _make_sentence_map(self, sentence: DocSentence, document: Document):
-        keys = []
-        vectors = []
-
         id_domain = document.directory
         id_document = document.id
         id_sentence = sentence.id
 
-        for idx, orth in enumerate(sentence.orths):
-            id_token = str(idx)
-            key = (id_domain, id_document, id_sentence, id_token)
-            vector = self._vectorizer.embed(sentence.orths)
-
-            keys.append(key)
-            vectors.append(vector)
+        keys = [
+            (id_domain, id_document, id_sentence, id_token)
+            for id_token, orth in enumerate(sentence.orths)
+        ]
+        vectors = self._vectorizer.embed(sentence.orths)
 
         return keys, vectors
 
@@ -48,7 +43,7 @@ class MapMaker:
 @click.command()
 @click.option('--input-path', required=True, type=str,
               help='Path to corpora files.')
-@click.option('--directories', required=True, nargs=3,
+@click.option('--directories', required=True, nargs=1,
               help='Directories names with corpus files.')
 @click.option('--elmo-model', required=True, type=(str, str),
               help="A path to elmo model options, weights.")
@@ -58,12 +53,17 @@ class MapMaker:
               help="File with retrofitted fasttext model.")
 @click.option('--output-path', required=True, type=str,
               help='Directory for saving map files.')
-def main(input_path, directories, elmo_model,
-         fasttext_model, retrofit_model, output_path):
+def main(
+        input_path,
+        directories,
+        elmo_model,
+        fasttext_model,
+        retrofit_model,
+        output_path
+):
     elmo_options, elmo_weights = elmo_model
     makers_dict = {
-        'test': MapMaker(vectorizer=None),
-        # 'elmo': MapMaker(vectorizer=vec.ElmoVectorizer(elmo_options, elmo_weights)),
+        'elmo': MapMaker(vectorizer=vec.ElmoVectorizer(elmo_options, elmo_weights)),
         # 'fasttext': MapMaker(vectorizer=vec.FastTextVectorizer(fasttext_model)),
         # 'retrofit': MapMaker(vectorizer=vec.RetrofitVectorizer(retrofit_model, fasttext_model))
     }
