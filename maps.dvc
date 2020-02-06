@@ -1,4 +1,4 @@
-md5: c2a338857a69b972dfa8c43ab385b1b2
+md5: 418871280c314cddd2d4a3bcc10b4648
 cmd: CUDA_VISIBLE_DEVICES=0 ./data/scripts/make_maps.py --input-path ./data/corpora
   --directories 116 --elmo-model ./data/elmo/options.json ./data/elmo/weights.hdf5
   --fasttext-model ./data/fasttext/kgr10.plain.skipgram.dim300.neg10.bin --retrofit-model
@@ -7,7 +7,7 @@ cmd: CUDA_VISIBLE_DEVICES=0 ./data/scripts/make_maps.py --input-path ./data/corp
 deps:
 - md5: 41d2afc23fd6749b364ed9a5efe5f50c.dir
   path: data/corpora
-- md5: 932fc61629e0cff7476e630f24c86b4f
+- md5: c247b6283a6fafcdf0d731f1c3f0c267
   path: data/scripts/make_maps.py
 outs:
 - md5: f1f2b8c54ae0fdd1aaa27c00f17be352.dir
