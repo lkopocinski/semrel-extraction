@@ -11,7 +11,7 @@ class RelationsGenerator:
     def __init__(self, document: Document):
         self._document = document
 
-        self._relation_tokens_indices = None
+        self._relation_tokens_indices = {}
 
     def generate_positive(self, channels: tuple):
         for relation in self._document.relations:
@@ -51,7 +51,7 @@ class RelationsGenerator:
                     member_from.id_sent,
                     lemma_from,
                     _member_from.channel if _member_from else '',
-                    _member_from.ne if _member_from else False,
+                    _member_from.is_named_entity if _member_from else False,
                     (idx_from,),
                     member_from.context
                 )
@@ -59,7 +59,7 @@ class RelationsGenerator:
                     member_to.id_sent,
                     lemma_to,
                     _member_to.channel if _member_to else '',
-                    _member_from.ne if _member_from else False,
+                    _member_from.is_named_entity if _member_from else False,
                     (idx_to,),
                     member_to.context
                 )
