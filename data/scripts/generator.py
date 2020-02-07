@@ -20,53 +20,52 @@ class RelationsGenerator:
                 yield Relation(self._document.id, member_from, member_to)
 
     def generate_negative(self, channels: tuple):
-        pass
-        # relations = []
-        #
-        # for relation in self._document.relations:
-        #     if relation.is_ner() and relation.channels in channels:
-        #         member_from, member_to = relation.get_members()
-        #
-        #         relations.append(Relation(self._document.id, member_from, member_to))
-        #
-        #         self._map_indices_to_relation(member_from)
-        #         self._map_indices_to_relation(member_to)
-        #
-        # for _, member_from, member_to in relations:
-        #     nouns_indices_pairs = self._get_nouns_indices_pairs(member_from, member_to)
-        #
-        #     for idx_from, idx_to in nouns_indices_pairs:
-        #         _member_from = self._relation_tokens_indices.get(
-        #             (member_from.id_sent, idx_from), None)
-        #
-        #         _member_to = self._relation_tokens_indices.get(
-        #             (member_to.id_sent, idx_to), None)
-        #
-        #         if _member_from and _member_to and Relation(self._document.id, _member_from, _member_to) in relations:
-        #             continue
-        #
-        #         lemma_from = self._document.get_sentence(member_from.id_sent).lemmas[idx_from]
-        #         lemma_to = self._document.get_sentence(member_to.id_sent).lemmas[idx_to]
-        #
-        #         member_from = Element(
-        #             member_from.id_sent,
-        #             lemma_from,
-        #             _member_from.channel if _member_from else '',
-        #             _member_from.ne if _member_from else False,
-        #             (idx_from,),
-        #             member_from.context
-        #         )
-        #         member_to = Element(
-        #             member_to.id_sent,
-        #             lemma_to,
-        #             _member_to.channel if _member_to else '',
-        #             _member_from.ne if _member_from else False,
-        #             (idx_to,),
-        #             member_to.context
-        #         )
-        #
-        #         id_document = self._document.id
-        #         yield Relation(id_document, member_from, member_to)
+        relations = []
+
+        for relation in self._document.relations:
+            if relation.is_ner and relation.channels in channels:
+                member_from, member_to = relation.get_members()
+
+                relations.append(Relation(self._document.id, member_from, member_to))
+
+                self._map_indices_to_relation(member_from)
+                self._map_indices_to_relation(member_to)
+
+        for _, member_from, member_to in relations:
+            nouns_indices_pairs = self._get_nouns_indices_pairs(member_from, member_to)
+
+            for idx_from, idx_to in nouns_indices_pairs:
+                _member_from = self._relation_tokens_indices.get(
+                    (member_from.id_sent, idx_from), None)
+
+                _member_to = self._relation_tokens_indices.get(
+                    (member_to.id_sent, idx_to), None)
+
+                if _member_from and _member_to and Relation(self._document.id, _member_from, _member_to) in relations:
+                    continue
+
+                lemma_from = self._document.get_sentence(member_from.id_sent).lemmas[idx_from]
+                lemma_to = self._document.get_sentence(member_to.id_sent).lemmas[idx_to]
+
+                member_from = Element(
+                    member_from.id_sent,
+                    lemma_from,
+                    _member_from.channel if _member_from else '',
+                    _member_from.ne if _member_from else False,
+                    (idx_from,),
+                    member_from.context
+                )
+                member_to = Element(
+                    member_to.id_sent,
+                    lemma_to,
+                    _member_to.channel if _member_to else '',
+                    _member_from.ne if _member_from else False,
+                    (idx_to,),
+                    member_to.context
+                )
+
+                id_document = self._document.id
+                yield Relation(id_document, member_from, member_to)
 
     def _map_indices_to_relation(self, member):
         for idx_from in member.indices:
