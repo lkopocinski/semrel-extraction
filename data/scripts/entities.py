@@ -1,7 +1,7 @@
 from typing import NamedTuple, List
 
 
-class Element(NamedTuple):
+class Member(NamedTuple):
     id_sent: str
     lemma: str
     channel: str
@@ -19,8 +19,8 @@ class Element(NamedTuple):
 
 class Relation(NamedTuple):
     id_document: str
-    member_from: Element
-    member_to: Element
+    member_from: Member
+    member_to: Member
 
     def __str__(self):
         return f'{self.id_document}\t{self.member_from}\t{self.member_to}'
