@@ -14,7 +14,7 @@ dvc run \
 -d ${SCRIPTS_DIR}/generator.py \
 -o ${OUTPUT_PATH} \
 CUDA_VISIBLE_DEVICES=0 ${SCRIPTS_DIR}/generate.py --input-path ${INPUT_PATH} \
-                                                  --directories 112 114 115 \
+                                                  --directories 116 \
                                                   --output-path "${OUTPUT_PATH}/relations.tsv" \
 
 popd
