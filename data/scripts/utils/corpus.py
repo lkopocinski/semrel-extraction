@@ -8,7 +8,7 @@ from corpus_ccl import cclutils as ccl
 from corpus_ccl import corpus_object_utils as cou
 from corpus_ccl import token_utils as tou
 
-from entities import Element
+from entities import Member
 
 
 class DocToken:
@@ -137,7 +137,7 @@ class DocRelation:
         context = sentence.orths
         lemma = sentence.lemmas[indices[0]]
         named_entity = any(sentence.named_entities[idx] for idx in indices)
-        return Element(sentence_id, lemma, channel_name, named_entity, indices, context)
+        return Member(sentence_id, lemma, channel_name, named_entity, indices, context)
 
     @staticmethod
     def _get_annotation_indices(sentence: DocSentence, relation_member: corpus2.DirectionPoint):
