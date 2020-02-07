@@ -29,14 +29,14 @@ def main(
     for document in relations_documents_gen(relations_files):
         relations_generator = RelationsGenerator(document)
 
-        positive_relations = relations_generator.generate_positive(CHANNELS)
-        positives_lines = [f'in_relation\t{document.directory}\t{relation}' for relation in positive_relations]
+        # positive_relations = relations_generator.generate_positive(CHANNELS)
+        # positives_lines = [f'in_relation\t{document.directory}\t{relation}' for relation in positive_relations]
 
-        # negative_relations = relations_generator.generate_negative(CHANNELS)
-        # negatives_lines = [f'no_relation\t{document.directory}\t{relation}' for relation in negative_relations]
+        negative_relations = relations_generator.generate_negative(CHANNELS)
+        negatives_lines = [f'no_relation\t{document.directory}\t{relation}' for relation in negative_relations]
 
         # save_lines(output_path, positives_lines + negatives_lines, mode='a')
-        save_lines(output_path, positives_lines, mode='a')
+        save_lines(output_path, negatives_lines, mode='a')
 
 
 if __name__ == "__main__":
