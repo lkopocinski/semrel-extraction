@@ -15,7 +15,7 @@ class RelationsGenerator:
 
     def generate_positive(self, channels: tuple):
         for relation in self._document.relations:
-            if relation.is_ner() and relation.channels in channels:
+            if relation.is_ner and relation.channels in channels:
                 member_from, member_to = relation.get_members()
                 yield Relation(self._document.id, member_from, member_to)
 

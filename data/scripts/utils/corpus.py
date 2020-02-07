@@ -143,7 +143,7 @@ class DocRelation:
     def _get_annotation_indices(sentence: DocSentence, relation_member: corpus2.DirectionPoint):
         indices = []
         for index, token in enumerate(sentence.tokens):
-            number = tou.get_annotation(sentence, token._token, relation_member.channel_name(), index, default=0)
+            number = tou.get_annotation(sentence._sentence, token._token, relation_member.channel_name(), index, default=0)
             if number == relation_member.annotation_number():
                 indices.append(index)
         return tuple(indices)
