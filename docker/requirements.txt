@@ -21,3 +21,6 @@ tqdm==4.39.0
 virtualenv==16.7.8
 virtualenv-clone==0.5.3
 wordfreq==2.2.1
+
+pudb
+ipython
