@@ -15,25 +15,22 @@ class MapMaker:
     def __init__(self, vectorizer: vec.Vectorizer):
         self._vectorizer = vectorizer
 
-    def _make_sentence_map(self, sentence: DocSentence, document: Document):
-        id_domain = document.directory
-        id_document = document.id
-        id_sentence = sentence.id
-
-        keys = [
-            (id_domain, id_document, id_sentence, id_token)
-            for id_token, orth in enumerate(sentence.orths)
-        ]
+    def make_sentence_map(self, sentence: DocSentence, document: Document):
+        keys = self.make_keys(document, sentence)
         vectors = self._vectorizer.embed(sentence.orths)
 
         return keys, vectors
+
+    def make_keys(self, document, sentence):
+        return [(document.directory, document.id, sentence.id, id_token)
+                for id_token, orth in enumerate(sentence.orths)]
 
     def make_map(self, corpus_files: Iterator[Path]) -> [List[tuple], torch.Tensor]:
         keys = []
         vectors = []
 
         for sentence, document in sentences_documents_gen(corpus_files):
-            _keys, _vectors = self._make_sentence_map(sentence, document)
+            _keys, _vectors = self.make_sentence_map(sentence, document)
             keys.extend(_keys)
             vectors.extend(_vectors)
 
