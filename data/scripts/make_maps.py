@@ -1,40 +1,12 @@
 #!/usr/bin/env python3.6
 from pathlib import Path
-from typing import List, Iterator
 
 import click
-import torch
 
 import data.scripts.utils.vectorizers as vec
-from data.scripts.utils.corpus import DocSentence, Document, sentences_documents_gen, relations_file_paths
+from data.scripts.maps import MapMaker
+from data.scripts.utils.corpus import relations_file_paths, relations_documents_gen
 from data.scripts.utils.io import save_lines, save_tensor
-
-
-class MapMaker:
-
-    def __init__(self, vectorizer: vec.Vectorizer):
-        self._vectorizer = vectorizer
-
-    def make_sentence_map(self, sentence: DocSentence, document: Document):
-        keys = self.make_keys(document, sentence)
-        vectors = self._vectorizer.embed(sentence.orths)
-
-        return keys, vectors
-
-    def make_keys(self, document, sentence):
-        return [(document.directory, document.id, sentence.id, id_token)
-                for id_token, orth in enumerate(sentence.orths)]
-
-    def make_map(self, corpus_files: Iterator[Path]) -> [List[tuple], torch.Tensor]:
-        keys = []
-        vectors = []
-
-        for sentence, document in sentences_documents_gen(corpus_files):
-            _keys, _vectors = self.make_sentence_map(sentence, document)
-            keys.extend(_keys)
-            vectors.extend(_vectors)
-
-        return keys, torch.stack(vectors)
 
 
 @click.command()
@@ -67,7 +39,8 @@ def main(
     relations_files = relations_file_paths(input_path, directories)
 
     for name, mapmaker in makers_dict.items():
-        keys, vectors = mapmaker.make_map(relations_files)
+        documents = relations_documents_gen(relations_files)
+        keys, vectors = mapmaker.make_map(documents)
 
         save_lines(Path(f'{output_path}/{name}.map.keys'), keys)
         save_tensor(Path(f'{output_path}/{name}.map.pt'), vectors)
