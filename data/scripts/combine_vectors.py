@@ -8,8 +8,9 @@ import click
 import torch
 import torch.nn as nn
 
-from entities import Member, Relation
-from io import save_lines, save_tensor
+
+from data.scripts.entities import Member, Relation
+from data.scripts.utils.io import save_lines, save_tensor
 
 PHRASE_LENGTH_LIMIT = 5
 

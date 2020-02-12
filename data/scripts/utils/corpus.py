@@ -8,7 +8,7 @@ from corpus_ccl import cclutils as ccl
 from corpus_ccl import corpus_object_utils as cou
 from corpus_ccl import token_utils as tou
 
-from entities import Member
+from data.scripts.entities import Member
 
 
 class DocToken:

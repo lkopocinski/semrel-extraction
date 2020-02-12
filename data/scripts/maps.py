@@ -2,6 +2,7 @@ from typing import Iterator, List
 
 import torch
 
+import data.scripts.utils.vectorizers as vec
 from data.scripts.utils.corpus import DocSentence, Document
 
 
@@ -10,15 +11,16 @@ class MapMaker:
     def __init__(self, vectorizer: vec.Vectorizer):
         self._vectorizer = vectorizer
 
-    def make_sentence_map(self, sentence: DocSentence, document: Document):
+    @staticmethod
+    def make_keys(document: Document, sentence: DocSentence) -> List[tuple]:
+        return [(document.directory, document.id, sentence.id, id_token)
+                for id_token, _ in enumerate(sentence.orths)]
+
+    def make_sentence_map(self, sentence: DocSentence, document: Document) -> [List[tuple], torch.Tensor]:
         keys = self.make_keys(document, sentence)
         vectors = self._vectorizer.embed(sentence.orths)
 
         return keys, vectors
-
-    def make_keys(self, document, sentence):
-        return [(document.directory, document.id, sentence.id, id_token)
-                for id_token, orth in enumerate(sentence.orths)]
 
     def make_map(self, documents: Iterator[Document]) -> [List[tuple], torch.Tensor]:
         keys = []
