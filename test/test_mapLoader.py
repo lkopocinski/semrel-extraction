@@ -29,3 +29,5 @@ def test_load_map():
 
     assert keys == expected_keys
     assert repr(expected_vectors) == repr(vectors)
+
+

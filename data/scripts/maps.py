@@ -16,7 +16,7 @@ class MapMaker:
         return [(document.directory, document.id, sentence.id, id_token)
                 for id_token, _ in enumerate(sentence.orths)]
 
-    def make_sentence_map(self, sentence: DocSentence, document: Document) -> [List[tuple], torch.Tensor]:
+    def make_sentence_map(self, document: Document, sentence: DocSentence) -> [List[tuple], torch.Tensor]:
         keys = self.make_keys(document, sentence)
         vectors = self._vectorizer.embed(sentence.orths)
 
@@ -28,7 +28,7 @@ class MapMaker:
 
         for document in documents:
             for sentence in document.sentences:
-                _keys, _vectors = self.make_sentence_map(sentence, document)
+                _keys, _vectors = self.make_sentence_map(document, sentence)
                 keys.extend(_keys)
                 vectors.extend(_vectors)
 
