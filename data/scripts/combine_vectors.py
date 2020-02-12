@@ -2,22 +2,49 @@
 
 import csv
 from pathlib import Path
+from typing import List
 
 import click
 import torch
 import torch.nn as nn
 
-from data.scripts.utils.io import save_lines, save_tensor
+from entities import Member, Relation
+from io import save_lines, save_tensor
+
+PHRASE_LENGTH_LIMIT = 5
 
 
-def file_rows(path: Path):
-    with path.open('r', encoding='utf-8') as f:
-        for line in f:
-            yield line.strip().split('\t')
+class RelationsLoader:
 
-        with keys_file.open('r', newline='', encoding='utf-8') as file_csv:
-            reader_csv = csv.reader(file_csv, delimiter='\t')
-            return {key: idx for idx, key in enumerate(reader_csv)}
+    def __init__(self, relations_path: Path):
+        self._path_csv = relations_path
+
+    def relations(self):
+        with self._path_csv.open('r', newline='', encoding='utf-8') as file_csv:
+            reader_csv = csv.DictReader(file_csv, delimiter='\t')
+            for line_dict in reader_csv:
+                relation = self._parse_relation(line_dict)
+                yield line_dict['label'], line_dict['id_domain'], relation
+
+    @staticmethod
+    def _parse_relation(relation_dict: dict) -> Relation:
+        member_from = Member(
+            id_sentence=relation_dict['id_sent_1'],
+            lemma=relation_dict['lemma_1'],
+            channel=relation_dict['channel_1'],
+            is_named_entity=relation_dict['is_named_entity_1'],
+            indices=eval(relation_dict['indices_1']),
+            context=eval(relation_dict['context_1'])
+        )
+        member_to = Member(
+            id_sentence=relation_dict['id_sent_2'],
+            lemma=relation_dict['lemma_2'],
+            channel=relation_dict['channel_2'],
+            is_named_entity=relation_dict['is_named_entity_2'],
+            indices=eval(relation_dict['indices_2']),
+            context=eval(relation_dict['context_2'])
+        )
+        return Relation(relation_dict['id_document'], member_from, member_to)
 
 
 class MapLoader:
@@ -42,57 +69,70 @@ class MapLoader:
         return keys, vectors
 
 
-# class RelationsVectorizer:
-#
-#     def __init__(self, keys: dict, vectors: torch.Tensor):
-#         self._keys = keys
-#         self._vectors = vectors
-#
-#     @staticmethod
-#     def _max_pool(tensor: torch.Tensor):
-#         pool = nn.MaxPool1d(5, stride=0)
-#         tensor = tensor.transpose(2, 1)
-#         output = pool(tensor)
-#         return output.transpose(2, 1).squeeze()
-#
-#     def make_tensors(self, relations_path: Path):
-#         relations_keys = []
-#         relations_vectors = []
-#
-#         for label, id_domain, id_document, \
-#             id_sentence_1, lemma_1, channel_1, _, token_indices_1, _, \
-#             id_sentence_2, lemma_2, channel_2, _, token_indices_2, _ \
-#                 in file_rows(relations_path):
-#
-#             if len(eval(token_indices_1)) > 5 or len(eval(token_indices_2)) > 5:
-#                 continue
-#
-#             relations_keys.append((
-#                 label, id_domain, id_document,
-#                 id_sentence_1, lemma_1, channel_1, token_indices_1,
-#                 id_sentence_2, lemma_2, channel_2, token_indices_2
-#             ))
-#             relations_vectors.append((
-#                 self._get_tensor(id_domain, id_document, id_sentence_1, eval(token_indices_1)),
-#                 self._get_tensor(id_domain, id_document, id_sentence_2, eval(token_indices_2))
-#             ))
-#
-#         vec1, vec2 = zip(*relations_vectors)
-#         vec1, vec2 = torch.cat(vec1), torch.cat(vec2)
-#         pooled1, pooled2 = self._max_pool(vec1), self._max_pool(vec2)
-#         relations_vectors = torch.cat([pooled1, pooled2], dim=1)
-#
-#         return relations_keys, relations_vectors
-#
-#     def _get_tensor(self, id_domain, id_doc, id_sent, token_indices):
-#         vectors_indices = [
-#             self._keys[(id_domain, id_doc, id_sent, id_token)]
-#             for id_token in token_indices
-#         ]
-#         tensor = torch.zeros(1, 5, self._vectors.shape[-1])
-#         vectors = self._vectors[vectors_indices]
-#         tensor[:, 0:self._vectors.shape[1], :] = vectors
-#         return tensor
+class RelationsVectorizer:
+
+    def __init__(self, relations_loader: RelationsLoader, keys: dict, vectors: torch.Tensor):
+        self.relations_loader = relations_loader
+
+        self._keys = keys
+        self._vectors = vectors
+
+    @staticmethod
+    def _max_pool(tensor: torch.Tensor):
+        pool = nn.MaxPool1d(PHRASE_LENGTH_LIMIT, stride=0)
+        tensor = tensor.transpose(2, 1)
+        output = pool(tensor)
+        return output.transpose(2, 1).squeeze()
+
+    def _max_pool_vectors(self, tensor: List):
+        vec1, vec2 = zip(*tensor)
+
+        vec1 = torch.cat(vec1)
+        vec2 = torch.cat(vec2)
+
+        pooled1 = self._max_pool(vec1)
+        pooled2 = self._max_pool(vec2)
+
+        return torch.cat([pooled1, pooled2], dim=1)
+
+    def _get_vectors_indices(self, id_domain, id_document, id_sentence, token_indices):
+        return [self._keys[(id_domain, id_document, id_sentence, id_token)]
+                for id_token in token_indices]
+
+    def _get_tensor(self, vectors_indices):
+        tensor = torch.zeros(1, PHRASE_LENGTH_LIMIT, self._vectors.shape[-1])
+        vectors = self._vectors[vectors_indices]
+        tensor[:, 0:self._vectors.shape[1], :] = vectors
+        return tensor
+
+    def member_to_key(self, member: Member):
+        return member.id_sentence, member.channel, member.indices, member.lemma
+
+    def make_tensors(self):
+        keys = []
+        vectors = []
+
+        for label, id_domain, relation in self.relations_loader.relations():
+            id_document, member_from, member_to = relation
+
+            if len(member_from.indices) > PHRASE_LENGTH_LIMIT or len(member_to.indices) > PHRASE_LENGTH_LIMIT:
+                continue
+
+            keys.append((label, id_domain, relation.id_document,
+                         self.member_to_key(member_from),
+                         self.member_to_key(member_to)))
+
+            vectors_indices_from = self._get_vectors_indices(id_domain, id_document,
+                                                             member_from.id_sentence, member_from.indices)
+            vectors_indices_to = self._get_vectors_indices(id_domain, id_document,
+                                                           member_to.id_sentence, member_to.indices)
+
+            vectors.append((self._get_tensor(vectors_indices_from),
+                            self._get_tensor(vectors_indices_to)))
+
+        max_pooled_tensor = self._max_pool_vectors(vectors)
+
+        return keys, max_pooled_tensor
 
 
 @click.command()
@@ -125,12 +165,13 @@ def main(
 
     for name, load_map in map_loaders.items():
         keys, vectors = load_map()
-        # vectorizer = RelationsVectorizer(keys, vectors)
-        #
-        # relations_keys, relations_vectors = vectorizer.make_tensors(relations_path)
-        #
-        # save_lines(Path(f'{output_path}/{name}.rel.keys'), relations_keys)
-        # save_tensor(Path(f'{output_path}/{name}.rel.pt'), relations_vectors)
+        relations_loader = RelationsLoader(relations_path)
+        vectorizer = RelationsVectorizer(relations_loader, keys, vectors)
+
+        relations_keys, relations_vectors = vectorizer.make_tensors()
+
+        save_lines(Path(f'{output_path}/{name}.rel.keys'), relations_keys)
+        save_tensor(Path(f'{output_path}/{name}.rel.pt'), relations_vectors)
 
 
 if __name__ == '__main__':

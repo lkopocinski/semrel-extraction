@@ -31,7 +31,7 @@ class BrandProductDataset(data.Dataset):
 
     def __getitem__(self, index: int):
         x = self.vectors[index]
-        y = self.label2digit[self.keys[index][1]]
+        y = self.label2digit[self.keys[index][0]]
         return x, y
 
 

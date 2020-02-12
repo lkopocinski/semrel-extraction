@@ -36,19 +36,19 @@ class RelationsGenerator:
 
             for idx_from, idx_to in nouns_indices_pairs:
                 _member_from = self._relation_tokens_indices.get(
-                    (member_from.id_sent, idx_from), None)
+                    (member_from.id_sentence, idx_from), None)
 
                 _member_to = self._relation_tokens_indices.get(
-                    (member_to.id_sent, idx_to), None)
+                    (member_to.id_sentence, idx_to), None)
 
                 if _member_from and _member_to and Relation(self._document.id, _member_from, _member_to) in relations:
                     continue
 
-                lemma_from = self._document.get_sentence(member_from.id_sent).lemmas[idx_from]
-                lemma_to = self._document.get_sentence(member_to.id_sent).lemmas[idx_to]
+                lemma_from = self._document.get_sentence(member_from.id_sentence).lemmas[idx_from]
+                lemma_to = self._document.get_sentence(member_to.id_sentence).lemmas[idx_to]
 
                 member_from = Member(
-                    member_from.id_sent,
+                    member_from.id_sentence,
                     lemma_from,
                     _member_from.channel if _member_from else '',
                     _member_from.is_named_entity if _member_from else False,
@@ -56,7 +56,7 @@ class RelationsGenerator:
                     member_from.context
                 )
                 member_to = Member(
-                    member_to.id_sent,
+                    member_to.id_sentence,
                     lemma_to,
                     _member_to.channel if _member_to else '',
                     _member_from.is_named_entity if _member_from else False,
@@ -69,11 +69,11 @@ class RelationsGenerator:
 
     def _map_indices_to_relation(self, member: Member):
         for idx_from in member.indices:
-            self._relation_tokens_indices[(member.id_sent, idx_from)] = member
+            self._relation_tokens_indices[(member.id_sentence, idx_from)] = member
 
     def _get_nouns_indices_pairs(self, member_from:  Member, member_to: Member):
-        sent_id_from = member_from.id_sent
-        sent_id_to = member_to.id_sent
+        sent_id_from = member_from.id_sentence
+        sent_id_to = member_to.id_sentence
 
         nouns_indices_from = self._document.get_sentence(sent_id_from).noun_indices
         nouns_indices_to = self._document.get_sentence(sent_id_to).noun_indices
