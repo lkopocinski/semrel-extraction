@@ -1,4 +1,4 @@
-md5: 70f45228fbe7a5f67fb0aa703740c176
+md5: 4e523a65d10a1d5e799893cb6d28f637
 cmd: CUDA_VISIBLE_DEVICES=0 ./data/scripts/generate.py --input-path ./data/corpora
   --directories 116 --output-path ./data/relations/relations.tsv
 deps:
@@ -6,7 +6,7 @@ deps:
   path: data/corpora
 - md5: 6924163047dd81a864d14fe61a59e5e5
   path: data/scripts/generate.py
-- md5: c2973cc06dde8858d57c0420cfc107c5
+- md5: bb719e4f47caa091e98de963693f34b6
   path: data/scripts/generator.py
 outs:
 - md5: 3ec5bed9fa2ec21c8a83d2073d097d6b.dir
