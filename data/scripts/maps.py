@@ -13,7 +13,7 @@ class MapMaker:
 
     @staticmethod
     def make_keys(document: Document, sentence: DocSentence) -> List[tuple]:
-        return [(document.directory, document.id, sentence.id, id_token)
+        return [f'{document.directory}\t{document.id}\t{sentence.id}\t{id_token}'
                 for id_token, _ in enumerate(sentence.orths)]
 
     def make_sentence_map(self, document: Document, sentence: DocSentence) -> [List[tuple], torch.Tensor]:

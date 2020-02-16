@@ -1,0 +1,22 @@
+md5: 1fb582b06db2f9a4f71d21a805afb2e6
+cmd: CUDA_VISIBLE_DEVICES=0 ./data/scripts/make_elmo_map.py --input-path ./data/relations_files.txt
+  --model ./data/elmo/options.json ./data/elmo/weights.hdf5 --output-paths ./data/maps/elmo.map.keys
+  ./data/maps/elmo.map.pt
+deps:
+- md5: 538e11e0eee17264b3b7fc96a45076cf
+  path: data/relations_files.txt
+- md5: 0e48e8f2cd22e80234a7bdb33be2f2b8
+  path: data/scripts/make_elmo_map.py
+- md5: 06160fe405eb03411eeee1204b867c0c
+  path: data/scripts/maps.py
+outs:
+- md5: b117101dafc74fc56f42661d37c3fbe6
+  path: data/maps/elmo.map.keys
+  cache: true
+  metric: false
+  persist: false
+- md5: 2ccb044e005dbbba18f28129d87290df
+  path: data/maps/elmo.map.pt
+  cache: true
+  metric: false
+  persist: false
