@@ -1,7 +1,7 @@
-md5: 342930f1b27515ce067fde91079f460b
+md5: 498eb0945f1dac9e44a2db887b2375f6
 cmd: ./data/scripts/combine_vectors.py --data-in ./data/generations --output-path
   ./data/vectorss --elmo-map ./data/maps/elmo.fake.map --fasttext-map ./data/maps/fasttext.fake.map
   --retrofit-map ./data/maps/retrofit.fake.map
 deps:
-- md5: b5829d82f7f81b03631ef89ad27dd5c1
+- md5: abf5ccf650257b6027ae984e1bc50f32
   path: data/scripts/combine_vectors.py
