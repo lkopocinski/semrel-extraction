@@ -157,7 +157,7 @@ class DocRelation:
 
 class Document:
 
-    def __init__(self, document: corpus2.DocumentPtr):
+    def __init__(self, document: corpus2.Document):
         self._document = document
 
         self._id = self._get_document_name()
@@ -215,11 +215,19 @@ class Document:
         return False
 
 
+def relations_documents_from_index(index_path: Path):
+    with index_path.open('r', encoding='utf-8') as file:
+        relation_files = [Path(line.strip()) for line in file]
+        return relations_documents_gen(relation_files)
+
+
 def relations_documents_gen(relation_files: Iterator[Path]) -> Iterator[Document]:
     for rel_path in relation_files:
         ccl_path = Path(str(rel_path).replace('.rel', ''))
         if rel_path.is_file() and ccl_path.is_file():
-            yield Document(ccl.read_ccl_and_rel_ccl(str(ccl_path), str(rel_path)))
+            ccl_document = ccl.read_ccl_and_rel_ccl(ccl_file=str(ccl_path),
+                                                    rel_ccl_file=str(rel_path))
+            yield Document(ccl_document)
 
 
 def relations_file_paths(input_path: str, directories: List) -> Iterator[Path]:

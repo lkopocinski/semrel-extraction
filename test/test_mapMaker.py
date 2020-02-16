@@ -1,43 +1,35 @@
 from unittest import mock
-from unittest.mock import Mock, PropertyMock
+from unittest.mock import PropertyMock
+
+import torch
 
 from data.scripts.maps import MapMaker
 
 
-def test_make_keys():
-    vectorizer = Mock()
-
-    document = Mock()
+@mock.patch('data.scripts.maps.Document', autospec=True)
+@mock.patch('data.scripts.maps.DocSentence', autospec=True)
+def test_make_keys(document, sentence):
     type(document).directory = PropertyMock(return_value='DIR')
     type(document).id = PropertyMock(return_value='DOC_ID')
-
-    sentence = Mock()
     type(sentence).id = PropertyMock(return_value='SENT_ID')
-    type(sentence).orths = PropertyMock(return_value=['orth0', 'orth1', 'orth2', 'orth3'])
+    type(sentence).orths = PropertyMock(return_value=['orth0', 'orth1', 'orth2'])
 
-    maker = MapMaker(vectorizer)
-    keys = maker.make_keys(document, sentence)
+    keys = MapMaker.make_keys(document, sentence)
 
     expected_keys = [
         ('DIR', 'DOC_ID', 'SENT_ID', 0),
         ('DIR', 'DOC_ID', 'SENT_ID', 1),
-        ('DIR', 'DOC_ID', 'SENT_ID', 2),
-        ('DIR', 'DOC_ID', 'SENT_ID', 3)
+        ('DIR', 'DOC_ID', 'SENT_ID', 2)
     ]
 
     assert keys == expected_keys
 
 
-def test_make_sentence_map():
-    vectorizer = Mock()
-    document = Mock()
-    sentence = Mock()
-    type(sentence).orths = PropertyMock(return_value=['orth0', 'orth1', 'orth2', 'orth3'])
+@mock.patch('data.scripts.vectorizers.Vectorizer', autospec=True)
+@mock.patch('data.scripts.maps.Document', autospec=True)
+@mock.patch.object(MapMaker, 'make_sentence_map', autospec=True, return_value=[])
+def test_make_document_map(vectorizer, document):
+    type(document).sentences = PropertyMock(return_value=['sent1', 'sent2', 'sent3'])
 
     maker = MapMaker(vectorizer)
-
-    with mock.patch.object(maker, 'make_keys', return_value=[('DIR', 'DOC_ID', 'SENT_ID', 0)]) as make_keys_method:
-        keys = maker.make_sentence_map(document, sentence)
-
-        make_keys_method.assert_called_with(document, sentence)
-        vectorizer.embed.assert_called_with(['orth0', 'orth1', 'orth2', 'orth3'])
+    maker.make_document_map(document)

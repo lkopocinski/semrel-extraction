@@ -2,6 +2,7 @@ import abc
 from typing import List
 
 import torch
+from allennlp.commands.elmo import ElmoEmbedder
 from allennlp.modules.elmo import Elmo, batch_to_ids
 from gensim.models import KeyedVectors
 from gensim.models.fasttext import load_facebook_model
@@ -12,6 +13,18 @@ class Vectorizer(abc.ABC):
     @abc.abstractmethod
     def embed(self, context: List[str]) -> torch.Tensor:
         pass
+
+
+class ElmoEmbedderVectorizer(Vectorizer):
+
+    def __init__(self, options, weights, device=0):
+        self.model = ElmoEmbedder(options, weights, device)
+
+    def embed(self, context: List[str]) -> torch.Tensor:
+        pass
+
+    def embed_batch(self, batch: List[List[str]]):
+        return self.model.batch_to_embeddings(batch)
 
 
 class ElmoVectorizer(Vectorizer):
