@@ -54,7 +54,7 @@ class MapLoader:
     def _load_keys(self) -> dict:
         with self._keys_path.open('r', encoding='utf-8') as file:
             return {
-                line.strip().split('\t'): index
+                tuple(line.strip().split('\t')): index
                 for index, line in enumerate(file)
             }
 

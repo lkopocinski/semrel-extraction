@@ -3,10 +3,11 @@
 pushd "$(git rev-parse --show-toplevel)"
 
 INPUT_PATH="./data/relations_files.txt"
-OUTPUT_PATH="./data/relations/relations.tsv"
+OUTPUT_DIR="./data/relations"
+OUTPUT_PATH="${OUTPUT_DIR}/relations.tsv"
 SCRIPTS_DIR="./data/scripts"
 
-mkdir -p ${OUTPUT_PATH}
+mkdir -p ${OUTPUT_DIR}
 
 dvc run \
   -d ${INPUT_PATH} \
