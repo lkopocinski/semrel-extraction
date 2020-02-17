@@ -37,17 +37,16 @@ class FastTextVectorizer(Vectorizer):
 
 class RetrofitVectorizer(Vectorizer):
 
-    def __init__(self, retrofitted_model_path, fasttext_model_path):
-        self.model_retrofit = KeyedVectors.load_word2vec_format(
-            retrofitted_model_path)
+    def __init__(self, retrofit_model_path, fasttext_model_path):
+        self.model_retrofit = KeyedVectors.load_word2vec_format(retrofit_model_path)
         self.model_fasttext = load_facebook_model(fasttext_model_path)
 
     def _embed_word(self, word: str) -> torch.Tensor:
         try:
-            return torch.FloatTensor(self.model_retrofit[word])
+            return torch.from_numpy(self.model_retrofit[word])
         except KeyError:
             print("Term not found in retrofit model: ", word)
-            return torch.FloatTensor(self.model_fasttext.wv[word])
+            return torch.from_numpy(self.model_fasttext.wv[word])
 
     def embed(self, context: List[str]) -> torch.Tensor:
         tensors = [self._embed_word(word) for word in context]
