@@ -3,8 +3,8 @@ from pathlib import Path
 
 import click
 
-from data.scripts.utils.corpus import relations_documents_gen, relations_file_paths
 from data.scripts.generator import RelationsGenerator
+from data.scripts.utils.corpus import relations_documents_from_index
 from data.scripts.utils.io import save_lines
 
 CHANNELS = (('BRAND_NAME', 'PRODUCT_NAME'),
@@ -13,20 +13,14 @@ CHANNELS = (('BRAND_NAME', 'PRODUCT_NAME'),
 
 @click.command()
 @click.option('--input-path', required=True, type=str,
-              help='Path to corpora files.')
-@click.option('--directories', required=True, nargs=1,
-              help='Directories names with corpus files.')
+              help='Path to corpora relations files list.')
 @click.option('--output-path', required=True, type=str,
               help='Directory for saving generated relations files.')
-def main(
-        input_path,
-        directories,
-        output_path
-):
-    relations_files = relations_file_paths(input_path, directories)
+def main(input_path, output_path):
+    documents = relations_documents_from_index(index_path=Path(input_path))
     output_path = Path(output_path)
 
-    for document in relations_documents_gen(relations_files):
+    for document in documents:
         relations_generator = RelationsGenerator(document)
 
         positive_relations = relations_generator.generate_positive(CHANNELS)

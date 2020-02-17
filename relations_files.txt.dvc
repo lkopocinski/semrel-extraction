@@ -1,7 +1,7 @@
-md5: 968a6ce63f849f2187276a4c491154ed
+md5: 3bd01c9b12971ef51bd8867a6a4692a5
 cmd: find ./data/corpora/116/ -type f -name *.rel.xml > ./data/relations_files.txt
 deps:
-- md5: a19c8508857b14a756a4f901d5547a9a.dir
+- md5: 90eb94f85a48865155e48967735cf7dc.dir
   path: data/corpora
 outs:
 - md5: 538e11e0eee17264b3b7fc96a45076cf
