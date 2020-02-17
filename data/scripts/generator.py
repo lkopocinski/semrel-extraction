@@ -27,6 +27,7 @@ class RelationsGenerator:
                 member_from, member_to = relation.get_members()
 
                 relations.append(Relation(self._document.id, member_from, member_to))
+                # relations.append(Relation(self._document.id, member_to, member_from))
 
                 self._map_indices_to_relation(member_from)
                 self._map_indices_to_relation(member_to)
@@ -41,7 +42,9 @@ class RelationsGenerator:
                 _member_to = self._relation_tokens_indices.get(
                     (member_to.id_sentence, idx_to), None)
 
-                if _member_from and _member_to and Relation(self._document.id, _member_from, _member_to) in relations:
+                if _member_from and _member_to \
+                        and (Relation(self._document.id, _member_from, _member_to) in relations
+                             or Relation(self._document.id, _member_to, _member_from) in relations):
                     continue
 
                 lemma_from = self._document.get_sentence(member_from.id_sentence).lemmas[idx_from]
@@ -71,7 +74,7 @@ class RelationsGenerator:
         for idx_from in member.indices:
             self._relation_tokens_indices[(member.id_sentence, idx_from)] = member
 
-    def _get_nouns_indices_pairs(self, member_from:  Member, member_to: Member):
+    def _get_nouns_indices_pairs(self, member_from: Member, member_to: Member):
         sent_id_from = member_from.id_sentence
         sent_id_to = member_to.id_sentence
 

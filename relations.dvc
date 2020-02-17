@@ -1,15 +1,15 @@
-md5: e8632844aec384f6e654ae55c7e6f516
-cmd: CUDA_VISIBLE_DEVICES=0 ./data/scripts/generate.py --input-path ./data/corpora
-  --directories 116 --output-path ./data/relations/relations.tsv
+md5: d39d4289f626e2b3dae1b479f9da225b
+cmd: CUDA_VISIBLE_DEVICES=0 ./data/scripts/generate.py --input-path ./data/relations_files.txt
+  --output-path ./data/relations/relations.tsv
 deps:
-- md5: 90eb94f85a48865155e48967735cf7dc.dir
-  path: data/corpora
+- md5: a67b59d48aa62c88d5698e8f8ff5f965
+  path: data/relations_files.txt
 - md5: 6300af04acf86fd23370ea57ec168941
   path: data/scripts/generate.py
-- md5: bb719e4f47caa091e98de963693f34b6
+- md5: fc2c8bf9c323be197172d034c0bf566a
   path: data/scripts/generator.py
 outs:
-- md5: 3ec5bed9fa2ec21c8a83d2073d097d6b.dir
+- md5: ca157c033969dfb070c57184a4625898.dir
   path: data/relations
   cache: true
   metric: false
