@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Iterator, List
 
 import torch
@@ -12,7 +13,7 @@ class MapMaker:
         self._vectorizer = vectorizer
 
     @staticmethod
-    def make_keys(document: Document, sentence: DocSentence) -> List[tuple]:
+    def make_keys(document: Document, sentence: DocSentence) -> List[str]:
         return [f'{document.directory}\t{document.id}\t{sentence.id}\t{id_token}'
                 for id_token, _ in enumerate(sentence.orths)]
 
@@ -42,3 +43,25 @@ class MapMaker:
             vectors.extend(document_tensor)
 
         return keys, torch.stack(vectors)
+
+
+class MapLoader:
+
+    def __init__(self, keys_file: str, vectors_file: str):
+        self._keys_path = Path(keys_file)
+        self._vectors_file = Path(vectors_file)
+
+    def _load_keys(self) -> dict:
+        with self._keys_path.open('r', encoding='utf-8') as file:
+            return {
+                line.strip().split('\t'): index
+                for index, line in enumerate(file)
+            }
+
+    def _load_vectors(self) -> torch.Tensor:
+        return torch.load(self._vectors_file)
+
+    def __call__(self) -> [dict, torch.Tensor]:
+        keys = self._load_keys()
+        vectors = self._load_vectors()
+        return keys, vectors

@@ -5,10 +5,18 @@ import click
 
 from data.scripts.generator import RelationsGenerator
 from data.scripts.utils.corpus import relations_documents_from_index
-from data.scripts.utils.io import save_lines
+from data.scripts.utils.io import save_lines, save_line
 
 CHANNELS = (('BRAND_NAME', 'PRODUCT_NAME'),
             ('PRODUCT_NAME', 'BRAND_NAME'))
+
+
+def get_header() -> str:
+    return '\t'.join([
+        'label', 'id_domain', 'id_document',
+        'id_sentence_from', 'lemma_from', 'channel_from', 'is_named_entity_from', 'indices_from', 'context_from',
+        'id_sentence_to', 'lemma_to', 'channel_to', 'is_named_entity_to', 'indices_to', 'context_to'
+    ])
 
 
 @click.command()
@@ -16,9 +24,12 @@ CHANNELS = (('BRAND_NAME', 'PRODUCT_NAME'),
               help='Path to corpora relations files list.')
 @click.option('--output-path', required=True, type=str,
               help='Directory for saving generated relations files.')
-def main(input_path, output_path):
+def main(input_path: str, output_path: str):
     documents = relations_documents_from_index(index_path=Path(input_path))
     output_path = Path(output_path)
+
+    header = get_header()
+    save_line(output_path, header)
 
     for document in documents:
         relations_generator = RelationsGenerator(document)
