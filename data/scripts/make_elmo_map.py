@@ -23,7 +23,6 @@ def main(input_path, model, output_paths):
     vectorizer = ElmoVectorizer(options=elmo_options, weights=elmo_weights)
     mapmaker = MapMaker(vectorizer=vectorizer)
 
-
     documents = relations_documents_from_index(index_path=Path(input_path))
     keys, vectors = mapmaker.make_map(documents)
 
