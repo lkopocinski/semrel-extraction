@@ -19,7 +19,7 @@ dvc run \
   -o ${VECTORS_FILE} \
   -f retrofit.map.dvc \
   CUDA_VISIBLE_DEVICES=0 ${SCRIPTS_DIR}/make_retrofit_map.py --input-path ${INPUT_PATH} \
-                                                             --model-retrofit "${MODEL_DIR}/kgr10.plain.skipgram.dim300.neg10.retrofit-v3.vec" \
+                                                             --model-retrofit "${MODEL_DIR}/kgr10.plain.skipgram.dim300.neg10.retrofit.vec" \
                                                              --model-fasttext "${MODEL_DIR}/kgr10.plain.skipgram.dim300.neg10.bin" \
                                                              --output-paths ${KEYS_FILE} ${VECTORS_FILE}
 
