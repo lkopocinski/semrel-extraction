@@ -59,7 +59,7 @@ class MapLoader:
             }
 
     def _load_vectors(self) -> torch.Tensor:
-        return torch.load(self._vectors_file)
+        return torch.load(str(self._vectors_file))
 
     def __call__(self) -> [dict, torch.Tensor]:
         keys = self._load_keys()
