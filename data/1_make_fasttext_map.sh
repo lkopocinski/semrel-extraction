@@ -5,7 +5,7 @@ pushd "$(git rev-parse --show-toplevel)"
 MODEL_DIR="./data/fasttext"
 SCRIPTS_DIR="./data/scripts"
 
-INPUT_PATH="./data/relations_files.txt"
+INPUT_PATH="./data/relations_files.list"
 KEYS_FILE="./data/maps/fasttext.map.keys"
 VECTORS_FILE="./data/maps/fasttext.map.pt"
 
