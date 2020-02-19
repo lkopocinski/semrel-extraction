@@ -3,8 +3,6 @@ cmd: CUDA_VISIBLE_DEVICES=0 ./data/scripts/make_elmo_map.py --input-path ./data/
   --model ./data/elmo/options.json ./data/elmo/weights.hdf5 --output-paths ./data/maps/elmo.map.keys
   ./data/maps/elmo.map.pt
 deps:
-- md5: aa87aa2437a53998454b5471841fc3e2
-  path: data/relations_files.txt
 - md5: 68c6d89196656cff7bae931eebe51512
   path: data/scripts/make_elmo_map.py
 - md5: 6405262c31fad03c63c3e67daf5600a3
