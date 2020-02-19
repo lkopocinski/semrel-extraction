@@ -20,7 +20,7 @@ from data.scripts.utils.vectorizers import ElmoVectorizer
               help='Paths for saving keys and map files.')
 def main(input_path, model, output_paths):
     elmo_options, elmo_weights = model
-    vectorizer = ElmoVectorizer(options=elmo_options, weights=elmo_weights)
+    vectorizer = ElmoVectorizer(options_path=elmo_options, weights_path=elmo_weights)
     mapmaker = MapMaker(vectorizer=vectorizer)
 
     documents = relations_documents_from_index(index_path=Path(input_path))

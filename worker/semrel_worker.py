@@ -62,8 +62,8 @@ class SemrelWorker(nlp_ws.NLPWorker):
     @classmethod
     def static_init(cls, config):
         cls.elmo = ElmoVectorizer(
-            options=os.getenv('ELMO_MODEL_OPTIONS'),
-            weights=os.getenv('ELMO_MODEL_WEIGHTS')
+            options_path=os.getenv('ELMO_MODEL_OPTIONS'),
+            weights_path=os.getenv('ELMO_MODEL_WEIGHTS')
         )
 
         cls.fasttext = FastTextVectorizer(

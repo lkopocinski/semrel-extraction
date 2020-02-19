@@ -16,10 +16,10 @@ class Vectorizer(abc.ABC):
 
 class ElmoVectorizer(Vectorizer):
 
-    def __init__(self, options, weights):
-        self.model = Elmo(options, weights, 1, dropout=0)
+    def __init__(self, options_path: str, weights_path: str):
+        self.model = Elmo(options_path, weights_path, 1, dropout=0)
 
-    def embed(self, context: List[str]):
+    def embed(self, context: List[str]) -> torch.Tensor:
         character_ids = batch_to_ids([context])
         embeddings = self.model(character_ids)
         tensor = embeddings['elmo_representations'][0]
@@ -28,7 +28,7 @@ class ElmoVectorizer(Vectorizer):
 
 class FastTextVectorizer(Vectorizer):
 
-    def __init__(self, model_path):
+    def __init__(self, model_path: str):
         self.model = load_facebook_model(model_path)
 
     def embed(self, context: List[str]) -> torch.Tensor:
