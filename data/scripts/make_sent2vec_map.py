@@ -41,7 +41,7 @@ def main(input_path, model, output_paths):
     relations_loader = RelationsLoader(input_path)
     make_sentence_map(relations_loader)
 
-    rel_map =
+    # rel_map =
 
 
 if __name__ == '__main__':
