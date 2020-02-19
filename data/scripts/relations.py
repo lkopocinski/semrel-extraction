@@ -44,25 +44,24 @@ class RelationsGenerator:
                 lemma_from = self._document.get_sentence(member_from.id_sentence).lemmas[index_from]
                 lemma_to = self._document.get_sentence(member_to.id_sentence).lemmas[index_to]
 
-                member_from = Member(
-                    member_from.id_sentence,
-                    lemma_from,
-                    _member_from.channel if _member_from else '',
-                    _member_from.is_named_entity if _member_from else False,
-                    (index_from,),
-                    member_from.context
+                __member_from = Member(
+                    id_sentence=member_from.id_sentence,
+                    lemma=lemma_from,
+                    channel=_member_from.channel if _member_from else '',
+                    is_named_entity=_member_from.is_named_entity if _member_from else False,
+                    indices=(index_from,),
+                    context=member_from.context
                 )
-                member_to = Member(
-                    member_to.id_sentence,
-                    lemma_to,
-                    _member_to.channel if _member_to else '',
-                    _member_from.is_named_entity if _member_from else False,
-                    (index_to,),
-                    member_to.context
+                __member_to = Member(
+                    id_sentence=member_to.id_sentence,
+                    lemma=lemma_to,
+                    channel=_member_to.channel if _member_to else '',
+                    is_named_entity=_member_from.is_named_entity if _member_from else False,
+                    indices=(index_to,),
+                    context=member_to.context
                 )
 
-                _ = self._document.id
-                yield Relation(_, member_from, member_to)
+                yield Relation(self._document.id, __member_from, __member_to)
 
     def _map_tokens_indices_to_member(self, member: Member):
         for index in member.indices:
