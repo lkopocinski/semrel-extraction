@@ -7,7 +7,7 @@ import torch
 import sent2vec
 from data.scripts.combine_vectors import RelationsLoader
 from data.scripts.entities import Relation
-from data.scripts.utils.corpus import relations_documents_from_index
+from data.scripts.utils.corpus import from_index_documents_gen
 from io import save_lines, save_tensor
 
 PHRASE_LENGTH_LIMIT = 5
@@ -16,7 +16,7 @@ PHRASE_LENGTH_LIMIT = 5
 def make_sentence_map(relations_paths: Path):
     sentence_map = {}
 
-    documents = relations_documents_from_index(index_path=relations_paths)
+    documents = from_index_documents_gen(relations_files_index=relations_paths)
     for document in documents:
         id_domain = document.directory
         id_document = document.id

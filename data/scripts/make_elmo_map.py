@@ -4,14 +4,14 @@ from pathlib import Path
 import click
 
 from data.scripts.maps import MapMaker
-from data.scripts.utils.corpus import relations_documents_from_index
+from data.scripts.utils.corpus import from_index_documents_gen
 from data.scripts.utils.io import save_lines, save_tensor
 from data.scripts.utils.vectorizers import ElmoVectorizer
 
 
 @click.command()
 @click.option('--input-path', required=True, type=str,
-              help='Path to relation corpora files index.')
+              help='Path to relation corpora files list.')
 @click.option('--model', required=True, type=(str, str),
               metavar='options.json weights.hdf5',
               help="Paths to elmo model options and weights.")
@@ -23,7 +23,7 @@ def main(input_path, model, output_paths):
     vectorizer = ElmoVectorizer(options_path=elmo_options, weights_path=elmo_weights)
     mapmaker = MapMaker(vectorizer=vectorizer)
 
-    documents = relations_documents_from_index(index_path=Path(input_path))
+    documents = from_index_documents_gen(relations_files_index=Path(input_path))
     keys, vectors = mapmaker.make_map(documents)
 
     keys_path, vectors_path = output_paths

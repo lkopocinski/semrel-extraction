@@ -4,7 +4,7 @@ from pathlib import Path
 import click
 
 from data.scripts.maps import MapMaker
-from data.scripts.utils.corpus import relations_documents_from_index
+from data.scripts.utils.corpus import from_index_documents_gen
 from data.scripts.utils.io import save_lines, save_tensor
 from data.scripts.utils.vectorizers import RetrofitVectorizer
 
@@ -19,7 +19,7 @@ from data.scripts.utils.vectorizers import RetrofitVectorizer
               metavar='model.bin',
               help="Paths to fasttext model.")
 @click.option('--output-paths', required=True, type=(str, str),
-              metavar='fasttext.map.keys fasttext.map.pt',
+              metavar='retrofit.map.keys retrofit.map.pt',
               help='Paths for saving keys and map files.')
 def main(input_path, model_retrofit, model_fasttext, output_paths):
     vectorizer = RetrofitVectorizer(
@@ -28,7 +28,7 @@ def main(input_path, model_retrofit, model_fasttext, output_paths):
     )
     mapmaker = MapMaker(vectorizer=vectorizer)
 
-    documents = relations_documents_from_index(index_path=Path(input_path))
+    documents = from_index_documents_gen(relations_files_index=Path(input_path))
     keys, vectors = mapmaker.make_map(documents)
 
     keys_path, vectors_path = output_paths

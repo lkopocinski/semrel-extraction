@@ -220,14 +220,14 @@ class Document:
         return False
 
 
-def relations_documents_from_index(index_path: Path) -> Iterator[Document]:
-    with index_path.open('r', encoding='utf-8') as file:
+def from_index_documents_gen(relations_files_index: Path) -> Iterator[Document]:
+    with relations_files_index.open('r', encoding='utf-8') as file:
         relation_files = [Path(line.strip()) for line in file]
-        return relations_documents_gen(relation_files)
+        return documents_gen(relation_files)
 
 
-def relations_documents_gen(relation_files: Iterator[Path]) -> Iterator[Document]:
-    for rel_path in relation_files:
+def documents_gen(relations_files: Iterator[Path]) -> Iterator[Document]:
+    for rel_path in relations_files:
         ccl_path = Path(str(rel_path).replace('.rel', ''))
         if rel_path.is_file() and ccl_path.is_file():
             ccl_document = ccl.read_ccl_and_rel_ccl(
@@ -236,8 +236,8 @@ def relations_documents_gen(relation_files: Iterator[Path]) -> Iterator[Document
             yield Document(ccl_document)
 
 
-def relations_file_paths(input_path: str, directories: List) -> Iterator[Path]:
+def relations_files_paths(corpora_path: str, directories: List) -> Iterator[Path]:
     return list(chain.from_iterable(
         dir_path.glob('*.rel.xml')
-        for dir_path in Path(input_path).iterdir()
+        for dir_path in Path(corpora_path).iterdir()
         if dir_path.stem in directories))

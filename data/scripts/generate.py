@@ -4,7 +4,7 @@ from pathlib import Path
 import click
 
 from data.scripts.generator import RelationsGenerator
-from data.scripts.utils.corpus import relations_documents_from_index
+from data.scripts.utils.corpus import from_index_documents_gen
 from data.scripts.utils.io import save_lines, save_line
 
 CHANNELS = (('BRAND_NAME', 'PRODUCT_NAME'),
@@ -25,7 +25,7 @@ def get_header() -> str:
 @click.option('--output-path', required=True, type=str,
               help='Directory for saving generated relations files.')
 def main(input_path: str, output_path: str):
-    documents = relations_documents_from_index(index_path=Path(input_path))
+    documents = from_index_documents_gen(relations_files_index=Path(input_path))
     output_path = Path(output_path)
 
     header = get_header()
