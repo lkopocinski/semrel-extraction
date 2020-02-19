@@ -9,10 +9,6 @@ class Member(NamedTuple):
     indices: tuple
     context: List[str]
 
-    @property
-    def start_idx(self):
-        return self.indices[0]
-
     def __str__(self):
         return f'{self.id_sentence}\t{self.lemma}\t{self.channel}\t{self.is_named_entity}\t{self.indices}\t{self.context}'
 

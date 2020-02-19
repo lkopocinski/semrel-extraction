@@ -3,7 +3,7 @@ from pathlib import Path
 
 import click
 
-from data.scripts.generator import RelationsGenerator
+from data.scripts.relations import RelationsGenerator
 from data.scripts.utils.corpus import from_index_documents_gen
 from data.scripts.utils.io import save_lines, save_line
 

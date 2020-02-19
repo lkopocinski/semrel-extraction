@@ -13,7 +13,7 @@ mkdir -p ${OUTPUT_DIR}
 dvc run \
   -d ${INPUT_PATH} \
   -d ${SCRIPTS_DIR}/generate_relations.py \
-  -d ${SCRIPTS_DIR}/generator.py \
+  -d ${SCRIPTS_DIR}/relations.py \
   -o ${RELATIONS_PATH} \
   CUDA_VISIBLE_DEVICES=0 ${SCRIPTS_DIR}/generate_relations.py --input-path ${INPUT_PATH} \
                                                               --output-path ${RELATIONS_PATH}

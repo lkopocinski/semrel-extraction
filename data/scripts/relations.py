@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.6
 
 from itertools import permutations, product
+from typing import Iterator
 
 from data.scripts.utils.corpus import Document, Member
 from entities import Relation
@@ -13,7 +14,7 @@ class RelationsGenerator:
 
         self._relation_tokens_indices = {}
 
-    def generate_positive(self, channels: tuple):
+    def generate_positive(self, channels: tuple) -> Iterator[Relation]:
         for relation in self._document.relations:
             if relation.is_ner and relation.channels in channels:
                 member_from, member_to = relation.get_members()
@@ -27,7 +28,6 @@ class RelationsGenerator:
                 member_from, member_to = relation.get_members()
 
                 relations.append(Relation(self._document.id, member_from, member_to))
-                # relations.append(Relation(self._document.id, member_to, member_from))
 
                 self._map_indices_to_relation(member_from)
                 self._map_indices_to_relation(member_to)
