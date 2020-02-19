@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Generator, Iterator
+from typing import Iterator
 
 import torch
 
@@ -17,11 +17,11 @@ def save_lines(path: Path, lines: Iterator, mode='w+'):
             f.write(f'{line}\n')
 
 
-def read_lines(path: Path) -> Generator[str, None, None]:
+def read_lines(path: Path) -> Iterator[str]:
     with path.open('r', encoding='utf-8') as f:
         for line in f:
             yield line.strip()
 
 
-def save_tensor(path: Path, tensor):
+def save_tensor(path: Path, tensor: torch.Tensor):
     torch.save(tensor, str(path))
