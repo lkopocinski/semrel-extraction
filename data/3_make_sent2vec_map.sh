@@ -9,6 +9,8 @@ MODEL_DIR="./data/sent2vec"
 OUTPUT_DIR="./data/vectors"
 SCRIPTS_DIR="./data/scripts"
 
+mkdir -p ${OUTPUT_DIR}
+
 dvc run \
   -d ${RELATIONS_FILE} \
   -d ${DOCUMENTS_FILE} \

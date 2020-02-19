@@ -112,14 +112,6 @@ RUN git clone http://nlp.pwr.edu.pl/wccl.git && \
     cd /home/install && \
     rm -rf wccl
 
-# sent2vec
-WORKDIR /home/install
-RUN git clone https://github.com/epfml/sent2vec.git && \
-    cd sent2vec/ && \
-    pip install . && \
-    cd /home/install && \
-    rm -rf sent2vec
-
 
 RUN locale-gen en_US.UTF-8
 ENV LANG C.UTF-8
@@ -129,6 +121,16 @@ ENV PIP_EXTRA_INDEX_URL "https://pypi.clarin-pl.eu/"
 
 COPY requirements.txt /
 RUN pip install -r /requirements.txt
+
+
+# sent2vec
+WORKDIR /home/install
+RUN git clone https://github.com/epfml/sent2vec.git && \
+    cd sent2vec/ && \
+    pip install . && \
+    cd /home/install && \
+    rm -rf sent2vec
+
 
 WORKDIR /
 ENTRYPOINT ["/bin/bash"]

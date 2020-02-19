@@ -40,9 +40,7 @@ def main(relations_file, documents_files, model, output_paths):
     s2v = sent2vec.Sent2vecModel()
     s2v.load_model(model, inference_mode=True)
 
-    sentence_map = make_sentence_map(documents_files)
-    import pudb;
-    pudb.set_trace()
+    sentence_map = make_sentence_map(Path(documents_files))
     relations_loader = RelationsLoader(relations_file)
 
 

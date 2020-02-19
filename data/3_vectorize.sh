@@ -7,6 +7,8 @@ OUTPUT_DIR="./data/vectors"
 SCRIPTS_DIR="./data/scripts"
 MAPS_DIR="./data/maps"
 
+mkdir -p ${OUTPUT_DIR}
+
 dvc run \
   -d ${INPUT_PATH} \
   -d ${SCRIPTS_DIR}/combine_vectors.py \
