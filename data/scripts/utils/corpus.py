@@ -188,7 +188,7 @@ class Document:
         return self._relations
 
     def get_sentence(self, sentence_id: str) -> DocSentence:
-        return self._sentence_dict[sentence_id]
+        return self._sentence_dict.get(sentence_id, None)
 
     def _id_to_sentence_dict(self) -> Dict[str, DocSentence]:
         return {sentence.id(): DocSentence(sentence)

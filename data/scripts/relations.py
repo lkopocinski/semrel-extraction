@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.6
 
 from itertools import permutations, product
-from typing import Iterator
+from typing import Iterator, List
 
 from data.scripts.utils.corpus import Document, Member
 from entities import Relation
@@ -12,7 +12,7 @@ class RelationsGenerator:
     def __init__(self, document: Document):
         self._document = document
 
-        self._relation_tokens_indices = {}
+        self._tokens_indices_to_member = {}
 
     def generate_positive(self, channels: tuple) -> Iterator[Relation]:
         for relation in self._document.relations:
@@ -23,39 +23,33 @@ class RelationsGenerator:
     def generate_negative(self, channels: tuple):
         relations = []
 
-        for relation in self._document.relations:
-            if relation.is_ner and relation.channels in channels:
-                member_from, member_to = relation.get_members()
-
-                relations.append(Relation(self._document.id, member_from, member_to))
-
-                self._map_indices_to_relation(member_from)
-                self._map_indices_to_relation(member_to)
+        for relation in self.generate_positive(channels):
+            self._map_tokens_indices_to_member(relation.member_from)
+            self._map_tokens_indices_to_member(relation.member_to)
+            relations.append(relation)
 
         for _, member_from, member_to in relations:
             nouns_indices_pairs = self._get_nouns_indices_pairs(member_from, member_to)
 
-            for idx_from, idx_to in nouns_indices_pairs:
-                _member_from = self._relation_tokens_indices.get(
-                    (member_from.id_sentence, idx_from), None)
+            for index_from, index_to in nouns_indices_pairs:
+                _member_from = self._tokens_indices_to_member.get(
+                    (member_from.id_sentence, index_from), None)
 
-                _member_to = self._relation_tokens_indices.get(
-                    (member_to.id_sentence, idx_to), None)
+                _member_to = self._tokens_indices_to_member.get(
+                    (member_to.id_sentence, index_to), None)
 
-                if _member_from and _member_to \
-                        and (Relation(self._document.id, _member_from, _member_to) in relations
-                             or Relation(self._document.id, _member_to, _member_from) in relations):
+                if self._are_in_relation(_member_from, _member_to, relations):
                     continue
 
-                lemma_from = self._document.get_sentence(member_from.id_sentence).lemmas[idx_from]
-                lemma_to = self._document.get_sentence(member_to.id_sentence).lemmas[idx_to]
+                lemma_from = self._document.get_sentence(member_from.id_sentence).lemmas[index_from]
+                lemma_to = self._document.get_sentence(member_to.id_sentence).lemmas[index_to]
 
                 member_from = Member(
                     member_from.id_sentence,
                     lemma_from,
                     _member_from.channel if _member_from else '',
                     _member_from.is_named_entity if _member_from else False,
-                    (idx_from,),
+                    (index_from,),
                     member_from.context
                 )
                 member_to = Member(
@@ -63,16 +57,16 @@ class RelationsGenerator:
                     lemma_to,
                     _member_to.channel if _member_to else '',
                     _member_from.is_named_entity if _member_from else False,
-                    (idx_to,),
+                    (index_to,),
                     member_to.context
                 )
 
-                id_document = self._document.id
-                yield Relation(id_document, member_from, member_to)
+                _ = self._document.id
+                yield Relation(_, member_from, member_to)
 
-    def _map_indices_to_relation(self, member: Member):
-        for idx_from in member.indices:
-            self._relation_tokens_indices[(member.id_sentence, idx_from)] = member
+    def _map_tokens_indices_to_member(self, member: Member):
+        for index in member.indices:
+            self._tokens_indices_to_member[(member.id_sentence, index)] = member
 
     def _get_nouns_indices_pairs(self, member_from: Member, member_to: Member):
         sent_id_from = member_from.id_sentence
@@ -82,8 +76,13 @@ class RelationsGenerator:
         nouns_indices_to = self._document.get_sentence(sent_id_to).noun_indices
 
         if sent_id_from == sent_id_to:
-            nouns_indices_pairs = permutations(nouns_indices_from, 2)
+            nouns_indices_pairs = permutations(nouns_indices_from, r=2)
         else:
             nouns_indices_pairs = product(nouns_indices_from, nouns_indices_to)
 
         return nouns_indices_pairs
+
+    def _are_in_relation(self, member_from: Member, member_to: Member, relations: List):
+        return member_from and member_to and (
+            (Relation(self._document.id, member_from, member_to) in relations
+             or Relation(self._document.id, member_to, member_from) in relations))
