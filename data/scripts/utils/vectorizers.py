@@ -1,6 +1,7 @@
 import abc
 from typing import List
 
+import sent2vec
 import torch
 from allennlp.modules.elmo import Elmo, batch_to_ids
 from gensim.models import KeyedVectors
@@ -51,3 +52,14 @@ class RetrofitVectorizer(Vectorizer):
     def embed(self, context: List[str]) -> torch.Tensor:
         tensors = [self._embed_word(word) for word in context]
         return torch.stack(tensors)
+
+
+class Sent2VecVectorizer(Vectorizer):
+
+    def __init__(self, model_path: str):
+        self.model = sent2vec.Sent2vecModel()
+        self.model.load_model(model_path, inference_mode=True)
+
+    def embed(self, sentence: List[str]) -> torch.Tensor:
+        sentence = ' '.join(sentence)
+        return torch.from_numpy(self.model.embed_sentence(sentence))
