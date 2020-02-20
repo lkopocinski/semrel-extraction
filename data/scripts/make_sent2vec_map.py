@@ -1,19 +1,18 @@
 #!/usr/bin/env python3.6
 from pathlib import Path
+from typing import List
 
 import click
 import torch
 
-import sent2vec
-from data.scripts.combine_vectors import RelationsLoader
-from data.scripts.entities import Relation
+from data.scripts.entities import Relation, Member
+from data.scripts.relations import RelationsLoader
 from data.scripts.utils.corpus import from_index_documents_gen
-from io import save_lines, save_tensor
+from data.scripts.utils.io import save_lines, save_tensor
+from data.scripts.utils.vectorizers import Sent2VecVectorizer
 
-PHRASE_LENGTH_LIMIT = 5
 
-
-def make_sentence_map(relations_paths: Path):
+def make_sentence_map(relations_paths: Path) -> dict:
     sentence_map = {}
 
     documents = from_index_documents_gen(relations_files_index=relations_paths)
@@ -30,75 +29,90 @@ def make_sentence_map(relations_paths: Path):
     return sentence_map
 
 
-def make_vectors(relations_loader: RelationsLoader, sentence_map: dict):
-    keys = []
-    vectors = []
+class RelationsMapMaker:
+    PHRASE_LENGTH_LIMIT = 5
+    MASK = 'MASK'
 
-    for label, id_domain, relation in relations_loader.relations():
+    def __init__(self, relations_loader: RelationsLoader, vectorizer: Sent2VecVectorizer):
+        self.relations_loader = relations_loader
+        self.vectorizer = vectorizer
+
+    def _is_phrase_too_long(self, member: Member) -> bool:
+        return len(member.indices) > self.PHRASE_LENGTH_LIMIT
+
+    def _make_key(self, label: str, id_domain: str, relation: Relation):
         id_document, member_from, member_to = relation
+        return '\t'.join([
+            label, id_domain, id_document,
+            member_from.id_sentence, member_from.channel, str(member_from.indices), member_from.lemma,
+            member_to.id_sentence, member_to.channel, str(member_to.indices), member_to.lemma,
+        ])
 
-        if len(member_from.indices) > PHRASE_LENGTH_LIMIT or len(member_to.indices) > PHRASE_LENGTH_LIMIT:
-            continue
+    def _mask_tokens(self, context: List[str], indices: tuple[int]):
+        return [self.MASK
+                if index in indices else token
+                for index, token in enumerate(context)]
 
-        id_sentence_from = int(member_from.id_sentence.replace('sent', ''))
-        id_sentence_to = int(member_to.id_sentence.replace('sent', ''))
+    def make_map(self, sentence_map: dict) -> [List, torch.tensor]:
+        keys = []
+        vectors = []
 
-        if id_sentence_from > id_sentence_to:
-            # swap
-            id_sentence_from = int(member_to.id_sentence.replace('sent', ''))
-            id_sentence_to = int(member_from.id_sentence.replace('sent', ''))
-            indices_from = member_to.indices
-            indices_to = member_from.indices
-        else:
-            indices_from = member_from.indices
-            indices_to = member_to.indices
+        for label, id_domain, relation in self.relations_loader.relations():
+            id_document, member_from, member_to = relation
 
-        if id_sentence_from == id_sentence_to:
-            context_left = sentence_map[(id_domain, id_document)].get(id_sentence_from - 1, [])
-            context_between = mask_tokens(sentence_map[(id_domain, id_document)][id_sentence_from],
-                                          indices_from + indices_to)
-            context_right = sentence_map[(id_domain, id_document)].get(id_sentence_to + 1, [])
-        elif (id_sentence_to - id_sentence_from) > 0:
-            # be sure the indices are swapped
-            context_between = []
-            context_left = sentence_map[(id_domain, id_document)].get(id_sentence_from - 1, [])
-            context_between.extend(mask_tokens(sentence_map[(id_domain, id_document)][id_sentence_from], indices_from))
+            if self._is_phrase_too_long(member_from) or self._is_phrase_too_long(member_to):
+                continue
 
-            for i in range(id_sentence_from + 1, id_sentence_to):
-                context_between.extend(sentence_map[(id_domain, id_document)].get(i, []))
+            id_sentence_from = int(member_from.id_sentence.replace('sent', ''))
+            id_sentence_to = int(member_to.id_sentence.replace('sent', ''))
 
-            context_between.extend(mask_tokens(sentence_map[(id_domain, id_document)][id_sentence_to], indices_to))
-            context_right = sentence_map[(id_domain, id_document)].get(id_sentence_to + 1, [])
+            if id_sentence_from > id_sentence_to:
+                # swap
+                id_sentence_from = int(member_to.id_sentence.replace('sent', ''))
+                id_sentence_to = int(member_from.id_sentence.replace('sent', ''))
+                indices_from = member_to.indices
+                indices_to = member_from.indices
+            else:
+                indices_from = member_from.indices
+                indices_to = member_to.indices
 
-        tokens = context_left + context_between + context_right
-        sentence = ' '.join(tokens)
+            if id_sentence_from == id_sentence_to:
+                context_left = sentence_map[(id_domain, id_document)].get(id_sentence_from - 1, [])
+                context_between = self._mask_tokens(sentence_map[(id_domain, id_document)][id_sentence_from],
+                                                    indices_from + indices_to)
+                context_right = sentence_map[(id_domain, id_document)].get(id_sentence_to + 1, [])
+            elif (id_sentence_to - id_sentence_from) > 0:
+                # be sure the indices are swapped
+                context_between = []
+                context_left = sentence_map[(id_domain, id_document)].get(id_sentence_from - 1, [])
+                context_between.extend(
+                    self._mask_tokens(sentence_map[(id_domain, id_document)][id_sentence_from], indices_from))
 
-        keys.append(_make_key(label, id_domain, relation))
-        vectors.append(torch.from_numpy(s2v.embed_sentence(sentence)))
+                for i in range(id_sentence_from + 1, id_sentence_to):
+                    context_between.extend(sentence_map[(id_domain, id_document)].get(i, []))
 
-    tensor = torch.cat(vectors)
+                context_between.extend(
+                    self._mask_tokens(sentence_map[(id_domain, id_document)][id_sentence_to], indices_to))
+                context_right = sentence_map[(id_domain, id_document)].get(id_sentence_to + 1, [])
 
-    return keys, tensor
+            context = context_left + context_between + context_right
 
+            key = self._make_key(label, id_domain, relation)
+            vector = self.vectorizer.embed(context)
 
-def _make_key(label: str, id_domain: str, relation: Relation):
-    id_document, member_from, member_to = relation
-    return '\t'.join([
-        label, id_domain, id_document,
-        member_from.id_sentence, member_from.channel, str(member_from.indices), member_from.lemma,
-        member_to.id_sentence, member_to.channel, str(member_to.indices), member_to.lemma,
-    ])
+            keys.append(key)
+            vectors.append(vector)
 
+        tensor = torch.cat(vectors)
 
-def mask_tokens(context, indices):
-    return ['MASK' if index in indices else token for index, token in enumerate(context)]
+        return keys, tensor
 
 
 @click.command()
 @click.option('--relations-file', required=True, type=str,
               help='Path to relations file.')
 @click.option('--documents-files', required=True, type=str,
-              help='Path to relations file.')
+              help='Path to corpora relation files list.')
 @click.option('--model', required=True, type=str,
               metavar='model.bin',
               help="Paths to sent2vec model.")
@@ -106,13 +120,12 @@ def mask_tokens(context, indices):
               metavar='sent2vec.map.keys sent2vec.map.pt',
               help='Paths for saving keys and map files.')
 def main(relations_file, documents_files, model, output_paths):
-    s2v = sent2vec.Sent2vecModel()
-    s2v.load_model(model, inference_mode=True)
-
-    sentence_map = make_sentence_map(Path(documents_files))
+    vectorizer = Sent2VecVectorizer(model_path=model)
     relations_loader = RelationsLoader(relations_file)
+    sentence_map = make_sentence_map(relations_paths=Path(documents_files))
 
-    relations_keys, relations_vectors = make_vectors(relations_loader, sentence_map)
+    mapmaker = RelationsMapMaker(relations_loader, vectorizer)
+    relations_keys, relations_vectors = mapmaker.make_map(sentence_map)
 
     keys_path, vectors_path = output_paths
     save_lines(Path(keys_path), relations_keys)
