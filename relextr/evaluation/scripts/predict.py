@@ -4,7 +4,7 @@ import click
 import torch
 from corpus_ccl import cclutils
 
-from relextr.evaluation.scripts.extractor import Parser
+from worker.extractor import Parser
 from relextr.model.scripts.relnet import RelNet
 from data.scripts.utils.vectorizers import ElmoVectorizer, FastTextVectorizer
 

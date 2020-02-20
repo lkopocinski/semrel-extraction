@@ -5,7 +5,7 @@ import torch
 from corpus_ccl import cclutils
 
 from data.scripts.utils.vectorizers import ElmoVectorizer, FastTextVectorizer
-from relextr.evaluation.scripts.extractor import Parser, NounExtractor, NERxtractor
+from worker.extractor import Parser, NounExtractor, NERxtractor
 from relextr.model.scripts.relnet import RelNet
 
 
