@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.6
-
+import csv
 from itertools import permutations, product
+from pathlib import Path
 from typing import Iterator, List
 
 from data.scripts.utils.corpus import Document, Member
@@ -85,3 +86,41 @@ class RelationsGenerator:
         return member_from and member_to and (
             (Relation(self._document.id, member_from, member_to) in relations
              or Relation(self._document.id, member_to, member_from) in relations))
+
+
+class RelationsLoader:
+
+    def __init__(self, relations_path: Path):
+        self._relations_path_csv = relations_path
+
+    def relations(self):
+        with self._relations_path_csv.open('r', newline='', encoding='utf-8') as file_csv:
+            reader_csv = csv.DictReader(file_csv, delimiter='\t')
+            for line_dict in reader_csv:
+                label = line_dict['label']
+                id_domain = line_dict['id_domain']
+                relation = self._parse_relation(line_dict)
+
+                yield label, id_domain, relation
+
+    @staticmethod
+    def _parse_relation(relation_dict: dict) -> Relation:
+        id_document = relation_dict['id_document']
+        member_from = Member(
+            id_sentence=relation_dict['id_sentence_from'],
+            lemma=relation_dict['lemma_from'],
+            channel=relation_dict['channel_from'],
+            is_named_entity=relation_dict['is_named_entity_from'],
+            indices=eval(relation_dict['indices_from']),
+            context=eval(relation_dict['context_from'])
+        )
+        member_to = Member(
+            id_sentence=relation_dict['id_sentence_to'],
+            lemma=relation_dict['lemma_to'],
+            channel=relation_dict['channel_to'],
+            is_named_entity=relation_dict['is_named_entity_to'],
+            indices=eval(relation_dict['indices_to']),
+            context=eval(relation_dict['context_to'])
+        )
+
+        return Relation(id_document, member_from, member_to)
