@@ -1,8 +1,6 @@
 from unittest import mock
 from unittest.mock import PropertyMock
 
-import torch
-
 from data.scripts.maps import MapMaker
 
 
