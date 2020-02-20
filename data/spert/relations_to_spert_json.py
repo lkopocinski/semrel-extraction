@@ -1,13 +1,13 @@
 #!/usr/bin/env python3.6
 
-import json
 from pathlib import Path
 from typing import List, Iterator
 
 import click
 
-from data.scripts.combine_vectors import RelationsLoader
 from data.scripts.entities import Member, Relation
+from data.scripts.relations import RelationsLoader
+from data.scripts.utils.io import save_json
 
 
 class SPERTMapper:
@@ -20,6 +20,9 @@ class SPERTMapper:
         'BRAND_NAME PRODUCT_NAME': 'Brand-Product',
         'PRODUCT_NAME BRAND_NAME': 'Product-Brand'
     }
+
+    def __init__(self, relations_loader: RelationsLoader):
+        self.relations_loader = relations_loader
 
     def map_tokens(self, relation: Relation):
         return relation.member_from.context
@@ -35,11 +38,10 @@ class SPERTMapper:
         return [self.map_entity(relation.member_from),
                 self.map_entity(relation.member_to)]
 
-    def map_relations(self, relation: Relation):
+    def map_relations(self, relation: Relation) -> List[dict]:
         relation_key = f'{relation.member_from.channel} {relation.member_to.channel}'
         relation_type = self.RELATION_TYPE_MAP[relation_key]
         relation_dict = {'type': relation_type, 'head': 0, 'tail': 1}
-
         return [relation_dict]
 
     def map(self, relation: Relation) -> dict:
@@ -49,34 +51,25 @@ class SPERTMapper:
             'relations': self.map_relations(relation)
         }
 
+    def filter_map(self) -> Iterator[dict]:
+        for label, id_domain, relation in self.relations_loader.relations():
+            in_relation = label == 'in_relation'
+            in_same_context = relation.member_from.context == relation.member_to.context
 
-def filter_relations(relations_loader: RelationsLoader) -> Iterator[Relation]:
-    for label, id_domain, relation in relations_loader.relations():
-        in_relation = (label == 'in_relation')
-        in_same_context = (relation.member_from.context == relation.member_to.context)
-
-        if in_relation and in_same_context:
-            yield relation
-
-
-def save_json(documents, save_path: Path):
-    with save_path.open("w", encoding='utf-8') as file:
-        json.dump(documents, file)
+            if in_relation and in_same_context:
+                yield self.map(relation)
 
 
 @click.command()
 @click.option('--input-path', required=True, type=str,
-              help='Path to relation corpora files index.')
+              help='Path to relations file.')
 @click.option('--output-path', required=True, type=str,
               help='Paths for saving SPERT json file.')
-def main(input_path: str, output_path: str):
-    mapper = SPERTMapper()
+def main(input_path, output_path):
     relations_loader = RelationsLoader(Path(input_path))
+    mapper = SPERTMapper(relations_loader)
 
-    documents = [
-        mapper.map(relation)
-        for relation in filter_relations(relations_loader)
-    ]
+    documents = mapper.filter_map()
 
     save_json(documents, Path(output_path))
 

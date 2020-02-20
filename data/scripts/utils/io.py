@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import Iterator
 
@@ -25,3 +26,8 @@ def read_lines(path: Path) -> Iterator[str]:
 
 def save_tensor(path: Path, tensor: torch.Tensor):
     torch.save(tensor, str(path))
+
+
+def save_json(to_save_content, save_path: Path):
+    with save_path.open("w", encoding='utf-8') as file:
+        json.dump(to_save_content, file)
