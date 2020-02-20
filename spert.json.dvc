@@ -1,10 +1,10 @@
-md5: d19cfcf04c431ce5b5a6935b58f69d32
+md5: c9553d7c5067d4a37c5fc1c799973bed
 cmd: CUDA_VISIBLE_DEVICES=0 ./data/spert/relations_to_spert_json.py --input-path ./data/relations/relations.tsv
   --output-path ./data/spert/spert.json
 deps:
 - md5: 1b1c6fce55a3fb2ff1cd230255a06b49
   path: data/relations/relations.tsv
-- md5: 2f0462f2a8862cd13d7769979441c13c
+- md5: bc6a857914e18bfb3b259e557caf5b6e
   path: data/spert/relations_to_spert_json.py
 outs:
 - md5: e735b4ea18aa146ba184353e863b9920
