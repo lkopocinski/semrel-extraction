@@ -11,7 +11,7 @@ from data.scripts.utils.vectorizers import ElmoVectorizer
 
 @click.command()
 @click.option('--input-path', required=True, type=str,
-              help='Path to relation corpora files list.')
+              help='Path to corpora relation files list.')
 @click.option('--model', required=True, type=(str, str),
               metavar='options.json weights.hdf5',
               help="Paths to elmo model options and weights.")

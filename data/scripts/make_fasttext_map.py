@@ -11,7 +11,7 @@ from data.scripts.utils.vectorizers import FastTextVectorizer
 
 @click.command()
 @click.option('--input-path', required=True, type=str,
-              help='Path to relation corpora files list.')
+              help='Path to corpora relation files list.')
 @click.option('--model', required=True, type=str,
               metavar='model.bin',
               help="Paths to fasttext model.")

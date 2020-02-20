@@ -11,7 +11,7 @@ from data.scripts.utils.vectorizers import RetrofitVectorizer
 
 @click.command()
 @click.option('--input-path', required=True, type=str,
-              help='Path to relation corpora files index.')
+              help='Path to corpora relation files index.')
 @click.option('--model-retrofit', required=True, type=str,
               metavar='model.vec',
               help="Paths to retrofit model.")

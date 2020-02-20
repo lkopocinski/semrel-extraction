@@ -58,7 +58,7 @@ class RelationsEmbedder:
             member_to.id_sentence, member_to.channel, str(member_to.indices), member_to.lemma,
         ])
 
-    def is_phrase_too_long(self, member: Member) -> bool:
+    def _is_phrase_too_long(self, member: Member) -> bool:
         return len(member.indices) > self.PHRASE_LENGTH_LIMIT
 
     def make_tensor(self) -> [List, torch.Tensor]:
@@ -68,7 +68,7 @@ class RelationsEmbedder:
         for label, id_domain, relation in self.relations_loader.relations():
             id_document, member_from, member_to = relation
 
-            if self.is_phrase_too_long(member_from) or self.is_phrase_too_long(member_to):
+            if self._is_phrase_too_long(member_from) or self._is_phrase_too_long(member_to):
                 continue
 
             vectors_indices_from = self._get_vectors_indices(id_domain, id_document, member_from)
