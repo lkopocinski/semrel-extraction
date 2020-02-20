@@ -10,7 +10,7 @@ from torch.optim import Adagrad
 
 import mlflow
 from data_loader import get_loaders
-from relextr.model.runs import RUNS
+from model import RUNS
 from relnet import RelNet
 from utils.metrics import Metrics
 from utils.utils import parse_config, get_device, is_better_loss, ignored

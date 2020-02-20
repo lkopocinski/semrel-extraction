@@ -6,7 +6,7 @@ from corpus_ccl import cclutils
 
 from data.scripts.utils.vectorizers import ElmoVectorizer, FastTextVectorizer
 from worker.extractor import Parser, NounExtractor, NERxtractor
-from relextr.model.scripts.relnet import RelNet
+from scripts import RelNet
 
 
 def get_device():
