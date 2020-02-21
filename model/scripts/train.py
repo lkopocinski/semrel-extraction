@@ -1,16 +1,16 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3.6
 
 import logging
 
 import click
+import mlflow
 import torch
 import torch.nn as nn
-from torch.optim import Adagrad
+from torch.optim import Adagrad, Optimizer
+from torch.utils.data import DataLoader
 
-import mlflow
 from data_loader import get_loaders
-from model import RUNS
+from model.runs import RUNS
 from relnet import RelNet
 from utils.metrics import Metrics
 from utils.utils import parse_config, get_device, is_better_loss, ignored
@@ -19,8 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 @click.command()
-@click.option('--config',
-              required=True,
+@click.option('--config', required=True,
               type=click.Path(exists=True),
               help='File with training params.')
 def main(config):
@@ -33,10 +32,10 @@ def main(config):
     mlflow.set_tracking_uri(config['tracking_uri'])
     mlflow.set_experiment(config['experiment_name'])
 
-    for idx, params in runs.items():
+    for index, params in runs.items():
         with ignored(Exception):
             with mlflow.start_run():
-                logger.info(f'\nRUN: {idx} WITH {params}')
+                logger.info(f'\nRUN: {index} WITH: {params}')
 
                 in_domain = params.get('in_domain')
                 out_domain = params.get('out_domain')
@@ -53,7 +52,7 @@ def main(config):
                 train_loader, valid_loader, test_loader, vector_size = get_loaders(
                     data_dir=config['dataset']['dir'],
                     keys_file=config['dataset']['keys'],
-                    vectors_files=[f'{m}.rel.pt' for m in methods],
+                    vectors_files=[f'{method}.rel.pt' for method in methods],
                     batch_size=config['batch_size'],
                     balanced=True,
                     lexical_split=lexical_split,
@@ -62,7 +61,7 @@ def main(config):
                 )
 
                 network = RelNet(in_dim=vector_size, **config['net_params'])
-                network.to(device)
+                network = network.to(device)
                 optimizer = Adagrad(network.parameters(), lr=0.001)
                 loss_func = nn.CrossEntropyLoss()
 
@@ -85,7 +84,7 @@ def main(config):
                     logger.info(epoch, end=" ")
 
                     # Train
-                    train_metrics = train(network, optimizer, loss_func, train_loader, device)
+                    train_metrics = train(network, optimizer, train_loader, loss_func, device)
                     log_metrics(train_metrics, 'train', epoch)
 
                     # Validate
@@ -105,7 +104,7 @@ def main(config):
                 log_metrics(test_metrics, 'test')
 
 
-def log_metrics(metrics, prefix, step=0):
+def log_metrics(metrics: Metrics, prefix: str, step: int = 0):
     mlflow.log_metrics({
         f'{prefix}_loss': metrics.loss,
         f'{prefix}_accuracy': metrics.accuracy,
@@ -118,7 +117,7 @@ def log_metrics(metrics, prefix, step=0):
     }, step=step)
 
 
-def train(network, optimizer, loss_function, batches, device):
+def train(network: RelNet, optimizer: Optimizer, batches: DataLoader, loss_function, device: torch.device):
     metrics = Metrics()
 
     network.train()
@@ -139,7 +138,7 @@ def train(network, optimizer, loss_function, batches, device):
     return metrics
 
 
-def evaluate(network, batches, loss_function, device):
+def evaluate(network: RelNet, batches: DataLoader, loss_function, device: torch.device):
     metrics = Metrics()
     network.eval()
 
@@ -156,7 +155,7 @@ def evaluate(network, batches, loss_function, device):
     return metrics
 
 
-def test(network, model_path, batches, loss_function, device):
+def test(network: RelNet, model_path: str, batches: DataLoader, loss_function, device: torch.device):
     network.load(model_path)
     network.to(device)
     return evaluate(network, batches, loss_function, device)
