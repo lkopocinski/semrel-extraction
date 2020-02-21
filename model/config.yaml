@@ -1,0 +1,15 @@
+tracking_uri: 'http://10.17.50.132:8080'
+experiment_name: 'NO_EXP'
+
+dataset:
+  dir: './'
+  keys: 'keys.txt'
+
+net_params:
+  hidden_dim: 512
+  dropout: 0.5
+
+learn_params:
+  runs: '115_in_lexical'
+  batch_size: 100
+  epochs: 50

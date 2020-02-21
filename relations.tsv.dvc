@@ -1,0 +1,9 @@
+md5: 86333564aa0b8fbe33eb7c272ee328b0
+cmd: CUDA_VISIBLE_DEVICES=0 ./data/scripts/generate.py --input-path ./data/relations_files.txt
+  --output-path ./data/relations/relations.tsv
+outs:
+- md5: 1b1c6fce55a3fb2ff1cd230255a06b49
+  path: data/relations/relations.tsv
+  cache: true
+  metric: false
+  persist: false

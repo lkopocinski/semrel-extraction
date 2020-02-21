@@ -1,0 +1,24 @@
+{
+  "entities": {
+    "Brand": {
+      "short": "Brand",
+      "verbose": "Brand"
+    },
+    "Product": {
+      "short": "Product",
+      "verbose": "Product"
+    }
+  },
+  "relations": {
+    "Brand-Product": {
+      "short": "Brand-Product",
+      "verbose": "Brand-Product",
+      "symmetric": false
+    },
+    "Product-Brand": {
+      "short": "Product-Brand",
+      "verbose": "Product-Brand",
+      "symmetric": false
+    }
+  }
+}

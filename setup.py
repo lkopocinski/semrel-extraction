@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='relextr',
+    name='semrel',
     version='0.1.2',
     author='Arkadiusz Janz',
     author_email='arkadiusz.janz@pwr.edu.pl',

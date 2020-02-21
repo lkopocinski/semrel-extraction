@@ -8,7 +8,7 @@ from corpus_ccl import cclutils as ccl
 from corpus_ccl import corpus_object_utils as cou
 from corpus_ccl import token_utils as tou
 
-from entities import Member
+from data.scripts.entities import Member
 
 
 class DocToken:
@@ -21,27 +21,27 @@ class DocToken:
         self._pos = self._get_pos()
 
     @property
-    def lemma(self):
+    def lemma(self) -> str:
         return self._lemma
 
     @property
-    def orth(self):
+    def orth(self) -> str:
         return self._orth
 
     @property
-    def is_noun(self):
+    def is_noun(self) -> bool:
         return 'subst' == self._pos
 
-    def _get_lemma(self):
+    def _get_lemma(self) -> str:
         try:
             return self._token.lexemes()[0].lemma_utf8()
         except IndexError:
             return ''
 
-    def _get_orth(self):
+    def _get_orth(self) -> str:
         return self._token.orth_utf8()
 
-    def _get_pos(self):
+    def _get_pos(self) -> str:
         try:
             return cou.get_pos(self._token, 'nkjp', True)
         except IndexError:
@@ -57,31 +57,31 @@ class DocSentence:
         self._tokens = self._get_tokens()
         self._orths = self._get_orths()
         self._lemmas = self._get_lemmas()
-        self._named_entities = self._get_named_entities()
+        self._named_entities_indices = self._get_named_entities_indices()
         self._noun_indices = self._get_noun_indices()
 
     @property
-    def id(self):
+    def id(self) -> str:
         return self._id
 
     @property
-    def tokens(self):
+    def tokens(self) -> List[DocToken]:
         return self._tokens
 
     @property
-    def orths(self):
+    def orths(self) -> List[str]:
         return self._orths
 
     @property
-    def lemmas(self):
+    def lemmas(self) -> List[str]:
         return self._lemmas
 
     @property
-    def named_entities(self):
-        return self._named_entities
+    def named_entities_indices(self) -> List[int]:
+        return self._named_entities_indices
 
     @property
-    def noun_indices(self):
+    def noun_indices(self) -> List[int]:
         return self._noun_indices
 
     def _get_tokens(self) -> List[DocToken]:
@@ -93,8 +93,10 @@ class DocSentence:
     def _get_lemmas(self) -> List[str]:
         return [token.lemma for token in self._tokens]
 
-    def _get_named_entities(self) -> List[int]:
-        return [tou.get_annotation(self._sentence, token._token, 'NE', default=0) for token in self._tokens]
+    def _get_named_entities_indices(self) -> List[int]:
+        return [index
+                for index, token in enumerate(self._tokens)
+                if tou.get_annotation(self._sentence, token._token, 'named-entity', default=False)]
 
     def _get_noun_indices(self) -> List[int]:
         return [index for index, token in enumerate(self._tokens) if token.is_noun]
@@ -116,39 +118,43 @@ class DocRelation:
         self._sentence_to = sentences[self._relation.rel_to().sentence_id()]
 
     @property
-    def is_ner(self):
+    def is_ner(self) -> bool:
         return self._is_ner
 
     @property
-    def channels(self):
+    def channels(self) -> [str, str]:
         return self._channel_from, self._channel_to
 
-    def _is_ner_relation(self):
+    def _is_ner_relation(self) -> bool:
         return self._relation.rel_set() == 'NER relation'
 
-    def _get_member(self, relation_member, sentence: DocSentence):
+    def _get_member(self, relation_member: corpus2.DirectionPoint, sentence: DocSentence):
         sentence_id = relation_member.sentence_id()
         channel_name = relation_member.channel_name()
-        indices = self._get_annotation_indices(sentence, relation_member)
+        indices = self._get_annotation_indices(relation_member, sentence)
 
         if not indices:
             return None
 
         context = sentence.orths
         lemma = sentence.lemmas[indices[0]]
-        named_entity = any(sentence.named_entities[idx] for idx in indices)
+        named_entity = all(index in sentence.named_entities_indices for index in indices)
         return Member(sentence_id, lemma, channel_name, named_entity, indices, context)
 
     @staticmethod
-    def _get_annotation_indices(sentence: DocSentence, relation_member: corpus2.DirectionPoint):
+    def _get_annotation_indices(relation_member: corpus2.DirectionPoint, sentence: DocSentence) -> tuple[int]:
         indices = []
+
         for index, token in enumerate(sentence.tokens):
-            number = tou.get_annotation(sentence._sentence, token._token, relation_member.channel_name(), index, default=0)
-            if number == relation_member.annotation_number():
+            annotation_number = tou.get_annotation(
+                sentence._sentence, token._token, relation_member.channel_name(), index, default=0
+            )
+            if annotation_number == relation_member.annotation_number():
                 indices.append(index)
+
         return tuple(indices)
 
-    def get_members(self):
+    def get_members(self) -> [Member, Member]:
         member_from = self._get_member(self._relation.rel_from(), self._sentence_from)
         member_to = self._get_member(self._relation.rel_to(), self._sentence_to)
         return member_from, member_to
@@ -156,7 +162,7 @@ class DocRelation:
 
 class Document:
 
-    def __init__(self, document: corpus2.DocumentPtr):
+    def __init__(self, document: corpus2.Document):
         self._document = document
 
         self._id = self._get_document_name()
@@ -174,7 +180,7 @@ class Document:
         return self._directory
 
     @property
-    def sentences(self):
+    def sentences(self) -> List[DocSentence]:
         return self._sentences
 
     @property
@@ -182,7 +188,7 @@ class Document:
         return self._relations
 
     def get_sentence(self, sentence_id: str) -> DocSentence:
-        return self._sentence_dict[sentence_id]
+        return self._sentence_dict.get(sentence_id, None)
 
     def _id_to_sentence_dict(self) -> Dict[str, DocSentence]:
         return {sentence.id(): DocSentence(sentence)
@@ -193,11 +199,11 @@ class Document:
         ccl_path, __ = self._document.path().split(';')
         return Path(ccl_path).stem.split('.')[0]
 
-    def _get_document_directory(self):
+    def _get_document_directory(self) -> str:
         ccl_path, __ = self._document.path().split(';')
         return Path(ccl_path).parent.stem
 
-    def _get_sentences(self):
+    def _get_sentences(self) -> List[DocSentence]:
         return [DocSentence(sentence)
                 for paragraph in self._document.paragraphs()
                 for sentence in paragraph.sentences()]
@@ -214,21 +220,24 @@ class Document:
         return False
 
 
-def sentences_documents_gen(relations_files: Iterator[Path]):
-    return ((sentence, document)
-            for document in relations_documents_gen(relations_files)
-            for sentence in document.sentences)
+def from_index_documents_gen(relations_files_index: Path) -> Iterator[Document]:
+    with relations_files_index.open('r', encoding='utf-8') as file:
+        relation_files = [Path(line.strip()) for line in file]
+        return documents_gen(relation_files)
 
 
-def relations_documents_gen(relation_files: Iterator[Path]) -> Iterator[Document]:
-    for rel_path in relation_files:
+def documents_gen(relations_files: Iterator[Path]) -> Iterator[Document]:
+    for rel_path in relations_files:
         ccl_path = Path(str(rel_path).replace('.rel', ''))
         if rel_path.is_file() and ccl_path.is_file():
-            yield Document(ccl.read_ccl_and_rel_ccl(str(ccl_path), str(rel_path)))
+            ccl_document = ccl.read_ccl_and_rel_ccl(
+                ccl_file=str(ccl_path), rel_ccl_file=str(rel_path)
+            )
+            yield Document(ccl_document)
 
 
-def relations_file_paths(input_path: str, directories: List) -> Iterator[Path]:
+def relations_files_paths(corpora_path: str, directories: List) -> Iterator[Path]:
     return list(chain.from_iterable(
         dir_path.glob('*.rel.xml')
-        for dir_path in Path(input_path).iterdir()
+        for dir_path in Path(corpora_path).iterdir()
         if dir_path.stem in directories))
