@@ -1,7 +1,7 @@
 from itertools import chain
 from pathlib import Path
 from typing import Iterator
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 import corpus2
 from corpus_ccl import cclutils as ccl
@@ -96,7 +96,7 @@ class DocSentence:
     def _get_named_entities_indices(self) -> List[int]:
         return [index
                 for index, token in enumerate(self._tokens)
-                if tou.get_annotation(self._sentence, token._token, 'NAMED-ENTITY', default=False)]
+                if tou.get_annotation(self._sentence, token._token, 'NAMED_ENTITY', default=False)]
 
     def _get_noun_indices(self) -> List[int]:
         return [index for index, token in enumerate(self._tokens) if token.is_noun]
@@ -142,7 +142,7 @@ class DocRelation:
         return Member(sentence_id, lemma, channel_name, named_entity, indices, context)
 
     @staticmethod
-    def _get_annotation_indices(relation_member: corpus2.DirectionPoint, sentence: DocSentence) -> tuple[int]:
+    def _get_annotation_indices(relation_member: corpus2.DirectionPoint, sentence: DocSentence) -> Tuple[int]:
         indices = []
 
         for index, token in enumerate(sentence.tokens):
@@ -228,7 +228,7 @@ def from_index_documents_gen(relations_files_index: Path) -> Iterator[Document]:
 
 def documents_gen(relations_files: Iterator[Path]) -> Iterator[Document]:
     for rel_path in relations_files:
-        ccl_path = Path(str(rel_path).replace('.rel', ''))
+        ccl_path = Path(str(rel_path).replace('rel', 'ner'))
         if rel_path.is_file() and ccl_path.is_file():
             ccl_document = ccl.read_ccl_and_rel_ccl(
                 ccl_file=str(ccl_path), rel_ccl_file=str(rel_path)
