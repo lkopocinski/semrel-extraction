@@ -96,7 +96,7 @@ class DocSentence:
     def _get_named_entities_indices(self) -> List[int]:
         return [index
                 for index, token in enumerate(self._tokens)
-                if tou.get_annotation(self._sentence, token._token, 'named-entity', default=False)]
+                if tou.get_annotation(self._sentence, token._token, 'NAMED-ENTITY', default=False)]
 
     def _get_noun_indices(self) -> List[int]:
         return [index for index, token in enumerate(self._tokens) if token.is_noun]
