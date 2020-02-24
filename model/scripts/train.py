@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 def main(config):
     device = get_device()
     config = parse_config(Path(config))
-    
+
     runs_name = config['learn_params']['runs']
     runs = RUNS[runs_name]
     model_name = f'{runs_name}.pt'
@@ -82,7 +82,7 @@ def main(config):
                 best_valid_loss = None
 
                 logger.info('Epochs:', end=" ")
-                for epoch in range(config['epochs']):
+                for epoch in range(config['learn_params']['epochs']):
                     logger.info(epoch, end=" ")
 
                     # Train

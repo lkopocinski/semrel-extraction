@@ -167,7 +167,7 @@ def get_loaders(data_dir: str,
                 in_domain: str = None,
                 out_domain: str = None,
                 random_seed: int = 42,
-                num_workers: int = 8,
+                num_workers: int = 0,
                 pin_memory: bool = False):
     dataset = BrandProductDataset(
         keys_file=f'{data_dir}/{keys_file}',
