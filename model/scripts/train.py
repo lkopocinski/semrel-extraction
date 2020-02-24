@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.6
 
 import logging
+from pathlib import Path
 
 import click
 import mlflow
@@ -9,11 +10,11 @@ import torch.nn as nn
 from torch.optim import Adagrad, Optimizer
 from torch.utils.data import DataLoader
 
-from data_loader import get_loaders
+from model.scripts.utils.data_loader import get_loaders
 from model.runs import RUNS
-from relnet import RelNet
-from utils.metrics import Metrics
-from utils.utils import parse_config, get_device, is_better_loss, ignored
+from model.scripts.relnet import RelNet
+from model.scripts.utils.metrics import Metrics
+from model.scripts.utils.utils import parse_config, get_device, is_better_loss, ignored
 
 logger = logging.getLogger(__name__)
 
@@ -24,10 +25,11 @@ logger = logging.getLogger(__name__)
               help='File with training params.')
 def main(config):
     device = get_device()
-    config = parse_config(config)
-
-    runs = RUNS[config['runs']]
-    model_name = f'{config["runs"]}.pt'
+    config = parse_config(Path(config))
+    
+    runs_name = config['learn_params']['runs']
+    runs = RUNS[runs_name]
+    model_name = f'{runs_name}.pt'
 
     mlflow.set_tracking_uri(config['tracking_uri'])
     mlflow.set_experiment(config['experiment_name'])
@@ -53,7 +55,7 @@ def main(config):
                     data_dir=config['dataset']['dir'],
                     keys_file=config['dataset']['keys'],
                     vectors_files=[f'{method}.rel.pt' for method in methods],
-                    batch_size=config['batch_size'],
+                    batch_size=config['learn_params']['batch_size'],
                     balanced=True,
                     lexical_split=lexical_split,
                     in_domain=in_domain,

@@ -7,10 +7,10 @@ DOCUMENTS_FILE="./data/relations_files.list"
 MODEL_DIR="./data/sent2vec"
 
 SCRIPTS_DIR="./data/scripts"
-OUTPUT_DIR='./data/vectors'
+OUTPUT_DIR='./data/vectors_2'
 
-KEYS_FILE="${OUTPUT_DIR}/sent2vec.map.keys"
-VECTORS_FILE="${OUTPUT_DIR}/sent2vec.map.pt"
+KEYS_FILE="${OUTPUT_DIR}/sent2vec.rel.keys"
+VECTORS_FILE="${OUTPUT_DIR}/sent2vec.rel.pt"
 
 mkdir -p ${OUTPUT_DIR}
 

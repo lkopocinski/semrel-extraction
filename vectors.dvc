@@ -1,0 +1,18 @@
+md5: 5e338d8edd1ed69f919b97bdf39c8ca9
+cmd: CUDA_VISIBLE_DEVICES=0 ./data/scripts/embedd_relations.py --input-path ./data/relations/relations.tsv
+  --elmo-map ./data/maps/elmo.map.keys ./data/maps/elmo.map.pt --fasttext-map ./data/maps/fasttext.map.keys
+  ./data/maps/fasttext.map.pt --retrofit-map ./data/maps/retrofit.map.keys ./data/maps/retrofit.map.pt
+  --output-dir ./data/vectors
+deps:
+- md5: 67299076dea942634be3cc4601bee2c5
+  path: data/relations/relations.tsv
+- md5: 17fe79211ba943efbf3c3fbfba949cc0
+  path: data/scripts/embedd_relations.py
+- md5: 9064e7f0896a01a122b9c14960cebf6c.dir
+  path: data/maps
+outs:
+- md5: 1fd14c0f63c935b1bd125d1737183b7a.dir
+  path: data/vectors
+  cache: true
+  metric: false
+  persist: false

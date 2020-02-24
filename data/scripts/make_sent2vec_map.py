@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.6
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
 import click
 import torch
@@ -50,7 +50,7 @@ class RelationsMapMaker:
             member_to.id_sentence, member_to.channel, str(member_to.indices), member_to.lemma,
         ])
 
-    def _mask_tokens(self, context: List[str], indices: tuple[int]):
+    def _mask_tokens(self, context: List[str], indices: Tuple[int]):
         return [self.MASK
                 if index in indices else token
                 for index, token in enumerate(context)]
@@ -159,7 +159,7 @@ class RelationsMapMaker:
               help='Paths for saving keys and map files.')
 def main(relations_file, documents_files, model, output_paths):
     vectorizer = Sent2VecVectorizer(model_path=model)
-    relations_loader = RelationsLoader(relations_path=relations_file)
+    relations_loader = RelationsLoader(relations_path=Path(relations_file))
     sentence_map = make_sentence_map(relations_paths=Path(documents_files))
 
     mapmaker = RelationsMapMaker(relations_loader, vectorizer, sentence_map)
