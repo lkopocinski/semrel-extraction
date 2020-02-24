@@ -1,7 +1,0 @@
-md5: 4477a9ed88ff65140e27c07279825196
-outs:
-- md5: 7836c42a9f564ae0d1580f0c3257bf39
-  path: retrofit.rel.pt
-  cache: true
-  metric: false
-  persist: false

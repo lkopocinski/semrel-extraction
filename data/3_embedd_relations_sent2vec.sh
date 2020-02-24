@@ -20,6 +20,7 @@ dvc run \
   -d ${SCRIPTS_DIR}/make_sent2vec_map.py \
   -o ${KEYS_FILE} \
   -o ${VECTORS_FILE} \
+  -f vectors.sent2vec.dvc
   CUDA_VISIBLE_DEVICES=0 ${SCRIPTS_DIR}/make_sent2vec_map.py --relations-file ${RELATIONS_FILE} \
                                                              --documents-files ${DOCUMENTS_FILE} \
                                                              --model "${MODEL_DIR}/kgr10.bin" \
