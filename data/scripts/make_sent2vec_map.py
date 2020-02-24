@@ -155,7 +155,7 @@ class RelationsMapMaker:
               metavar='model.bin',
               help="Paths to sent2vec model.")
 @click.option('--output-paths', required=True, type=(str, str),
-              metavar='sent2vec.map.keys sent2vec.map.pt',
+              metavar='sent2vec.rel.keys sent2vec.rel.pt',
               help='Paths for saving keys and map files.')
 def main(relations_file, documents_files, model, output_paths):
     vectorizer = Sent2VecVectorizer(model_path=model)
