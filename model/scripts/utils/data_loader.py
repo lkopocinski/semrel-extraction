@@ -1,7 +1,7 @@
 import random
 from collections import defaultdict
 from pathlib import Path
-from typing import List, Dict, Set
+from typing import List, Dict, Set, Tuple
 
 import torch
 from torch.utils import data
@@ -47,23 +47,21 @@ class DatasetGenerator:
         self.dataset = dataset
         random.seed(random_seed)
 
-    def _filter_indices_by_channels(self, indices: Set[int], channels) -> set:
+    def _filter_indices_by_channels(self, indices: Set[int], channels) -> Set:
         return {index for index in indices if (self.dataset.keys[index][4] in channels or
                                                self.dataset.keys[index][8] in channels)}
 
-    def _split(self, indices) -> List[List[int]]:
+    def _split(self, indices) -> Tuple[List, List, List]:
         random.shuffle(indices)
         return self._chunk(indices)
 
-    def _chunk(self, sequence) -> List[List[int]]:
+    def _chunk(self, sequence) -> Tuple[List, List, List]:
         avg = len(sequence) / float(5)
         t_len = int(3 * avg)
         v_len = int(avg)
-        return [sequence[0:t_len],
-                sequence[t_len:t_len + v_len],
-                sequence[t_len + v_len:]]
+        return sequence[0:t_len], sequence[t_len:t_len + v_len], sequence[t_len + v_len:]
 
-    def _generate(self, indices: List, balanced: bool, lexical_split: bool):
+    def _generate(self, indices: List, balanced: bool, lexical_split: bool) -> Tuple[List, List, List]:
         """ The data is split to train, dev, and test. """
         if not balanced:
             return self._split(indices)
@@ -82,14 +80,14 @@ class DatasetGenerator:
         if negatives_nns and len(negatives_nns) >= len(positives):
             negatives_nns = random.sample(sorted(negatives_nns), len(positives))
 
-        negatives = set(negatives_bps + negatives_nns)
+        negatives = set(negatives_bps).union(set(negatives_nns))
         if not lexical_split:
             return self._split(list(positives | negatives))
 
         # ok, lexical split... Lets take all the brands and split the dataset
         return self._split_lexically(positives, negatives)
 
-    def _split_lexically(self, positives: set, negatives: set):
+    def _split_lexically(self, positives: Set, negatives: Set) -> Tuple[List, List, List]:
         # 6 - lemma of left argument,
         # 10 - lemma of right argument
         # 4 - channel name for left argument
@@ -143,6 +141,23 @@ class DatasetGenerator:
         return self._generate(indices, balanced, lexical_split)
 
 
+class BaseSampler(data.Sampler):
+    """Samples elements randomly from a given list of indices, without replacement.
+
+    Arguments:
+        indices (sequence): a sequence of indices
+    """
+
+    def __init__(self, indices):
+        self.indices = indices
+
+    def __iter__(self):
+        return iter(self.indices)
+
+    def __len__(self):
+        return len(self.indices)
+
+
 def get_loaders(data_dir: str,
                 keys_file: str,
                 vectors_files: List[str],
@@ -152,7 +167,6 @@ def get_loaders(data_dir: str,
                 in_domain: str = None,
                 out_domain: str = None,
                 random_seed: int = 42,
-                shuffle: bool = True,
                 num_workers: int = 8,
                 pin_memory: bool = False):
     dataset = BrandProductDataset(
@@ -164,13 +178,13 @@ def get_loaders(data_dir: str,
     train_indices, valid_indices, test_indices = ds_generator.generate_datasets(balanced, lexical_split, in_domain)
 
     train_loader = data.DataLoader(
-        dataset, batch_size, shuffle, train_indices, num_workers, pin_memory=pin_memory,
+        dataset, batch_size, True, BaseSampler(train_indices), num_workers=num_workers, pin_memory=pin_memory,
     )
     valid_loader = data.DataLoader(
-        dataset, batch_size, shuffle, valid_indices, num_workers, pin_memory=pin_memory,
+        dataset, batch_size, True, BaseSampler(valid_indices), num_workers=num_workers, pin_memory=pin_memory,
     )
     test_loader = data.DataLoader(
-        dataset, batch_size, shuffle, test_indices, num_workers, pin_memory=pin_memory,
+        dataset, batch_size, True, BaseSampler(test_indices), num_workers=num_workers, pin_memory=pin_memory,
     )
 
     return train_loader, valid_loader, test_loader, dataset.vector_size
