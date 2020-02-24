@@ -178,13 +178,25 @@ def get_loaders(data_dir: str,
     train_indices, valid_indices, test_indices = ds_generator.generate_datasets(balanced, lexical_split, in_domain)
 
     train_loader = data.DataLoader(
-        dataset, batch_size, True, BaseSampler(train_indices), num_workers=num_workers, pin_memory=pin_memory,
+        dataset=dataset,
+        batch_size=batch_size,
+        sampler=BaseSampler(train_indices),
+        num_workers=num_workers,
+        pin_memory=pin_memory,
     )
     valid_loader = data.DataLoader(
-        dataset, batch_size, True, BaseSampler(valid_indices), num_workers=num_workers, pin_memory=pin_memory,
+        dataset=dataset,
+        batch_size=batch_size,
+        sampler=BaseSampler(valid_indices),
+        num_workers=num_workers,
+        pin_memory=pin_memory,
     )
     test_loader = data.DataLoader(
-        dataset, batch_size, True, BaseSampler(test_indices), num_workers=num_workers, pin_memory=pin_memory,
+        dataset=dataset,
+        batch_size=batch_size,
+        sampler=BaseSampler(test_indices),
+        num_workers=num_workers,
+        pin_memory=pin_memory,
     )
 
     return train_loader, valid_loader, test_loader, dataset.vector_size
