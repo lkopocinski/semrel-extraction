@@ -1,4 +1,4 @@
-md5: d0aa22cddef272c6f7de6f16fb62abca
+md5: 71f97e60c4f02acea21fe82929298f82
 deps:
 - md5: 67299076dea942634be3cc4601bee2c5
   path: data/relations/relations.tsv
@@ -12,7 +12,7 @@ outs:
   cache: true
   metric: false
   persist: false
-- md5: 34dd5653c5670ec4d754b133d63ec6e7
+- md5: b0857eee9decdfe55a088bf45e204a70
   path: data/vectors/elmo.rel.pt
   cache: true
   metric: false
@@ -22,7 +22,7 @@ outs:
   cache: true
   metric: false
   persist: false
-- md5: 5bdbefe6dfb31e0832c49645ac4135d0
+- md5: 87e26ce095baef45e8b7e4d291198445
   path: data/vectors/fasttext.rel.pt
   cache: true
   metric: false
@@ -32,7 +32,7 @@ outs:
   cache: true
   metric: false
   persist: false
-- md5: ccaa93373e3a0ec06bd0f52f5bc3c854
+- md5: 332e3dc003987ddaa6734b2c70a0d613
   path: data/vectors/retrofit.rel.pt
   cache: true
   metric: false
