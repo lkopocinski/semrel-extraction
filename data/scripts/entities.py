@@ -1,4 +1,4 @@
-from typing import NamedTuple, List
+from typing import NamedTuple, List, Tuple
 
 
 class Member(NamedTuple):
@@ -6,7 +6,7 @@ class Member(NamedTuple):
     lemma: str
     channel: str
     is_named_entity: bool
-    indices: tuple
+    indices: Tuple
     context: List[str]
 
     def __str__(self):
