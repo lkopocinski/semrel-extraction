@@ -19,9 +19,9 @@ class Indices(NamedTuple):
 
 
 class Relations(NamedTuple):
-    train: List[str] = []
-    valid: List[str] = []
-    test: List[str] = []
+    train: List[Relation] = []
+    valid: List[Relation] = []
+    test: List[Relation] = []
 
 
 class SPERTEntity(NamedTuple):
@@ -135,7 +135,7 @@ def load_indices(indices_file: Path) -> Indices:
         )
 
 
-def load_relations(indices: Indices, relations_loader: RelationsLoader) -> Iterator[Relation]:
+def load_relations(indices: Indices, relations_loader: RelationsLoader) -> Relations:
     relations = Relations()
 
     for index, (label, _, relation) in enumerate(relations_loader.relations()):
@@ -201,10 +201,11 @@ def main(input_path, indices_file, output_path):
     in_sentence_mapper = InSentenceSPERTMapper()
     between_sentence_mapper = BetweenSentencesSPERTMapper()
 
-    documents = map_relations(relations, in_sentence_mapper, between_sentence_mapper)
+    documents = map_relations(relations.train, in_sentence_mapper, between_sentence_mapper)
     documents = [document.to_dict() for document in documents]
 
     save_json(documents, Path(output_path))
+
 
 if __name__ == '__main__':
     main()
