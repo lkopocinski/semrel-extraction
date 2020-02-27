@@ -50,9 +50,9 @@ class SPERTDocRelation(NamedTuple):
 
 
 class SPERTDocument:
-    tokens: List[str]
-    entities: List[SPERTEntity]
-    relations: Set[SPERTDocRelation]
+    tokens: List[str] = []
+    entities: List[SPERTEntity] = []
+    relations: Set[SPERTDocRelation] = []
 
     def to_dict(self):
         return {
