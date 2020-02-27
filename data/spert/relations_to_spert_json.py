@@ -3,7 +3,7 @@ import json
 from abc import ABC
 from collections import defaultdict
 from pathlib import Path
-from typing import List, Iterator, NamedTuple, Set, Tuple
+from typing import List, Iterator, NamedTuple, Set, Tuple, Dict
 
 import click
 
@@ -16,12 +16,6 @@ class Indices(NamedTuple):
     train: List[int]
     valid: List[int]
     test: List[int]
-
-
-class Relations(NamedTuple):
-    train: List[Relation] = []
-    valid: List[Relation] = []
-    test: List[Relation] = []
 
 
 class SPERTEntity(NamedTuple):
@@ -52,7 +46,7 @@ class SPERTDocRelation(NamedTuple):
 class SPERTDocument:
     tokens: List[str] = []
     entities: List[SPERTEntity] = []
-    relations: Set[SPERTDocRelation] = []
+    relations: Set[SPERTDocRelation] = {}
 
     def to_dict(self):
         return {
@@ -135,17 +129,17 @@ def load_indices(indices_file: Path) -> Indices:
         )
 
 
-def load_relations(indices: Indices, relations_loader: RelationsLoader) -> Relations:
-    relations = Relations()
+def load_relations(indices: Indices, relations_loader: RelationsLoader) -> Dict[List[Relation]]:
+    relations = defaultdict(list)
 
     for index, (label, _, relation) in enumerate(relations_loader.relations()):
         if label == 'in_relation':
             if index in indices.train:
-                relations.train.append(relation)
+                relations['train'].append(relation)
             elif index in indices.valid:
-                relations.valid.append(relation)
+                relations['valid'].append(relation)
             elif index in indices.test:
-                relations.test.append(relation)
+                relations['test'].append(relation)
 
     return relations
 
@@ -190,9 +184,9 @@ def map_relations(relations: Iterator[Relation],
               help='Path to relations file.')
 @click.option('--indices-file', required=True, type=str,
               help='Path to indices file.')
-@click.option('--output-path', required=True, type=str,
+@click.option('--output-dir', required=True, type=str,
               help='Paths for saving SPERT json file.')
-def main(input_path, indices_file, output_path):
+def main(input_path, indices_file, output_dir):
     relations_loader = RelationsLoader(Path(input_path))
 
     indices = load_indices(Path(indices_file))
@@ -201,10 +195,11 @@ def main(input_path, indices_file, output_path):
     in_sentence_mapper = InSentenceSPERTMapper()
     between_sentence_mapper = BetweenSentencesSPERTMapper()
 
-    documents = map_relations(relations.train, in_sentence_mapper, between_sentence_mapper)
-    documents = [document.to_dict() for document in documents]
+    for set_name, set_relations in relations.items():
+        documents = map_relations(set_relations, in_sentence_mapper, between_sentence_mapper)
+        documents = [document.to_dict() for document in documents]
 
-    save_json(documents, Path(output_path))
+        save_json(documents, Path(f'{output_dir}/{set_name}.json'))
 
 
 if __name__ == '__main__':
