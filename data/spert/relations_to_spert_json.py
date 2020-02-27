@@ -1,13 +1,65 @@
 #!/usr/bin/env python3.6
+import json
 from abc import ABC
+from collections import defaultdict
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Iterator, NamedTuple, Set, Tuple
 
 import click
 
 from data.scripts.entities import Member, Relation
 from data.scripts.relations import RelationsLoader
 from data.scripts.utils.io import save_json
+
+
+class Indices(NamedTuple):
+    train: List[int]
+    valid: List[int]
+    test: List[int]
+
+
+class Relations(NamedTuple):
+    train: List[str] = []
+    valid: List[str] = []
+    test: List[str] = []
+
+
+class SPERTEntity(NamedTuple):
+    entity_type: str
+    start: int
+    end: int
+
+    def to_dict(self):
+        return {"type": self.entity_type, "start": self.start, "end": self.end}
+
+
+class SPERTRelation(NamedTuple):
+    tokens: List[str]
+    head: SPERTEntity
+    tail: SPERTEntity
+    relation_type: str
+
+
+class SPERTDocRelation(NamedTuple):
+    head: int
+    tail: int
+    relation_type: str
+
+    def to_dict(self):
+        return {'type': self.relation_type, 'head': self.head, 'tail': self.tail}
+
+
+class SPERTDocument(NamedTuple):
+    tokens: List[str]
+    entities: List[SPERTEntity]
+    relations: Set[SPERTDocRelation]
+
+    def to_dict(self):
+        return {
+            'tokens': self.tokens,
+            'entities': [entity.to_dict() for entity in self.entities],
+            'relations': [relation.to_dict() for relation in self.relations]
+        }
 
 
 class BrandProductSPERTMapper(ABC):
@@ -21,23 +73,20 @@ class BrandProductSPERTMapper(ABC):
         'PRODUCT_NAME BRAND_NAME': 'Product-Brand'
     }
 
-    def map(self, relation: Relation) -> Dict:
-        return {
-            'tokens': self.map_tokens(relation),
-            'entities': self.map_entities(relation),
-            'relations': self.map_relations(relation)
-        }
+    def map(self, relation: Relation) -> SPERTRelation:
+        tokens = self.map_tokens(relation)
+        head, tail = self.map_entities(relation)
+        relation_type = self._map_relation_type(relation)
+        return SPERTRelation(tokens, head, tail, relation_type)
 
-    def map_relations(self, relation: Relation) -> List[Dict]:
+    def _map_relation_type(self, relation: Relation) -> str:
         relation_key = f'{relation.member_from.channel} {relation.member_to.channel}'
-        relation_type = self.RELATION_TYPE_MAP[relation_key]
-        relation_dict = {'type': relation_type, 'head': 0, 'tail': 1}
-        return [relation_dict]
+        return self.RELATION_TYPE_MAP[relation_key]
 
-    def map_tokens(self, relation: Relation):
+    def map_entities(self, relation: Relation) -> Tuple[SPERTEntity, SPERTEntity]:
         pass
 
-    def map_entities(self, relation: Relation):
+    def map_tokens(self, relation: Relation) -> List[str]:
         pass
 
 
@@ -46,16 +95,16 @@ class InSentenceSPERTMapper(BrandProductSPERTMapper):
     def map_tokens(self, relation: Relation):
         return relation.member_from.context
 
-    def map_entity(self, member: Member) -> Dict:
+    def _map_entity(self, member: Member) -> SPERTEntity:
         entity_type = self.ENTITY_TYPE_MAP[member.channel]
         start = member.indices[0]
         end = member.indices[-1] + 1
-        return {"type": entity_type, "start": start, "end": end}
+        return SPERTEntity(entity_type, start, end)
 
-    def map_entities(self, relation: Relation) -> List[Dict]:
-        entity_from = self.map_entity(relation.member_from)
-        entity_to = self.map_entity(relation.member_to)
-        return [entity_from, entity_to]
+    def map_entities(self, relation: Relation) -> Tuple[SPERTEntity, SPERTEntity]:
+        entity_from = self._map_entity(relation.member_from)
+        entity_to = self._map_entity(relation.member_to)
+        return entity_from, entity_to
 
 
 class BetweenSentencesSPERTMapper(BrandProductSPERTMapper):
@@ -63,49 +112,100 @@ class BetweenSentencesSPERTMapper(BrandProductSPERTMapper):
     def map_tokens(self, relation: Relation):
         return relation.member_from.context + relation.member_to.context
 
-    def map_entity(self, member: Member, shift: int = 0) -> Dict:
+    def _map_entity(self, member: Member, shift: int = 0) -> SPERTEntity:
         entity_type = self.ENTITY_TYPE_MAP[member.channel]
         start = shift + member.indices[0]
         end = shift + member.indices[-1] + 1
-        return {"type": entity_type, "start": start, "end": end}
+        return SPERTEntity(entity_type, start, end)
 
-    def map_entities(self, relation: Relation) -> List[Dict]:
+    def map_entities(self, relation: Relation) -> Tuple[SPERTEntity, SPERTEntity]:
         member_from_context_len = len(relation.member_from.context)
-        entity_from = self.map_entity(relation.member_from)
-        entity_to = self.map_entity(relation.member_to, shift=member_from_context_len)
-        return [entity_from, entity_to]
+        entity_from = self._map_entity(relation.member_from)
+        entity_to = self._map_entity(relation.member_to, shift=member_from_context_len)
+        return entity_from, entity_to
 
 
-def map_in_relation(relations_loader: RelationsLoader,
-                    in_sentence_mapper: InSentenceSPERTMapper,
-                    between_sentence_mapper: BetweenSentencesSPERTMapper):
-    in_relations = (relation
-                    for label, _, relation in relations_loader.relations()
-                    if label == 'in_relation')
+def load_indices(indices_file: Path) -> Indices:
+    with indices_file.open('r', encoding='utf-8') as file:
+        indices = json.load(file)
+        return Indices(
+            train=indices['train'],
+            valid=indices['valid'],
+            test=indices['test']
+        )
 
-    for relation in in_relations:
-        _, member_from, member_to = relation
-        in_same_context = member_from.context == member_to.context
+
+def load_relations(indices: Indices, relations_loader: RelationsLoader) -> Iterator[Relation]:
+    relations = Relations()
+
+    for index, (label, _, relation) in enumerate(relations_loader.relations()):
+        if label == 'in_relation':
+            if index in indices.train:
+                relations.train.append(relation)
+            elif index in indices.valid:
+                relations.valid.append(relation)
+            elif index in indices.test:
+                relations.test.append(relation)
+
+    return relations
+
+
+def map_relations(relations: Iterator[Relation],
+                  in_sentence_mapper: InSentenceSPERTMapper,
+                  between_sentence_mapper: BetweenSentencesSPERTMapper):
+    documents = defaultdict(SPERTDocument)
+
+    for relation in relations:
+        id_document, member_from, member_to = relation
+        in_same_context = member_from.id_sentence == member_to.id_sentence
+
+        id_from = relation.member_from.id_sentence
+        id_to = relation.member_from.id_sentence
+        key = f'{id_document}-{id_from}-{id_to}'
 
         if in_same_context:
-            yield in_sentence_mapper.map(relation)
+            spert_relation = in_sentence_mapper.map(relation)
         else:
-            yield between_sentence_mapper.map(relation)
+            spert_relation = between_sentence_mapper.map(relation)
+
+        document = documents[key]
+        document.tokens = spert_relation.tokens
+
+        if spert_relation.head not in document.entities:
+            document.entities.append(spert_relation.head)
+
+        if spert_relation.tail not in document.entities:
+            document.entities.append(spert_relation.tail)
+
+        index_from = document.entities.index(spert_relation.head)
+        index_to = document.entities.index(spert_relation.tail)
+
+        document.relations.add(SPERTDocRelation(index_from, index_to, spert_relation.relation_type))
+
+    return documents
 
 
 @click.command()
 @click.option('--input-path', required=True, type=str,
               help='Path to relations file.')
+@click.option('--indices-file', required=False, type=str,
+              help='Path to indices file.')
 @click.option('--output-path', required=True, type=str,
               help='Paths for saving SPERT json file.')
-def main(input_path, output_path):
-    relations_loader = RelationsLoader(Path(input_path))
-    in_sentence_mapper = InSentenceSPERTMapper()
-    between_sentence_mapper = BetweenSentencesSPERTMapper()
+def main(input_path, indices_file, output_path):
+    if indices_file:
+        relations_loader = RelationsLoader(Path(input_path))
+        indices = load_indices(Path(indices_file))
 
-    documents = map_in_relation(relations_loader, in_sentence_mapper, between_sentence_mapper)
+        relations = load_relations(indices, relations_loader)
 
-    save_json(documents, Path(output_path))
+        in_sentence_mapper = InSentenceSPERTMapper()
+        between_sentence_mapper = BetweenSentencesSPERTMapper()
+
+        documents = map_relations(relations, in_sentence_mapper, between_sentence_mapper)
+        documents = [document.to_dict() for document in documents]
+
+        save_json(documents, Path(output_path))
 
 
 if __name__ == '__main__':
