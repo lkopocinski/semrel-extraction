@@ -49,7 +49,7 @@ class SPERTDocRelation(NamedTuple):
         return {'type': self.relation_type, 'head': self.head, 'tail': self.tail}
 
 
-class SPERTDocument(NamedTuple):
+class SPERTDocument:
     tokens: List[str]
     entities: List[SPERTEntity]
     relations: Set[SPERTDocRelation]
