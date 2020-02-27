@@ -6,6 +6,7 @@ INDICES_FILE="./data/spert/"
 SCRIPTS_DIR="./data/spert"
 
 INPUT_PATH="./data/relations/relations.tsv"
+INDICES_FILE="./data/spert/indices.json"
 OUTPUT_PATH="./data/spert/spert.json"
 
 dvc run \

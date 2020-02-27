@@ -188,25 +188,23 @@ def map_relations(relations: Iterator[Relation],
 @click.command()
 @click.option('--input-path', required=True, type=str,
               help='Path to relations file.')
-@click.option('--indices-file', required=False, type=str,
+@click.option('--indices-file', required=True, type=str,
               help='Path to indices file.')
 @click.option('--output-path', required=True, type=str,
               help='Paths for saving SPERT json file.')
 def main(input_path, indices_file, output_path):
-    if indices_file:
-        relations_loader = RelationsLoader(Path(input_path))
-        indices = load_indices(Path(indices_file))
+    relations_loader = RelationsLoader(Path(input_path))
 
-        relations = load_relations(indices, relations_loader)
+    indices = load_indices(Path(indices_file))
+    relations = load_relations(indices, relations_loader)
 
-        in_sentence_mapper = InSentenceSPERTMapper()
-        between_sentence_mapper = BetweenSentencesSPERTMapper()
+    in_sentence_mapper = InSentenceSPERTMapper()
+    between_sentence_mapper = BetweenSentencesSPERTMapper()
 
-        documents = map_relations(relations, in_sentence_mapper, between_sentence_mapper)
-        documents = [document.to_dict() for document in documents]
+    documents = map_relations(relations, in_sentence_mapper, between_sentence_mapper)
+    documents = [document.to_dict() for document in documents]
 
-        save_json(documents, Path(output_path))
-
+    save_json(documents, Path(output_path))
 
 if __name__ == '__main__':
     main()
