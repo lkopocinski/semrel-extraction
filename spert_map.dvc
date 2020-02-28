@@ -4,9 +4,3 @@ deps:
   path: data/relations/relations.tsv
 - md5: e68dd8073b30b01a074cb3a593eca70e
   path: data/spert/relations_to_spert_json.py
-outs:
-- md5: d751713988987e9331980363e24189ce.dir
-  path: data/spert/dataset
-  cache: true
-  metric: false
-  persist: false
