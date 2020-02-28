@@ -1,9 +1,9 @@
-md5: a614cbdc7d0015c619fe4a4dcd6190a9
+md5: ca6075ae915cc4c487b408b344186b06
 cmd: CUDA_VISIBLE_DEVICES=0 ./data/scripts/make_fasttext_map.py --input-path ./data/relations_files.list
   --model ./data/fasttext/kgr10.plain.skipgram.dim300.neg10.bin --output-paths ./data/maps/fasttext.map.keys
   ./data/maps/fasttext.map.pt
 deps:
-- md5: aa87aa2437a53998454b5471841fc3e2
+- md5: d718d192e892f4159b95265319c55c18
   path: data/relations_files.list
 - md5: a71a74a81a03cb74063e008821cf0605
   path: data/scripts/make_fasttext_map.py

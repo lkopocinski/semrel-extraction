@@ -1,11 +1,11 @@
-md5: 147d13a6728b9618d24e8c27b4060378
+md5: facc28a1c226ea9cf296956a66f4683e
 cmd: CUDA_VISIBLE_DEVICES=0 ./data/scripts/make_sent2vec_map.py --relations-file ./data/relations/relations.tsv
   --documents-files ./data/relations_files.list --model ./data/sent2vec/kgr10.bin
   --output-paths ./data/vectors/sent2vec.rel.keys ./data/vectors/sent2vec.rel.pt
 deps:
 - md5: 67299076dea942634be3cc4601bee2c5
   path: data/relations/relations.tsv
-- md5: aa87aa2437a53998454b5471841fc3e2
+- md5: d718d192e892f4159b95265319c55c18
   path: data/relations_files.list
 - md5: a96ca297f58227ecdd211e3e6134ba17
   path: data/scripts/make_sent2vec_map.py
