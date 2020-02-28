@@ -1,11 +1,11 @@
-md5: 4d5de7c025a37d0313a5c06103cf01d9
+md5: 9fc54d744b83f7816e8f409f1970dd0b
 deps:
 - md5: 67299076dea942634be3cc4601bee2c5
   path: data/relations/relations.tsv
 - md5: e68dd8073b30b01a074cb3a593eca70e
   path: data/spert/relations_to_spert_json.py
 outs:
-- md5: d751713988987e9331980363e24189ce.dir
+- md5: 57bf54da1c2bd82fbc42853daa3e9dd8.dir
   path: data/spert/dataset
   cache: true
   metric: false
