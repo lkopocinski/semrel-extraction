@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Iterator, List
 
 from data.scripts.utils.corpus import Document, Member
-from entities import Relation
+from data.scripts.entities import Relation
 
 
 class RelationsGenerator:

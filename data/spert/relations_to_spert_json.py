@@ -46,7 +46,7 @@ class SPERTDocRelation(NamedTuple):
 class SPERTDocument:
     tokens: List[str] = []
     entities: List[SPERTEntity] = []
-    relations: Set[SPERTDocRelation] = {}
+    relations: Set[SPERTDocRelation] = set()
 
     def to_dict(self):
         return {
@@ -129,7 +129,7 @@ def load_indices(indices_file: Path) -> Indices:
         )
 
 
-def load_relations(indices: Indices, relations_loader: RelationsLoader) -> Dict[List[Relation]]:
+def load_relations(indices: Indices, relations_loader: RelationsLoader) -> Dict:
     relations = defaultdict(list)
 
     for index, (label, _, relation) in enumerate(relations_loader.relations()):
@@ -197,7 +197,7 @@ def main(input_path, indices_file, output_dir):
 
     for set_name, set_relations in relations.items():
         documents = map_relations(set_relations, in_sentence_mapper, between_sentence_mapper)
-        documents = [document.to_dict() for document in documents]
+        documents = [document.to_dict() for document in documents.values()]
 
         save_json(documents, Path(f'{output_dir}/{set_name}.json'))
 
