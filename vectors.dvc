@@ -1,10 +1,10 @@
-md5: 71f97e60c4f02acea21fe82929298f82
+md5: 9642361dc634f29d45df029226d4d126
 deps:
 - md5: 67299076dea942634be3cc4601bee2c5
   path: data/relations/relations.tsv
 - md5: 17fe79211ba943efbf3c3fbfba949cc0
   path: data/scripts/embedd_relations.py
-- md5: c690f1ac96a5e8edbdf6aa1daf758ccf.dir
+- md5: 77cf90ad98efe5da17ed25ea4e903498.dir
   path: data/maps
 outs:
 - md5: 540eb8b5ee2258e39fbfe5ee03345a9b
