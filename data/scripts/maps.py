@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Iterator, List
+from tqdm import tqdm
 
 import torch
 
@@ -37,7 +38,7 @@ class MapMaker:
         keys = []
         vectors = []
 
-        for document in documents:
+        for document in tqdm(list(documents)):
             document_keys, document_tensor = self.make_document_map(document)
             keys.extend(document_keys)
             vectors.extend(document_tensor)
