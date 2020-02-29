@@ -6,7 +6,7 @@ import click
 from data.scripts.maps import MapMaker
 from data.scripts.utils.corpus import from_index_documents_gen
 from data.scripts.utils.io import save_lines, save_tensor
-from data.scripts.utils.vectorizers import ElmoVectorizer
+from data.scripts.utils.vectorizers import ElmoVectorizer, ElmoEmbedderVectorizer
 
 
 @click.command()
@@ -20,7 +20,7 @@ from data.scripts.utils.vectorizers import ElmoVectorizer
               help='Paths for saving keys and map files.')
 def main(input_path, model, output_paths):
     elmo_options, elmo_weights = model
-    vectorizer = ElmoVectorizer(options_path=elmo_options, weights_path=elmo_weights)
+    vectorizer = ElmoEmbedderVectorizer(options_path=elmo_options, weights_path=elmo_weights)
     mapmaker = MapMaker(vectorizer=vectorizer)
 
     documents = from_index_documents_gen(relations_files_index=Path(input_path))

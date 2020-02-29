@@ -3,9 +3,11 @@ from typing import List
 
 import sent2vec
 import torch
+from allennlp.commands.elmo import ElmoEmbedder
 from allennlp.modules.elmo import Elmo, batch_to_ids
 from gensim.models import KeyedVectors
 from gensim.models.fasttext import load_facebook_model
+import numpy as np
 
 
 class Vectorizer(abc.ABC):
@@ -13,6 +15,31 @@ class Vectorizer(abc.ABC):
     @abc.abstractmethod
     def embed(self, context: List[str]) -> torch.Tensor:
         pass
+
+
+class ElmoEmbedderVectorizer(Vectorizer):
+
+    def __init__(self, options_path: str, weights_path: str):
+        self.model = ElmoEmbedder(options_path, weights_path, cuda_device=0)
+
+    def embed(self, context: List[str]) -> torch.Tensor:
+        import pudb; pudb.set_trace()
+        vectors = self.model.embed_sentence(context)
+        vectors = np.average(vectors, axis=1)
+        tensor = torch.from_numpy(vectors)
+        return tensor.squeeze()
+
+
+class ElmoVectorizer(Vectorizer):
+
+    def __init__(self, options_path: str, weights_path: str):
+        self.model = Elmo(options_path, weights_path, 1, dropout=0)
+
+    def embed(self, context: List[str]) -> torch.Tensor:
+        character_ids = batch_to_ids([context])
+        embeddings = self.model(character_ids)
+        tensor = embeddings['elmo_representations'][0]
+        return tensor.squeeze()
 
 
 class ElmoVectorizer(Vectorizer):
