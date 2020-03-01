@@ -38,7 +38,9 @@ class MapMaker:
         keys = []
         vectors = []
 
-        for document in tqdm(list(documents)):
+        for idx, document in enumerate(documents):
+            if idx % 400 == 0:
+                print(f"{idx} / 12040")
             document_keys, document_tensor = self.make_document_map(document)
             keys.extend(document_keys)
             vectors.extend(document_tensor)

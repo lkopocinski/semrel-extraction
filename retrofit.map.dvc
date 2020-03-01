@@ -1,22 +1,22 @@
-md5: 72559106ba52f0f9804745ddb3ba47e0
+md5: 42aeb952815b046e744db32fa9c5bfae
 cmd: CUDA_VISIBLE_DEVICES=0 ./data/scripts/make_retrofit_map.py --input-path ./data/relations_files.list
   --model-retrofit ./data/fasttext/kgr10.plain.skipgram.dim300.neg10.retrofit.vec
   --model-fasttext ./data/fasttext/kgr10.plain.skipgram.dim300.neg10.bin --output-paths
   ./data/maps/retrofit.map.keys ./data/maps/retrofit.map.pt
 deps:
-- md5: d718d192e892f4159b95265319c55c18
+- md5: 687d0ef2d76502c115ff26a39a3a13df
   path: data/relations_files.list
 - md5: 2b1c69e6988e8d4e52d7f3b47bc42787
   path: data/scripts/make_retrofit_map.py
-- md5: 23b3119c061bac379484a9f02e9651d6
+- md5: c59de66a57f7bee5cd20703eb536b89c
   path: data/scripts/maps.py
 outs:
-- md5: 873a2895e9fea357679f2044e0a67119
+- md5: 4879fee7db0b389f8afdd90d0b792369
   path: data/maps/retrofit.map.keys
   cache: true
   metric: false
   persist: false
-- md5: 6b4c1c0e04c6229d16dafe268598e0bc
+- md5: 1a0b637491753c6295cf4cb261def9d6
   path: data/maps/retrofit.map.pt
   cache: true
   metric: false

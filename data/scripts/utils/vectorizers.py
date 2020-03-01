@@ -23,33 +23,27 @@ class ElmoEmbedderVectorizer(Vectorizer):
         self.model = ElmoEmbedder(options_path, weights_path, cuda_device=0)
 
     def embed(self, context: List[str]) -> torch.Tensor:
-        import pudb; pudb.set_trace()
+#        import pudb; pudb.set_trace()
         vectors = self.model.embed_sentence(context)
-        vectors = np.average(vectors, axis=1)
+        vectors = np.average(vectors, axis=0)
         tensor = torch.from_numpy(vectors)
-        return tensor.squeeze()
+        return tensor
 
 
 class ElmoVectorizer(Vectorizer):
 
     def __init__(self, options_path: str, weights_path: str):
         self.model = Elmo(options_path, weights_path, 1, dropout=0)
+        self.model = self.model.to("cuda:0")
 
     def embed(self, context: List[str]) -> torch.Tensor:
         character_ids = batch_to_ids([context])
+        character_ids = character_ids.to('cuda:0')
         embeddings = self.model(character_ids)
-        tensor = embeddings['elmo_representations'][0]
-        return tensor.squeeze()
 
+        character_ids.to('cpu')
+        embeddings = embeddings.to('cpu')
 
-class ElmoVectorizer(Vectorizer):
-
-    def __init__(self, options_path: str, weights_path: str):
-        self.model = Elmo(options_path, weights_path, 1, dropout=0)
-
-    def embed(self, context: List[str]) -> torch.Tensor:
-        character_ids = batch_to_ids([context])
-        embeddings = self.model(character_ids)
         tensor = embeddings['elmo_representations'][0]
         return tensor.squeeze()
 
