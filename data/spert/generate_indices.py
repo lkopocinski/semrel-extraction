@@ -4,18 +4,18 @@ from pathlib import Path
 
 import click
 
-from data_loader import BrandProductDataset, DatasetGenerator
-from io import save_json
-from runs import RUNS
+from model.scripts.utils.data_loader import BrandProductDataset, DatasetGenerator
+from data.scripts.utils.io import save_json
+from model.runs import RUNS
 
 
-def get_indices(keys_file: str,
+def get_indices(keys_file: Path,
                 balanced: bool = False,
                 lexical_split: bool = False,
                 in_domain: str = None,
                 random_seed: int = 42):
-    keys_path = Path(keys_file)
-    keys = BrandProductDataset._load_keys(keys_path)
+
+    keys = BrandProductDataset._load_keys(keys_file)
     ds_generator = DatasetGenerator(keys, random_seed)
     return ds_generator.generate_datasets(balanced, lexical_split, in_domain)
 
@@ -23,7 +23,7 @@ def get_indices(keys_file: str,
 @click.command()
 @click.option('--dataset-keys', required=True, type=str)
 @click.option('--output-path', required=True, type=str)
-def main(data_keys, output_path):
+def main(dataset_keys, output_path):
     indices = {}
 
     default_runs = RUNS['default']
@@ -32,7 +32,7 @@ def main(data_keys, output_path):
         lexical_split = params.get('lexical_split', False)
 
         train, valid, test = get_indices(
-            keys_file=data_keys,
+            keys_file=Path(dataset_keys),
             balanced=True,
             lexical_split=lexical_split,
             in_domain=in_domain,

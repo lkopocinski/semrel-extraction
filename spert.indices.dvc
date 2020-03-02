@@ -1,0 +1,14 @@
+md5: d54d3c0e1ea80c3521caafacb6013b52
+cmd: ./data/spert/generate_indices.py --dataset-keys ./data/vectors/elmo.rel.keys
+  --output-path ./data/spert/indices.json
+deps:
+- md5: b0b4f7c6b4d5ceb1094ec9df4bac26b2.dir
+  path: data/vectors
+- md5: 11bee01dfce93d9701727bd3ee0347a0
+  path: data/spert/generate_indices.py
+outs:
+- md5: 2cbecb174018d0fc7ff98f95c1153564
+  path: data/spert/indices.json
+  cache: false
+  metric: false
+  persist: false

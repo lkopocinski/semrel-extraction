@@ -132,7 +132,7 @@ class DatasetGenerator:
 
     def generate_datasets(self, balanced: bool, lexical_split: bool, in_domain: str, out_domain: str = None):
         if in_domain:
-            indices = [index for index, descriptor in self.dataset_keys.items() if descriptor[0] == in_domain]
+            indices = [index for index, descriptor in self.dataset_keys.items() if descriptor[1] == in_domain]
         elif out_domain:
             raise NotImplementedError(f'Out domain dataset split not implemented.')
         else:
