@@ -10,7 +10,7 @@ DEFAULT_RUNS = {
     1007: {'lexical_split': True, 'methods': ['elmo']},
     1008: {'lexical_split': True, 'methods': ['elmo', 'fasttext']},
     1009: {'lexical_split': True, 'methods': ['elmo', 'sent2vec']},
-    1000: {'lexical_split': True, 'methods': ['elmo', 'retrofit']},
+    1010: {'lexical_split': True, 'methods': ['elmo', 'retrofit']},
     1011: {'lexical_split': True, 'methods': ['elmo', 'fasttext', 'sent2vec']},
     1012: {'lexical_split': True, 'methods': ['elmo', 'retrofit', 'sent2vec']},
 

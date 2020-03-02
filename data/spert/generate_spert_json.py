@@ -44,9 +44,14 @@ class SPERTDocRelation(NamedTuple):
 
 
 class SPERTDocument:
-    tokens: List[str] = []
-    entities: List[SPERTEntity] = []
-    relations: Set[SPERTDocRelation] = set()
+
+    def __init__(self,
+                 tokens: List[str] = None,
+                 entities: List[SPERTEntity] = None,
+                 relations: Set[SPERTDocRelation] = None):
+        self.tokens = tokens or []
+        self.entities = entities or []
+        self.relations = relations or set()
 
     def to_dict(self):
         return {
@@ -119,27 +124,27 @@ class BetweenSentencesSPERTMapper(BrandProductSPERTMapper):
         return entity_from, entity_to
 
 
-def load_indices(indices_file: Path) -> Indices:
+def load_indices(indices_file: Path) -> Dict:
     with indices_file.open('r', encoding='utf-8') as file:
-        indices = json.load(file)
-        return Indices(
-            train=indices['train'],
-            valid=indices['valid'],
-            test=indices['test']
-        )
+        return json.load(file)
 
 
-def load_relations(indices: Indices, relations_loader: RelationsLoader) -> Dict:
+def filter_relations(filter_label: str, relations_loader: RelationsLoader) -> Dict:
+    return {index: relation
+            for index, (label, _, relation) in enumerate(relations_loader.relations())
+            if label == filter_label}
+
+
+def load_relations(indices: Indices, relations_dict: Dict) -> Dict:
     relations = defaultdict(list)
 
-    for index, (label, _, relation) in enumerate(relations_loader.relations()):
-        if label == 'in_relation':
-            if index in indices.train:
-                relations['train'].append(relation)
-            elif index in indices.valid:
-                relations['valid'].append(relation)
-            elif index in indices.test:
-                relations['test'].append(relation)
+    for index, relation in relations_dict.items():
+        if index in indices.train:
+            relations['train'].append(relation)
+        elif index in indices.valid:
+            relations['valid'].append(relation)
+        elif index in indices.test:
+            relations['test'].append(relation)
 
     return relations
 
@@ -187,19 +192,27 @@ def map_relations(relations: Iterator[Relation],
 @click.option('--output-dir', required=True, type=str,
               help='Paths for saving SPERT json file.')
 def main(input_path, indices_file, output_dir):
-    relations_loader = RelationsLoader(Path(input_path))
-
-    indices = load_indices(Path(indices_file))
-    relations = load_relations(indices, relations_loader)
-
     in_sentence_mapper = InSentenceSPERTMapper()
     between_sentence_mapper = BetweenSentencesSPERTMapper()
 
-    for set_name, set_relations in relations.items():
-        documents = map_relations(set_relations, in_sentence_mapper, between_sentence_mapper)
-        documents = [document.to_dict() for document in documents.values()]
+    relations_loader = RelationsLoader(Path(input_path))
+    relations_dict = filter_relations('in_relation', relations_loader)
 
-        save_json(documents, Path(f'{output_dir}/{set_name}.json'))
+    all_indices = load_indices(Path(indices_file))
+    for run_id, run_indices in all_indices.items():
+        indices = Indices(
+            train=run_indices['train'],
+            valid=run_indices['valid'],
+            test=run_indices['test']
+        )
+
+        relations = load_relations(indices, relations_dict)
+
+        for set_name, set_relations in relations.items():
+            documents = map_relations(set_relations, in_sentence_mapper, between_sentence_mapper)
+            documents = [document.to_dict() for document in documents.values()]
+
+            save_json(documents, Path(f'{output_dir}/{run_id}/{set_name}.json'))
 
 
 if __name__ == '__main__':
