@@ -43,13 +43,13 @@ class BrandProductDataset(data.Dataset):
 
 class DatasetGenerator:
 
-    def __init__(self, dataset: data.Dataset, random_seed: int = 42):
-        self.dataset = dataset
+    def __init__(self, keys: Dict[int, str], random_seed: int = 42):
+        self.dataset_keys = keys
         random.seed(random_seed)
 
     def _filter_indices_by_channels(self, indices: Set[int], channels) -> Set:
-        return {index for index in indices if (self.dataset.keys[index][4] in channels or
-                                               self.dataset.keys[index][8] in channels)}
+        return {index for index in indices if (self.dataset_keys[index][4] in channels or
+                                               self.dataset_keys[index][8] in channels)}
 
     def _split(self, indices) -> Tuple[List, List, List]:
         random.shuffle(indices)
@@ -67,8 +67,8 @@ class DatasetGenerator:
             return self._split(indices)
         # ok, lets try to balance the data (positives vs negatives)
         # 2 cases to cover: i) B-N, P-N, and ii) N-N
-        positives = {index for index in indices if self.dataset.keys[index][0] == 'in_relation'}
-        negatives = {index for index in indices if self.dataset.keys[index][0] == 'no_relation'}
+        positives = {index for index in indices if self.dataset_keys[index][0] == 'in_relation'}
+        negatives = {index for index in indices if self.dataset_keys[index][0] == 'no_relation'}
 
         # take the negatives connected with Bs or Ps
         negatives_bps = self._filter_indices_by_channels(negatives, CHANNELS)
@@ -97,10 +97,10 @@ class DatasetGenerator:
         brands_indices = defaultdict(list)
         for index in sorted(positives | negatives):
             brand = None
-            if self.dataset.keys[index][4] == 'BRAND_NAME':
-                brand = self.dataset.keys[index][6]
-            elif self.dataset.keys[index][8] == 'BRAND_NAME':
-                brand = self.dataset.keys[index][10]
+            if self.dataset_keys[index][4] == 'BRAND_NAME':
+                brand = self.dataset_keys[index][6]
+            elif self.dataset_keys[index][8] == 'BRAND_NAME':
+                brand = self.dataset_keys[index][10]
             else:
                 nns_and_nps_indices.append(index)
             if brand:
@@ -132,11 +132,11 @@ class DatasetGenerator:
 
     def generate_datasets(self, balanced: bool, lexical_split: bool, in_domain: str, out_domain: str = None):
         if in_domain:
-            indices = [index for index, descriptor in self.dataset.keys.items() if descriptor[0] == in_domain]
+            indices = [index for index, descriptor in self.dataset_keys.items() if descriptor[0] == in_domain]
         elif out_domain:
             raise NotImplementedError(f'Out domain dataset split not implemented.')
         else:
-            indices = self.dataset.keys.keys()
+            indices = self.dataset_keys.keys()
 
         return self._generate(indices, balanced, lexical_split)
 
@@ -174,7 +174,7 @@ def get_loaders(data_dir: str,
         vectors_files=[f'{data_dir}/{file}' for file in vectors_files],
     )
 
-    ds_generator = DatasetGenerator(dataset, random_seed)
+    ds_generator = DatasetGenerator(dataset.keys, random_seed)
     train_indices, valid_indices, test_indices = ds_generator.generate_datasets(balanced, lexical_split, in_domain)
 
     train_loader = data.DataLoader(
