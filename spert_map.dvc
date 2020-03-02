@@ -1,6 +1,6 @@
-md5: 402aa3d8f7e30d3b746d8f6efba4539b
+md5: 1ff4da087008fee8e27d438c3ea12100
 deps:
-- md5: 67299076dea942634be3cc4601bee2c5
+- md5: 44039d58b995c96107bb9dba88898aa6
   path: data/relations/relations.tsv
 - md5: e68dd8073b30b01a074cb3a593eca70e
   path: data/spert/relations_to_spert_json.py
