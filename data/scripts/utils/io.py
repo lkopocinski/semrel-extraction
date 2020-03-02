@@ -28,6 +28,9 @@ def save_tensor(path: Path, tensor: torch.Tensor):
     torch.save(tensor, str(path))
 
 
-def save_json(to_save_content, save_path: Path):
-    with save_path.open("w", encoding='utf-8') as file:
+def save_json(to_save_content, path: Path):
+    if not path.parent.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+    with path.open("w", encoding='utf-8') as file:
         json.dump(to_save_content, file)
