@@ -51,3 +51,56 @@ class Metrics:
                f'\n\tPrecision: {self.precision}' \
                f'\n\tRecall: {self.recall}' \
                f'\n\tFscore: {self.fscore}'
+
+
+class NerMetrics:
+
+    def __init__(self):
+        self._predicted = []
+        self._targets = []
+        self._ner_from = []
+        self._ner_to = []
+        self._ner_predicted = []
+
+    def append(self, predicted, targets, ner_from, ner_to):
+        _, predicted = torch.max(predicted, dim=1)
+        predicted = predicted.data.numpy()
+        targets = targets.data.numpy()
+
+        self._predicted = np.append(self._predicted, predicted)
+        self._targets = np.append(self._targets, targets)
+        self._ner_from.extend(ner_from)
+        self._ner_to.extend(ner_to)
+        self.predict_ner(predicted, targets, ner_from, ner_to)
+
+    def predict_ner(self, predicted, targets, ner_from, ner_to):
+        self._ner_predicted = []
+
+        for ner_from, ner_to, target, prediction in zip(ner_from, ner_to, targets, predicted):
+            neither_ner = not (ner_from or ner_to)
+            if neither_ner and target == 0 and prediction == 1:
+                self._ner_predicted.append(0)
+            else:
+                self._ner_predicted.append(prediction)
+
+    @property
+    def accuracy(self) -> float:
+        return accuracy_score(self._targets, self._ner_predicted)
+
+    @property
+    def precision(self) -> List[float]:
+        return precision_score(self._targets, self._ner_predicted, average=None)
+
+    @property
+    def recall(self) -> List[float]:
+        return recall_score(self._targets, self._ner_predicted, average=None)
+
+    @property
+    def fscore(self) -> List[float]:
+        return f1_score(self._targets, self._ner_predicted, average=None)
+
+    def __str__(self):
+        return f'\tAccuracy: {self.accuracy}' \
+               f'\n\tPrecision: {self.precision}' \
+               f'\n\tRecall: {self.recall}' \
+               f'\n\tFscore: {self.fscore}'

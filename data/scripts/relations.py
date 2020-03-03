@@ -2,10 +2,10 @@
 import csv
 from itertools import permutations, product
 from pathlib import Path
-from typing import Iterator, List
+from typing import Iterator, List, Dict
 
-from data.scripts.utils.corpus import Document, Member
 from data.scripts.entities import Relation
+from data.scripts.utils.corpus import Document, Member
 
 
 class RelationsGenerator:
@@ -102,6 +102,11 @@ class RelationsLoader:
                 relation = self._parse_relation(line_dict)
 
                 yield label, id_domain, relation
+
+    def filter_relations(self, filter_label: str) -> Dict[int, Relation]:
+        return {index: relation
+                for index, (label, _, relation) in enumerate(self.relations())
+                if label == filter_label}
 
     @staticmethod
     def _parse_relation(relation_dict: dict) -> Relation:

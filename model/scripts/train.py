@@ -5,43 +5,18 @@ from pathlib import Path
 
 import click
 import mlflow
-import numpy as np
 import torch
 import torch.nn as nn
 from torch.optim import Adagrad, Optimizer
 from torch.utils.data import DataLoader
 
-from data.scripts.utils.io import save_lines
 from model.runs import RUNS
 from model.scripts.relnet import RelNet
 from model.scripts.utils.data_loader import get_loaders
-from model.scripts.utils.metrics import Metrics
+from model.scripts.utils.metrics import Metrics, NerMetrics
 from model.scripts.utils.utils import parse_config, get_device, is_better_loss, ignored
 
 logger = logging.getLogger(__name__)
-
-
-class NerSaver:
-
-    def __init__(self):
-        self.predicted = []
-        self.targets = []
-        self.ner_from = []
-        self.ner_to = []
-
-    def append(self, predicted, targets, ner_from, ner_to):
-        _, predicted = torch.max(predicted, dim=1)
-        predicted = predicted.data.numpy()
-        targets = targets.data.numpy()
-
-        self.predicted = np.append(self.predicted, predicted)
-        self.targets = np.append(self.targets, targets)
-        self.ner_from.extend(ner_from)
-        self.ner_to.extend(ner_to)
-
-    def save(self, file_path: Path):
-        to_save = zip(self.predicted, self.targets, self.ner_from, self.ner_to)
-        save_lines(file_path, to_save)
 
 
 @click.command()
@@ -126,14 +101,22 @@ def main(config):
 
                 # Test
                 test_network = RelNet(in_dim=vector_size, **config['net_params'])
-                test_metrics = test(test_network, model_name, test_loader, loss_func, device)
+                test_metrics, test_ner_metrics = test(test_network, model_name, test_loader, loss_func, device)
+
                 logger.info(f'\n\nTest: {test_metrics}')
+                logger.info(f'\n\nTest ner: {test_ner_metrics}')
+
                 log_metrics(test_metrics, 'test')
+                log_metrics(test_ner_metrics, 'test_ner')
 
 
-def log_metrics(metrics: Metrics, prefix: str, step: int = 0):
+def log_metrics(metrics, prefix: str, step: int = 0):
+    try:
+        mlflow.log_metric(f'{prefix}_loss', metrics.loss)
+    except AttributeError:
+        pass
+
     mlflow.log_metrics({
-        f'{prefix}_loss': metrics.loss,
         f'{prefix}_accuracy': metrics.accuracy,
         f'{prefix}_precision_pos': metrics.precision[1],
         f'{prefix}_precision_neg': metrics.precision[0],
@@ -166,8 +149,10 @@ def train(network: RelNet, optimizer: Optimizer, batches: DataLoader, loss_funct
 
 
 def evaluate(network: RelNet, batches: DataLoader, loss_function,
-             device: torch.device, ner_saver: NerSaver = None) -> Metrics:
+             device: torch.device) -> Metrics:
     metrics = Metrics()
+    ner_metrics = NerMetrics()
+
     network.eval()
 
     with torch.no_grad():
@@ -179,23 +164,15 @@ def evaluate(network: RelNet, batches: DataLoader, loss_function,
             loss = loss_function(output, target)
 
             metrics.update(output.cpu(), target.cpu(), loss.item(), len(batches))
-            if ner_saver:
-                ner_saver.append(output.cpu(), target.cpu(), ner_from, ner_to)
+            ner_metrics.append(output.cpu(), target.cpu(), ner_from, ner_to)
 
-    return metrics
+    return metrics, ner_metrics
 
 
 def test(network: RelNet, model_path: str, batches: DataLoader, loss_function, device: torch.device) -> Metrics:
     network.load(model_path)
     network.to(device)
-    ner_saver = NerSaver()
-    evaluation = evaluate(network, batches, loss_function, device, ner_saver)
-
-    ner_results_path = Path(f'{model_path}.ner')
-    ner_saver.save(ner_results_path)
-    mlflow.log_artifact(ner_results_path)
-
-    return evaluation
+    return evaluate(network, batches, loss_function, device)
 
 
 if __name__ == "__main__":
