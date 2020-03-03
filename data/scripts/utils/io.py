@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Iterator
+from typing import Iterator, Dict
 
 import torch
 
@@ -34,3 +34,8 @@ def save_json(to_save_content, path: Path):
 
     with path.open("w", encoding='utf-8') as file:
         json.dump(to_save_content, file)
+
+
+def load_json(indices_file: Path) -> Dict:
+    with indices_file.open('r', encoding='utf-8') as file:
+        return json.load(file)
