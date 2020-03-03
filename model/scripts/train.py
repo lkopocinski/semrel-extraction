@@ -193,7 +193,7 @@ def test(network: RelNet, model_path: str, batches: DataLoader, loss_function, d
 
     ner_results_path = Path(f'{model_path}.ner')
     ner_saver.save(ner_results_path)
-    mlflow.log_artifact(ner_results_path)
+    mlflow.log_artifact(str(ner_results_path))
 
     return evaluation
 
