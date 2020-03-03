@@ -3,7 +3,7 @@ experiment_name: 'NO_EXP'
 
 dataset:
   dir: './data/vectors'
-  keys: 'keys.txt'
+  keys: 'elmo.rel.keys'
 
 net_params:
   hidden_dim: 512

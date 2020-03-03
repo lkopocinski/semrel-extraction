@@ -1,8 +1,8 @@
-md5: fa0c7dae70e35ebc5e348fa518a818be
+md5: f54d7355b579c90548c160bb12495620
 deps:
 - md5: 44039d58b995c96107bb9dba88898aa6
   path: data/relations/relations.tsv
-- md5: 17fe79211ba943efbf3c3fbfba949cc0
+- md5: ec0168e78ead021206c744aad3e4a42f
   path: data/scripts/embedd_relations.py
 - md5: 43b08f349f1ca2370414182ed2e29604.dir
   path: data/maps

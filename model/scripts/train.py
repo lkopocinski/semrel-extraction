@@ -41,6 +41,7 @@ class NerSaver:
 
     def save(self, file_path: Path):
         to_save = zip(self.predicted, self.targets, self.ner_from, self.ner_to)
+        import pudb; pudb.set_trace()
         save_lines(file_path, to_save)
 
 
