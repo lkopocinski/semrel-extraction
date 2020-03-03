@@ -131,6 +131,7 @@ RUN git clone https://github.com/epfml/sent2vec.git && \
     cd /home/install && \
     rm -rf sent2vec
 
+COPY credentials /root/.aws/credentials
 
 WORKDIR /
 ENTRYPOINT ["/bin/bash"]
