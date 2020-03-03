@@ -34,11 +34,14 @@ class BrandProductDataset(data.Dataset):
         return self.vectors.shape[0]
 
     def __getitem__(self, index: int):
-        label = self.keys[index][0]
+        key = self.keys[index]
+        label = key[0]
+        is_named_entity_f = key[11]
+        is_named_entity_t = key[12]
 
         x = self.vectors[index]
         y = self.label2digit[label]
-        return x, y
+        return x, y, is_named_entity_f, is_named_entity_t
 
 
 class DatasetGenerator:

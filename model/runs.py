@@ -1,3 +1,14 @@
+SPERT_RUNS = {
+    0: {'lexical_split': False},
+    1: {'lexical_split': True},
+    2: {'in_domain': '112', 'lexical_split': False},
+    3: {'in_domain': '112', 'lexical_split': True},
+    4: {'in_domain': '114', 'lexical_split': False},
+    5: {'in_domain': '114', 'lexical_split': True},
+    6: {'in_domain': '115', 'lexical_split': False},
+    7: {'in_domain': '115', 'lexical_split': True}
+}
+
 DEFAULT_RUNS = {
     # all domains
     1001: {'lexical_split': False, 'methods': ['elmo']},
@@ -420,6 +431,7 @@ OUT_DOMAIN_115 = {
 }
 
 RUNS = {
+    'spert': SPERT_RUNS,
     'default': DEFAULT_RUNS,
     'all': ALL_DOMAINS,
     'all_lexical': ALL_DOMAINS_LEXICAL,

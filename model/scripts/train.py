@@ -5,18 +5,43 @@ from pathlib import Path
 
 import click
 import mlflow
+import numpy as np
 import torch
 import torch.nn as nn
 from torch.optim import Adagrad, Optimizer
 from torch.utils.data import DataLoader
 
-from model.scripts.utils.data_loader import get_loaders
+from data.scripts.utils.io import save_lines
 from model.runs import RUNS
 from model.scripts.relnet import RelNet
+from model.scripts.utils.data_loader import get_loaders
 from model.scripts.utils.metrics import Metrics
 from model.scripts.utils.utils import parse_config, get_device, is_better_loss, ignored
 
 logger = logging.getLogger(__name__)
+
+
+class NerSaver:
+
+    def __init__(self):
+        self.predicted = []
+        self.targets = []
+        self.ner_from = []
+        self.ner_to = []
+
+    def append(self, predicted, targets, ner_from, ner_to):
+        _, predicted = torch.max(predicted, dim=1)
+        predicted = predicted.data.numpy()
+        targets = targets.data.numpy()
+
+        np.append(self.predicted, predicted)
+        np.append(self.targets, targets)
+        self.ner_from.append(ner_from)
+        self.ner_to.append(ner_to)
+
+    def save(self, file_path: Path):
+        to_save = zip(self.predicted, self.targets, self.ner_from, self.ner_to)
+        save_lines(file_path, to_save)
 
 
 @click.command()
@@ -123,7 +148,7 @@ def train(network: RelNet, optimizer: Optimizer, batches: DataLoader, loss_funct
     metrics = Metrics()
 
     network.train()
-    for data, labels in batches:
+    for data, labels, _, _ in batches:
         optimizer.zero_grad()
 
         data = data.to(device)
@@ -140,12 +165,13 @@ def train(network: RelNet, optimizer: Optimizer, batches: DataLoader, loss_funct
     return metrics
 
 
-def evaluate(network: RelNet, batches: DataLoader, loss_function, device: torch.device):
+def evaluate(network: RelNet, batches: DataLoader, loss_function,
+             device: torch.device, ner_saver: NerSaver = None) -> Metrics:
     metrics = Metrics()
     network.eval()
 
     with torch.no_grad():
-        for data, labels in batches:
+        for data, labels, ner_from, ner_to in batches:
             data = data.to(device)
             target = labels.to(device)
 
@@ -153,14 +179,19 @@ def evaluate(network: RelNet, batches: DataLoader, loss_function, device: torch.
             loss = loss_function(output, target)
 
             metrics.update(output.cpu(), target.cpu(), loss.item(), len(batches))
+            if ner_saver:
+                ner_saver.append(output.cpu(), target.cpu(), ner_from, ner_to)
 
     return metrics
 
 
-def test(network: RelNet, model_path: str, batches: DataLoader, loss_function, device: torch.device):
+def test(network: RelNet, model_path: str, batches: DataLoader, loss_function, device: torch.device) -> Metrics:
     network.load(model_path)
     network.to(device)
-    return evaluate(network, batches, loss_function, device)
+    ner_saver = NerSaver()
+    evaluation = evaluate(network, batches, loss_function, device, ner_saver)
+    ner_saver.save(Path(f'{model_path}.ner'))
+    return evaluation
 
 
 if __name__ == "__main__":

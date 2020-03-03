@@ -26,8 +26,8 @@ def get_indices(keys_file: Path,
 def main(dataset_keys, output_path):
     indices = {}
 
-    default_runs = RUNS['default']
-    for index, params in default_runs.items():
+    spert_runs = RUNS['spert']
+    for index, params in spert_runs.items():
         in_domain = params.get('in_domain')
         lexical_split = params.get('lexical_split', False)
 

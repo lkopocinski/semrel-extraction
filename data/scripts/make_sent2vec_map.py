@@ -48,6 +48,7 @@ class RelationsMapMaker:
             label, id_domain, id_document,
             member_from.id_sentence, member_from.channel, str(member_from.indices), member_from.lemma,
             member_to.id_sentence, member_to.channel, str(member_to.indices), member_to.lemma,
+            member_from.is_named_entity, member_to.is_named_entity
         ])
 
     def _mask_tokens(self, context: List[str], indices: Tuple[int]):
