@@ -34,14 +34,13 @@ class NerSaver:
         predicted = predicted.data.numpy()
         targets = targets.data.numpy()
 
-        np.append(self.predicted, predicted)
-        np.append(self.targets, targets)
-        self.ner_from.append(ner_from)
-        self.ner_to.append(ner_to)
+        self.predicted = np.append(self.predicted, predicted)
+        self.targets = np.append(self.targets, targets)
+        self.ner_from.extend(ner_from)
+        self.ner_to.extend(ner_to)
 
     def save(self, file_path: Path):
         to_save = zip(self.predicted, self.targets, self.ner_from, self.ner_to)
-        import pudb; pudb.set_trace()
         save_lines(file_path, to_save)
 
 
@@ -191,7 +190,11 @@ def test(network: RelNet, model_path: str, batches: DataLoader, loss_function, d
     network.to(device)
     ner_saver = NerSaver()
     evaluation = evaluate(network, batches, loss_function, device, ner_saver)
-    ner_saver.save(Path(f'{model_path}.ner'))
+
+    ner_results_path = Path(f'{model_path}.ner')
+    ner_saver.save(ner_results_path)
+    mlflow.log_artifact(ner_results_path)
+
     return evaluation
 
 
