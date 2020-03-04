@@ -10,6 +10,6 @@ net_params:
   dropout: 0.5
 
 learn_params:
-  runs: 'default'
+  runs: '114_in_lexical'
   batch_size: 100
   epochs: 50

@@ -74,10 +74,8 @@ class NerMetrics:
         self.predict_ner(predicted, targets, ner_from, ner_to)
 
     def predict_ner(self, predicted, targets, ner_from, ner_to):
-        self._ner_predicted = []
-
         for ner_from, ner_to, target, prediction in zip(ner_from, ner_to, targets, predicted):
-            neither_ner = not (ner_from or ner_to)
+            neither_ner = not (eval(ner_from) or eval(ner_to))
             if neither_ner and target == 0 and prediction == 1:
                 self._ner_predicted.append(0)
             else:

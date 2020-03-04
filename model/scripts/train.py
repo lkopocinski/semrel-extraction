@@ -90,7 +90,7 @@ def main(config):
                     log_metrics(train_metrics, 'train', epoch)
 
                     # Validate
-                    valid_metrics = evaluate(network, valid_loader, loss_func, device)
+                    valid_metrics, _ = evaluate(network, valid_loader, loss_func, device)
                     log_metrics(valid_metrics, 'valid', epoch)
 
                     # Loss stopping
@@ -138,7 +138,11 @@ def train(network: RelNet, optimizer: Optimizer, batches: DataLoader, loss_funct
         target = labels.to(device)
 
         output = network(data).squeeze(0)
-        loss = loss_function(output, target)
+        try:
+            loss = loss_function(output, target)
+        except Exception:
+            print(data)
+            continue
 
         loss.backward()
         optimizer.step()
@@ -161,7 +165,11 @@ def evaluate(network: RelNet, batches: DataLoader, loss_function,
             target = labels.to(device)
 
             output = network(data).squeeze(0)
-            loss = loss_function(output, target)
+            try:
+                loss = loss_function(output, target)
+            except Exception:
+                print(data)
+                continue
 
             metrics.update(output.cpu(), target.cpu(), loss.item(), len(batches))
             ner_metrics.append(output.cpu(), target.cpu(), ner_from, ner_to)
