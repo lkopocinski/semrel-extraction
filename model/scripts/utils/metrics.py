@@ -75,11 +75,12 @@ class NerMetrics:
 
     def predict_ner(self, predicted, ner_from, ner_to):
         for ner_from, ner_to, prediction in zip(ner_from, ner_to, predicted):
-            neither_ner = not (eval(ner_from) or eval(ner_to))
-            if neither_ner:
-                self._ner_predicted.append(0)
-            else:
+            both_ner = eval(ner_from) and eval(ner_to)
+            if both_ner:
                 self._ner_predicted.append(prediction)
+            else:
+                self._ner_predicted.append(0)
+
 
     @property
     def accuracy(self) -> float:
