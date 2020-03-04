@@ -1,6 +1,5 @@
 #!/usr/bin/env python3.6
 
-import logging
 from pathlib import Path
 
 import click
@@ -15,9 +14,6 @@ from model.scripts.relnet import RelNet
 from model.scripts.utils.data_loader import get_loaders
 from model.scripts.utils.metrics import Metrics, NerMetrics
 from model.scripts.utils.utils import parse_config, get_device, is_better_loss, ignored
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 
 @click.command()
@@ -38,7 +34,7 @@ def main(config):
     for index, params in runs.items():
         with ignored(Exception):
             with mlflow.start_run():
-                logger.info(f'\nRUN: {index} WITH: {params}')
+                print(f'\nRUN: {index} WITH: {params}')
 
                 in_domain = params.get('in_domain')
                 out_domain = params.get('out_domain')
@@ -82,9 +78,9 @@ def main(config):
 
                 best_valid_loss = None
 
-                logger.info('Epochs:', end=" ")
+                print('Epochs:', end=" ")
                 for epoch in range(config['learn_params']['epochs']):
-                    logger.info(epoch, end=" ")
+                    print(epoch, end=" ")
 
                     # Train
                     train_metrics = train(network, optimizer, train_loader, loss_func, device)
@@ -104,8 +100,8 @@ def main(config):
                 test_network = RelNet(in_dim=vector_size, **config['net_params'])
                 test_metrics, test_ner_metrics = test(test_network, model_name, test_loader, loss_func, device)
 
-                logger.info(f'\n\nTest: {test_metrics}')
-                logger.info(f'\n\nTest ner: {test_ner_metrics}')
+                print(f'\n\nTest: {test_metrics}')
+                print(f'\n\nTest ner: {test_ner_metrics}')
 
                 log_metrics(test_metrics, 'test')
                 log_metrics(test_ner_metrics, 'test_ner')
