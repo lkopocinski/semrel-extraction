@@ -17,6 +17,7 @@ from model.scripts.utils.metrics import Metrics, NerMetrics
 from model.scripts.utils.utils import parse_config, get_device, is_better_loss, ignored
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 @click.command()
@@ -140,8 +141,9 @@ def train(network: RelNet, optimizer: Optimizer, batches: DataLoader, loss_funct
         output = network(data).squeeze(0)
         try:
             loss = loss_function(output, target)
-        except Exception:
-            print(data)
+        except IndexError:
+            print("Output: ", output)
+            print("Output: ", target)
             continue
 
         loss.backward()
@@ -167,8 +169,9 @@ def evaluate(network: RelNet, batches: DataLoader, loss_function,
             output = network(data).squeeze(0)
             try:
                 loss = loss_function(output, target)
-            except Exception:
-                print(data)
+            except IndexError:
+                print("Output: ", output)
+                print("Output: ", target)
                 continue
 
             metrics.update(output.cpu(), target.cpu(), loss.item(), len(batches))

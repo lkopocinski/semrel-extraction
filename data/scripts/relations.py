@@ -57,7 +57,7 @@ class RelationsGenerator:
                     id_sentence=member_to.id_sentence,
                     lemma=lemma_to,
                     channel=_member_to.channel if _member_to else '',
-                    is_named_entity=_member_from.is_named_entity if _member_from else False,
+                    is_named_entity=_member_to.is_named_entity if _member_to else False,
                     indices=(index_to,),
                     context=member_to.context
                 )
