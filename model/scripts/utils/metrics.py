@@ -71,12 +71,12 @@ class NerMetrics:
         self._targets = np.append(self._targets, targets)
         self._ner_from.extend(ner_from)
         self._ner_to.extend(ner_to)
-        self.predict_ner(predicted, targets, ner_from, ner_to)
+        self.predict_ner(predicted, ner_from, ner_to)
 
-    def predict_ner(self, predicted, targets, ner_from, ner_to):
-        for ner_from, ner_to, target, prediction in zip(ner_from, ner_to, targets, predicted):
+    def predict_ner(self, predicted, ner_from, ner_to):
+        for ner_from, ner_to, prediction in zip(ner_from, ner_to, predicted):
             neither_ner = not (eval(ner_from) or eval(ner_to))
-            if neither_ner and target == 0 and prediction == 1:
+            if neither_ner:
                 self._ner_predicted.append(0)
             else:
                 self._ner_predicted.append(prediction)
