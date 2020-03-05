@@ -23,11 +23,9 @@ class ElmoEmbedderVectorizer(Vectorizer):
         self.model = ElmoEmbedder(options_path, weights_path, cuda_device=0)
 
     def embed(self, context: List[str]) -> torch.Tensor:
-#        import pudb; pudb.set_trace()
         vectors = self.model.embed_sentence(context)
         vectors = np.average(vectors, axis=0)
-        tensor = torch.from_numpy(vectors)
-        return tensor
+        return torch.from_numpy(vectors)
 
 
 class ElmoVectorizer(Vectorizer):

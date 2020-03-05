@@ -1,6 +1,5 @@
 from pathlib import Path
 from typing import Iterator, List
-from tqdm import tqdm
 
 import torch
 
