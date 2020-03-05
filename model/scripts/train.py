@@ -108,10 +108,10 @@ def main(config):
                 test_metrics, test_ner_metrics = test(test_network, model_name, test_loader, loss_func, device)
 
                 print(f'\n\nTest: {test_metrics}')
-                print(f'\n\nTest ner: {test_ner_metrics}')
+               # print(f'\n\nTest ner: {test_ner_metrics}')
 
                 log_metrics(test_metrics, 'test')
-                log_metrics(test_ner_metrics, 'test_ner')
+               # log_metrics(test_ner_metrics, 'test_ner')
 
 
 def log_metrics(metrics, prefix: str, step: int = 0):
@@ -161,7 +161,7 @@ def evaluate(network: RelNet, batches: DataLoader, loss_function,
              device: torch.device) -> Metrics:
     metrics = Metrics()
     # ner_metrics = NerMetrics()
-
+    ner_metrics = None
     network.eval()
 
     with torch.no_grad():
