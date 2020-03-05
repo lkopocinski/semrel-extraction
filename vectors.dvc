@@ -1,38 +1,38 @@
-md5: a02f19f07c426d68a7ad6ccb01db33fb
+md5: ed59009f3b89f40a07677e317ce43ee5
 deps:
 - md5: 973eb3d89b07d88e4a3d85df0ada1e79
   path: data/relations/relations.tsv
-- md5: ec0168e78ead021206c744aad3e4a42f
+- md5: 21960b2ecbda043757255d81cb884889
   path: data/scripts/embedd_relations.py
 - md5: 43b08f349f1ca2370414182ed2e29604.dir
   path: data/maps
 outs:
-- md5: 7e85782148a007d90ad408a99b2c6c47
+- md5: b227463e3cf8ac6b5de8c5f9e99d4097
   path: data/vectors/elmo.rel.keys
   cache: true
   metric: false
   persist: false
-- md5: f063903f293814420df3f0278aeb4f8f
+- md5: 767b086033d7733c7ddcc7b58ad3cc33
   path: data/vectors/elmo.rel.pt
   cache: true
   metric: false
   persist: false
-- md5: 7e85782148a007d90ad408a99b2c6c47
+- md5: b227463e3cf8ac6b5de8c5f9e99d4097
   path: data/vectors/fasttext.rel.keys
   cache: true
   metric: false
   persist: false
-- md5: 40985f2584dc8011d4a930fac05c381f
+- md5: 1eb5d0ddfa8795b056ba1f5b09af5d35
   path: data/vectors/fasttext.rel.pt
   cache: true
   metric: false
   persist: false
-- md5: 7e85782148a007d90ad408a99b2c6c47
+- md5: b227463e3cf8ac6b5de8c5f9e99d4097
   path: data/vectors/retrofit.rel.keys
   cache: true
   metric: false
   persist: false
-- md5: 1f116f1adf6aee41676737a566d1d892
+- md5: 6a7ed798c5921d0aad087b592a0c7ec7
   path: data/vectors/retrofit.rel.pt
   cache: true
   metric: false

@@ -1,4 +1,4 @@
-md5: f5988cffbf1079eeb423905d842e8d7d
+md5: a6ec415538f7fe931abae46187dbe7c7
 cmd: CUDA_VISIBLE_DEVICES=0 ./data/scripts/generate_relations.py --input-path ./data/relations_files.list
   --output-path ./data/relations/relations.tsv
 deps:
@@ -6,7 +6,7 @@ deps:
   path: data/relations_files.list
 - md5: 29daf02e9a621c5ce54c86c919653c1e
   path: data/scripts/generate_relations.py
-- md5: eea4c9735cfe1455a449a679d73bbdd8
+- md5: 07ecf4eebddf1414cbfa4148930f14a4
   path: data/scripts/relations.py
 outs:
 - md5: 973eb3d89b07d88e4a3d85df0ada1e79
