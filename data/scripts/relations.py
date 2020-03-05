@@ -115,7 +115,7 @@ class RelationsLoader:
             id_sentence=relation_dict['id_sentence_from'],
             lemma=relation_dict['lemma_from'],
             channel=relation_dict['channel_from'],
-            is_named_entity=relation_dict['is_named_entity_from'],
+            is_named_entity=eval(relation_dict['is_named_entity_from']),
             indices=eval(relation_dict['indices_from']),
             context=eval(relation_dict['context_from'])
         )
@@ -123,7 +123,7 @@ class RelationsLoader:
             id_sentence=relation_dict['id_sentence_to'],
             lemma=relation_dict['lemma_to'],
             channel=relation_dict['channel_to'],
-            is_named_entity=relation_dict['is_named_entity_to'],
+            is_named_entity=eval(relation_dict['is_named_entity_to']),
             indices=eval(relation_dict['indices_to']),
             context=eval(relation_dict['context_to'])
         )

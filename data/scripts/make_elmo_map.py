@@ -6,7 +6,7 @@ import click
 from data.scripts.maps import MapMaker
 from data.scripts.utils.corpus import from_index_documents_gen
 from data.scripts.utils.io import save_lines, save_tensor
-from data.scripts.utils.vectorizers import ElmoVectorizer, ElmoEmbedderVectorizer
+from data.scripts.utils.vectorizers import ElmoEmbedderVectorizer
 
 
 @click.command()
