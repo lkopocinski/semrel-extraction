@@ -114,13 +114,13 @@ def log_metrics(metrics, prefix: str, step: int = 0):
         pass
 
     mlflow.log_metrics({
-        f'{prefix}_accuracy': metrics.accuracy,
-        f'{prefix}_precision_pos': metrics.precision[1],
-        f'{prefix}_precision_neg': metrics.precision[0],
-        f'{prefix}_recall_pos': metrics.recall[1],
-        f'{prefix}_recall_neg': metrics.recall[0],
-        f'{prefix}_fscore_pos': metrics.fscore[1],
-        f'{prefix}_fscore_neg': metrics.fscore[0]
+        f'{prefix}_acc': metrics.accuracy,
+        f'{prefix}_prec_pos': metrics.precision[1],
+        f'{prefix}_prec_neg': metrics.precision[0],
+        f'{prefix}_rec_pos': metrics.recall[1],
+        f'{prefix}_rec_neg': metrics.recall[0],
+        f'{prefix}_f_pos': metrics.fscore[1],
+        f'{prefix}_f_neg': metrics.fscore[0]
     }, step=step)
 
 
