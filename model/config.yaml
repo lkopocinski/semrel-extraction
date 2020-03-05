@@ -1,5 +1,5 @@
 tracking_uri: 'http://10.17.50.132:8080'
-experiment_name: 'NO_EXP'
+experiment_name: 'LREC_2.0'
 
 dataset:
   dir: './data/vectors'
@@ -10,6 +10,6 @@ net_params:
   dropout: 0.5
 
 learn_params:
-  runs: '114_in_lexical'
+  runs: 'default'
   batch_size: 100
   epochs: 50

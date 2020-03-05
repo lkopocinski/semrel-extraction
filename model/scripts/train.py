@@ -66,9 +66,9 @@ def main(config):
 
                 # Log learning params
                 mlflow.log_params({
-                    'train size': len(train_loader),
-                    'valid size': len(valid_loader),
-                    'test size': len(test_loader),
+                    'train size': len(train_loader.sampler),
+                    'valid size': len(valid_loader.sampler),
+                    'test size': len(test_loader.sampler),
                     'vector size': vector_size,
                     'optimizer': optimizer.__class__.__name__,
                     'loss function': loss_func.__class__.__name__,
