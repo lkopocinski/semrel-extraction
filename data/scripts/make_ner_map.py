@@ -26,7 +26,7 @@ class RelationsMapMaker:
             label, id_domain, id_document,
             member_from.id_sentence, member_from.channel, str(member_from.indices), member_from.lemma,
             member_to.id_sentence, member_to.channel, str(member_to.indices), member_to.lemma,
-            member_from.is_named_entity, member_to.is_named_entity
+            str(member_from.is_named_entity), str(member_to.is_named_entity)
         ])
 
     def make_map(self) -> [List, torch.tensor]:
@@ -42,7 +42,7 @@ class RelationsMapMaker:
             ner_values = [member_from.is_named_entity, member_to.is_named_entity]
 
             key = self._make_key(label, id_domain, relation)
-            vector = torch.FloatTensor(ner_values)
+            vector = torch.FloatTensor(ner_values).unsqueeze(0)
 
             keys.append(key)
             vectors.append(vector)

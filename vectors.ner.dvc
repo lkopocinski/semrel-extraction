@@ -1,0 +1,19 @@
+md5: 3b075109e95ed04ae28d9dc3dcd6b27a
+cmd: ./data/scripts/make_ner_map.py --relations-file ./data/relations/relations.tsv
+  --output-paths ./data/vectors/ner.rel.keys ./data/vectors/ner.rel.pt
+deps:
+- md5: 973eb3d89b07d88e4a3d85df0ada1e79
+  path: data/relations/relations.tsv
+- md5: 7459b8f44a8f2cfbc95b47ccb1227fe9
+  path: data/scripts/make_ner_map.py
+outs:
+- md5: b227463e3cf8ac6b5de8c5f9e99d4097
+  path: data/vectors/ner.rel.keys
+  cache: true
+  metric: false
+  persist: false
+- md5: 05403723efaf42d248b8d2cee0b13864
+  path: data/vectors/ner.rel.pt
+  cache: true
+  metric: false
+  persist: false
