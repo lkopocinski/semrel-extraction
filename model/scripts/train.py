@@ -48,6 +48,13 @@ def main(config):
                     'methods': ', '.join(methods),
                 })
 
+                mlflow.log_params({
+                    'in_domain': in_domain,
+                    'out_domain': out_domain,
+                    'lexical_split': lexical_split,
+                    'methods': ', '.join(methods),
+                })
+
                 train_loader, valid_loader, test_loader, vector_size = get_loaders(
                     data_dir=config['dataset']['dir'],
                     keys_file=config['dataset']['keys'],
