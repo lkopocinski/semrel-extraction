@@ -153,7 +153,7 @@ def train(network: RelNet, optimizer: Optimizer, batches: DataLoader, loss_funct
 def evaluate(network: RelNet, batches: DataLoader, loss_function,
              device: torch.device) -> Metrics:
     metrics = Metrics()
-    ner_metrics = NerMetrics()
+    # ner_metrics = NerMetrics()
 
     network.eval()
 
@@ -171,7 +171,7 @@ def evaluate(network: RelNet, batches: DataLoader, loss_function,
                 continue
 
             metrics.update(output.cpu(), target.cpu(), loss.item(), len(batches))
-            ner_metrics.append(output.cpu(), target.cpu(), ner_from, ner_to)
+            # ner_metrics.append(output.cpu(), target.cpu(), ner_from, ner_to)
 
     return metrics, ner_metrics
 
