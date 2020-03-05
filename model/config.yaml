@@ -1,5 +1,5 @@
 tracking_uri: 'http://10.17.50.132:8080'
-experiment_name: 'LREC_2.0'
+experiment_name: 'LREC_2.0_ner'
 
 dataset:
   dir: './data/vectors'

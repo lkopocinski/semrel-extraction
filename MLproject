@@ -1,8 +1,0 @@
-name: Semrel
-
-docker_env:
-    image:  semrel:1.5
-
-entry_points:
-  main:
-    command: "./model/train.sh"
