@@ -1,4 +1,3 @@
-
 from abc import ABC, abstractmethod
 from typing import Tuple, List
 
@@ -12,20 +11,13 @@ class BrandProductSPERTMapper(ABC):
         'PRODUCT_NAME': 'Product',
     }
 
-    RELATION_TYPE_MAP = {
-        'BRAND_NAME-PRODUCT_NAME': 'Brand-Product',
-        'PRODUCT_NAME-BRAND_NAME': 'Product-Brand'
-    }
+    RELATION_TYPE = 'Brand-Product'
 
     def map(self, relation: Relation) -> SPERTRelation:
         tokens = self.map_tokens(relation)
         head, tail = self.map_entities(relation)
-        relation_type = self._map_relation_type(relation)
+        relation_type = self.RELATION_TYPE
         return SPERTRelation(tokens, head, tail, relation_type)
-
-    def _map_relation_type(self, relation: Relation) -> str:
-        relation_key = f'{relation.member_from.channel}-{relation.member_to.channel}'
-        return self.RELATION_TYPE_MAP[relation_key]
 
     @abstractmethod
     def map_entities(self, relation: Relation) -> Tuple[SPERTEntity, SPERTEntity]:
