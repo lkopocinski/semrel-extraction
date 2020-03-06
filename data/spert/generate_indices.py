@@ -25,6 +25,7 @@ def get_indices(keys_file: Path,
 def main(dataset_keys, output_path):
     indices = {}
 
+
     spert_runs = RUNS['spert']
     for index, params in spert_runs.items():
         in_domain = params.get('in_domain')

@@ -8,8 +8,8 @@ import click
 from data.scripts.entities import Relation
 from data.scripts.relations import RelationsLoader
 from data.scripts.utils.io import save_json, load_json
-from spert.entities import SPERTDocument, SPERTDocRelation
-from spert.mapper import InSentenceSPERTMapper, BetweenSentencesSPERTMapper
+from data.spert.entities import SPERTDocument, SPERTDocRelation
+from data.spert.mapper import InSentenceSPERTMapper, BetweenSentencesSPERTMapper
 
 
 def split_relations(indices: Dict, relations_dict: Dict) -> Dict:
@@ -62,6 +62,7 @@ def map_relations(relations: Iterator[Relation],
 @click.option('--output-dir', required=True, type=str,
               help='Paths for saving SPERT json file.')
 def main(input_path, indices_file, output_dir):
+    import pudb; pudb.set_trace()
     indices = load_json(Path(indices_file))
     relations_loader = RelationsLoader(Path(input_path))
     relations = relations_loader.filter_relations(filter_label='in_relation')
@@ -70,9 +71,11 @@ def main(input_path, indices_file, output_dir):
     between_sentence_mapper = BetweenSentencesSPERTMapper()
 
     for run_id, run_indices in indices.items():
+        print(f"RUN_ID: {run_id}")
         run_relations = split_relations(run_indices, relations)
 
         for set_name, set_relations in run_relations.items():
+            print(f"SET_NAME: {set_name}", end=" ")
             documents = map_relations(
                 relations=set_relations,
                 in_sentence_mapper=in_sentence_mapper,

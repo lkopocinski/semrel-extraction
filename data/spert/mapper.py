@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Tuple, List
 
-from entities import Relation, Member
-from spert.entities import SPERTEntity, SPERTRelation
+from data.scripts.entities import Relation, Member
+from data.spert.entities import SPERTEntity, SPERTRelation
 
 
 class BrandProductSPERTMapper(ABC):
