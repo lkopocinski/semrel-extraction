@@ -63,16 +63,20 @@ def map_relations(relations: Iterator[Relation],
               help='Paths for saving SPERT json file.')
 def main(input_path, indices_file, output_dir):
     indices = load_json(Path(indices_file))
-    for run_id, run_indices in indices.items():
-        relations_loader = RelationsLoader(Path(input_path))
-        relations = relations_loader.filter_relations(filter_label='in_relation')
-        relations = split_relations(run_indices, relations)
+    relations_loader = RelationsLoader(Path(input_path))
+    relations = relations_loader.filter_relations(filter_label='in_relation')
 
-        for set_name, set_relations in relations.items():
+    in_sentence_mapper = InSentenceSPERTMapper()
+    between_sentence_mapper = BetweenSentencesSPERTMapper()
+
+    for run_id, run_indices in indices.items():
+        run_relations = split_relations(run_indices, relations)
+
+        for set_name, set_relations in run_relations.items():
             documents = map_relations(
                 relations=set_relations,
-                in_sentence_mapper=InSentenceSPERTMapper(),
-                between_sentence_mapper=BetweenSentencesSPERTMapper()
+                in_sentence_mapper=in_sentence_mapper,
+                between_sentence_mapper=between_sentence_mapper
             )
 
             documents = [document.to_dict() for document in documents.values()]
