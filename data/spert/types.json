@@ -13,12 +13,7 @@
     "Brand-Product": {
       "short": "Brand-Product",
       "verbose": "Brand-Product",
-      "symmetric": false
-    },
-    "Product-Brand": {
-      "short": "Product-Brand",
-      "verbose": "Product-Brand",
-      "symmetric": false
+      "symmetric": true
     }
   }
 }
