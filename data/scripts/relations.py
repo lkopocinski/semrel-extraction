@@ -105,7 +105,7 @@ class RelationsLoader:
 
     def filter_relations(self, filter_label: str) -> Dict[int, Relation]:
         return {index: relation
-                for index, (label, _, relation) in enumerate(self.relations())
+                for index, (label, _, relation) in enumerate(self.relations(), 1)
                 if label == filter_label}
 
     @staticmethod
