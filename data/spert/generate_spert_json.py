@@ -63,9 +63,10 @@ def map_relations(relations: Iterator[Relation],
               help='Paths for saving SPERT json file.')
 def main(input_path, indices_file, output_dir):
     import pudb; pudb.set_trace()
+
     indices = load_json(Path(indices_file))
     relations_loader = RelationsLoader(Path(input_path))
-    relations = relations_loader.filter_relations(filter_label='in_relation')
+    relations = relations_loader._filter_relations(filter_label='in_relation')
 
     in_sentence_mapper = InSentenceSPERTMapper()
     between_sentence_mapper = BetweenSentencesSPERTMapper()

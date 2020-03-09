@@ -103,10 +103,14 @@ class RelationsLoader:
 
                 yield label, id_domain, relation
 
-    def filter_relations(self, filter_label: str) -> Dict[int, Relation]:
+    def _filter_relations(self, filter_label: str) -> Dict[int, Relation]:
+        # Experimental feature
         return {index: relation
-                for index, (label, _, relation) in enumerate(self.relations(), 1)
-                if label == filter_label}
+                for index, (label, _, relation) in enumerate(self.relations())
+                if (label == filter_label \
+                    and len(relation.member_from.indices) <= 5 \
+                    and len(relation.member_to.indices) <= 5)
+               }
 
     @staticmethod
     def _parse_relation(relation_dict: dict) -> Relation:
