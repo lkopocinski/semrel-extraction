@@ -44,7 +44,7 @@ def main(dataset_keys, output_path):
             'test': test
         }
 
-        save_json(indices, Path(output_path))
+    save_json(indices, Path(output_path))
 
 
 if __name__ == '__main__':

@@ -62,8 +62,6 @@ def map_relations(relations: Iterator[Relation],
 @click.option('--output-dir', required=True, type=str,
               help='Paths for saving SPERT json file.')
 def main(input_path, indices_file, output_dir):
-    import pudb; pudb.set_trace()
-
     indices = load_json(Path(indices_file))
     relations_loader = RelationsLoader(Path(input_path))
     relations = relations_loader._filter_relations(filter_label='in_relation')
