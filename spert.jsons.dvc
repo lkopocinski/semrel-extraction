@@ -1,4 +1,4 @@
-md5: 756975bfd0d43d2b6865cdb1aa69aae4
+md5: 9833adcabd07d768611e73c304830047
 cmd: ./data/spert/generate_spert_json.py --input-path ./data/relations/relations.tsv
   --indices-file ./data/spert/indices.json --output-dir ./data/spert/dataset
 deps:
@@ -6,10 +6,10 @@ deps:
   path: data/relations/relations.tsv
 - md5: 1edca9eff4469478da4499dae45a7cad
   path: data/spert/indices.json
-- md5: 8b60fbf9c30d59b423941aa2789c00e2
+- md5: 148714ff0e9bd320e9db60daa58860f6
   path: data/spert/generate_spert_json.py
 outs:
-- md5: 2082bd43c36a4f73920f67655e8bf5d4.dir
+- md5: 223221ab69802d19e6621b34a089d308.dir
   path: data/spert/dataset
   cache: true
   metric: false

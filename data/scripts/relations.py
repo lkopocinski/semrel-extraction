@@ -109,13 +109,16 @@ class RelationsLoader:
         relations_dict = {}
         index = 0
         for label, _, relation in self.relations():
-            if label != filter_label:
-                continue
-
             if len(relation.member_from.indices) > 5 or len(relation.member_to.indices) > 5:
                 continue
 
+            if label != filter_label:
+                index += 1
+                continue
+
+
             relations_dict[index] = relation
+            index += 1
 
         return relations_dict
 

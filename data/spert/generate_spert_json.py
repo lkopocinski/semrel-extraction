@@ -29,7 +29,7 @@ def map_relations(relations: Iterator[Relation],
         in_same_context = member_from.id_sentence == member_to.id_sentence
 
         id_from = relation.member_from.id_sentence
-        id_to = relation.member_from.id_sentence
+        id_to = relation.member_to.id_sentence
         key = f'{id_document}-{id_from}-{id_to}'
 
         if in_same_context:
@@ -62,6 +62,7 @@ def map_relations(relations: Iterator[Relation],
 @click.option('--output-dir', required=True, type=str,
               help='Paths for saving SPERT json file.')
 def main(input_path, indices_file, output_dir):
+
     indices = load_json(Path(indices_file))
     relations_loader = RelationsLoader(Path(input_path))
     relations = relations_loader._filter_relations(filter_label='in_relation')
@@ -70,7 +71,7 @@ def main(input_path, indices_file, output_dir):
     between_sentence_mapper = BetweenSentencesSPERTMapper()
 
     for run_id, run_indices in indices.items():
-        print(f"RUN_ID: {run_id}")
+        print(f"\n\nRUN_ID: {run_id}")
         run_relations = split_relations(run_indices, relations)
 
         for set_name, set_relations in run_relations.items():

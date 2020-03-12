@@ -16,7 +16,7 @@ def get_indices(keys_file: Path,
                 random_seed: int = 42):
     keys = BrandProductDataset._load_keys(keys_file)
     ds_generator = DatasetGenerator(keys, random_seed)
-    return ds_generator.generate_datasets(balanced, lexical_split, in_domain)
+    return ds_generator.generate_datasets(balanced, lexical_split, in_domain), keys
 
 
 @click.command()
@@ -25,17 +25,16 @@ def get_indices(keys_file: Path,
 def main(dataset_keys, output_path):
     indices = {}
 
-
     spert_runs = RUNS['spert']
     for index, params in spert_runs.items():
         in_domain = params.get('in_domain')
         lexical_split = params.get('lexical_split', False)
 
-        train, valid, test = get_indices(
+        (train, valid, test), keys = get_indices(
             keys_file=Path(dataset_keys),
             balanced=True,
             lexical_split=lexical_split,
-            in_domain=in_domain,
+            in_domain=in_domain
         )
 
         indices[index] = {
