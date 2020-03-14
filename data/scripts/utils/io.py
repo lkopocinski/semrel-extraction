@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Iterator, Dict
+from typing import Iterator, Dict, Generator
 
 import torch
 
@@ -18,7 +18,7 @@ def save_lines(path: Path, lines: Iterator, mode='w+'):
             f.write(f'{line}\n')
 
 
-def read_lines(path: Path) -> Iterator[str]:
+def read_lines(path: Path) -> Generator[str]:
     with path.open('r', encoding='utf-8') as f:
         for line in f:
             yield line.strip()

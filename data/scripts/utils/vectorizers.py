@@ -1,13 +1,12 @@
 import abc
 from typing import List
 
+import numpy as np
 import sent2vec
 import torch
 from allennlp.commands.elmo import ElmoEmbedder
-from allennlp.modules.elmo import Elmo, batch_to_ids
 from gensim.models import KeyedVectors
 from gensim.models.fasttext import load_facebook_model
-import numpy as np
 
 
 class Vectorizer(abc.ABC):
@@ -28,31 +27,14 @@ class ElmoEmbedderVectorizer(Vectorizer):
         return torch.from_numpy(vectors)
 
 
-class ElmoVectorizer(Vectorizer):
-
-    def __init__(self, options_path: str, weights_path: str):
-        self.model = Elmo(options_path, weights_path, 1, dropout=0)
-        self.model = self.model.to("cuda:0")
-
-    def embed(self, context: List[str]) -> torch.Tensor:
-        character_ids = batch_to_ids([context])
-        character_ids = character_ids.to('cuda:0')
-        embeddings = self.model(character_ids)
-
-        character_ids.to('cpu')
-        embeddings = embeddings.to('cpu')
-
-        tensor = embeddings['elmo_representations'][0]
-        return tensor.squeeze()
-
-
 class FastTextVectorizer(Vectorizer):
 
     def __init__(self, model_path: str):
         self.model = load_facebook_model(model_path)
 
     def embed(self, context: List[str]) -> torch.Tensor:
-        return torch.from_numpy(self.model.wv[context])
+        vectors = self.model.wv[context]
+        return torch.from_numpy(vectors)
 
 
 class RetrofitVectorizer(Vectorizer):
@@ -81,4 +63,5 @@ class Sent2VecVectorizer(Vectorizer):
 
     def embed(self, sentence: List[str]) -> torch.Tensor:
         sentence = ' '.join(sentence)
-        return torch.from_numpy(self.model.embed_sentence(sentence))
+        vector = self.model.embed_sentence(sentence)
+        return torch.from_numpy(vector)
