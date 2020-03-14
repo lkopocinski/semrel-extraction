@@ -12,6 +12,8 @@ from data.scripts.entities import Member
 
 
 class DocToken:
+    SUBST_KEY = 'subst'
+    TAGSET_KEY = 'nkjp'
 
     def __init__(self, token: corpus2.Token):
         self._token = token
@@ -30,7 +32,7 @@ class DocToken:
 
     @property
     def is_noun(self) -> bool:
-        return 'subst' == self._pos
+        return self.SUBST_KEY == self._pos
 
     def _get_lemma(self) -> str:
         try:
@@ -43,12 +45,13 @@ class DocToken:
 
     def _get_pos(self) -> str:
         try:
-            return cou.get_pos(self._token, 'nkjp', True)
+            return cou.get_pos(self._token, self.TAGSET_KEY, True)
         except IndexError:
             return ''
 
 
 class DocSentence:
+    NAMED_ENTITY_KEY = 'NAMED_ENTITY'
 
     def __init__(self, sentence: corpus2.Sentence):
         self._sentence = sentence
@@ -96,7 +99,7 @@ class DocSentence:
     def _get_named_entities_indices(self) -> List[int]:
         return [index
                 for index, token in enumerate(self._tokens)
-                if tou.get_annotation(self._sentence, token._token, 'NAMED_ENTITY', default=False)]
+                if tou.get_annotation(self._sentence, token._token, self.NAMED_ENTITY_KEY, default=False)]
 
     def _get_noun_indices(self) -> List[int]:
         return [index for index, token in enumerate(self._tokens) if token.is_noun]
@@ -106,6 +109,7 @@ class DocSentence:
 
 
 class DocRelation:
+    NER_RELATION_KEY = 'NER relation'
 
     def __init__(self, relation: corpus2.Relation, sentences: Dict[str, DocSentence]):
         self._relation = relation
@@ -126,7 +130,7 @@ class DocRelation:
         return self._channel_from, self._channel_to
 
     def _is_ner_relation(self) -> bool:
-        return self._relation.rel_set() == 'NER relation'
+        return self._relation.rel_set() == self.NER_RELATION_KEY
 
     def _get_member(self, relation_member: corpus2.DirectionPoint, sentence: DocSentence):
         sentence_id = relation_member.sentence_id()
