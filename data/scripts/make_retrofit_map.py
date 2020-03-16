@@ -1,4 +1,5 @@
 #!/usr/bin/env python3.6
+
 from pathlib import Path
 
 import click
