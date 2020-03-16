@@ -5,9 +5,12 @@ from itertools import permutations, product
 from pathlib import Path
 from typing import Iterator, List, Dict
 
+import torch
+
 from data.scripts.constant import PHRASE_LENGTH_LIMIT
 from data.scripts.entities import Relation
 from data.scripts.keys import make_token_key_member, make_relation_key
+from data.scripts.maps import VectorsMap
 from data.scripts.max_pool import max_pool_relation_vectors
 from data.scripts.utils.corpus import Document, Member
 

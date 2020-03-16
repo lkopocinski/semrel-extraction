@@ -1,15 +1,22 @@
 #!/usr/bin/env python3.6
+
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 import click
 import torch
 
+import data.scripts.constant as constant
 from data.scripts.entities import Relation, Member
-from data.scripts.relations import RelationsLoader
+from data.scripts.keys import make_relation_key
+from data.scripts.relations import RelationsLoader, is_phrase_too_long
 from data.scripts.utils.corpus import from_index_documents_gen
 from data.scripts.utils.io import save_lines, save_tensor
 from data.scripts.utils.vectorizers import Sent2VecVectorizer
+
+
+def sentence_id_to_int(id_sentence) -> int:
+    return int(id_sentence.replace('sent', ''))
 
 
 def make_sentence_map(relations_paths: Path) -> dict:
@@ -22,7 +29,7 @@ def make_sentence_map(relations_paths: Path) -> dict:
         sentence_map[(id_domain, id_document)] = {}
 
         for sentence in document.sentences:
-            sentence_index = int(sentence.id.replace('sent', ''))
+            sentence_index = sentence_id_to_int(sentence.id)
             context = sentence.orths
             sentence_map[(id_domain, id_document)][sentence_index] = context
 
@@ -30,41 +37,21 @@ def make_sentence_map(relations_paths: Path) -> dict:
 
 
 class RelationsMapMaker:
-    MASK = 'MASK'
-    PHRASE_LENGTH_LIMIT = 5
 
-    def __init__(self, relations_loader: RelationsLoader, vectorizer: Sent2VecVectorizer, sentence_map: dict):
-        self.relations_loader = relations_loader
-        self.vectorizer = vectorizer
-        self.sentence_map = sentence_map
-
-    def _is_phrase_too_long(self, member: Member) -> bool:
-        return len(member.indices) > self.PHRASE_LENGTH_LIMIT
-
-    @staticmethod
-    def _make_key(label: str, id_domain: str, relation: Relation):
-        id_document, member_from, member_to = relation
-        return '\t'.join([
-            label, id_domain, id_document,
-            member_from.id_sentence, member_from.channel, str(member_from.indices), member_from.lemma,
-            member_to.id_sentence, member_to.channel, str(member_to.indices), member_to.lemma,
-            str(member_from.is_named_entity), str(member_to.is_named_entity)
-        ])
+    def __init__(self, relations_loader: RelationsLoader, vectorizer: Sent2VecVectorizer, sentence_map: Dict):
+        self._relations_loader = relations_loader
+        self._vectorizer = vectorizer
+        self._sentence_map = sentence_map
 
     def _mask_tokens(self, context: List[str], indices: Tuple[int]):
-        return [self.MASK
-                if index in indices else token
+        return [constant.MASK_KEY if index in indices else token
                 for index, token in enumerate(context)]
 
-    @staticmethod
-    def _get_sentence_id_int(member: Member):
-        return int(member.id_sentence.replace('sent', ''))
-
-    def get_context_same_sentence(self, relation: Relation, document_sentences: dict) -> List[str]:
+    def get_context_same_sentence(self, relation: Relation, document_sentences: Dict) -> List[str]:
         id_document, member_from, member_to = relation
 
-        sentence_from_index = self._get_sentence_id_int(member_from)
-        sentence_to_index = self._get_sentence_id_int(member_to)
+        sentence_from_index = sentence_id_to_int(member_from.id_sentence)
+        sentence_to_index = sentence_id_to_int(member_to.id_sentence)
 
         left_sentence_index = sentence_from_index - 1
         context_left = document_sentences.get(left_sentence_index, [])
@@ -78,68 +65,71 @@ class RelationsMapMaker:
 
         return context_left + context_between + context_right
 
-    def get_context_different_sentences(self, relation: Relation, document_sentences: dict) -> List[str]:
+    def get_context_different_sentences(self, relation: Relation, document_sentences: Dict) -> List[str]:
         id_document, member_from, member_to = relation
 
-        sentence_from_index = self._get_sentence_id_int(member_from)
-        sentence_to_index = self._get_sentence_id_int(member_to)
+        sentence_from_index = sentence_id_to_int(member_from.id_sentence)
+        sentence_to_index = sentence_id_to_int(member_to.id_sentence)
 
+        context = []
         if sentence_from_index < sentence_to_index:
-            context = self.get_context_different_sentences_(
+            context = self.__get_context_different_sentences(
                 member_from=member_from, member_to=member_to,
                 document_sentences=document_sentences
             )
-        else:  # sentence_to_index < sentence_from_index
-            context = self.get_context_different_sentences_(
+        elif sentence_to_index < sentence_from_index:
+            context = self.__get_context_different_sentences(
                 member_from=member_to, member_to=member_from,
                 document_sentences=document_sentences
             )
 
         return context
 
-    def get_context_different_sentences_(self, member_from: Member, member_to: Member,
-                                         document_sentences: dict) -> List[str]:
-        sentence_from_index = self._get_sentence_id_int(member_from)
-        sentence_to_index = self._get_sentence_id_int(member_to)
+    def __get_context_different_sentences(self, member_from: Member, member_to: Member,
+                                          document_sentences: Dict) -> List[str]:
 
-        entire_context_between = []
+        sentence_from_index = sentence_id_to_int(member_from.id_sentence)
+        sentence_to_index = sentence_id_to_int(member_to.id_sentence)
+
+        whole_context_between = []
 
         left_sentence_index = sentence_from_index - 1
         context_left = document_sentences.get(left_sentence_index, [])
 
         context_between = document_sentences[sentence_from_index]
         context_between = self._mask_tokens(context_between, member_from.indices)
-        entire_context_between.extend(context_between)
+        whole_context_between.extend(context_between)
 
         for i in range(sentence_from_index + 1, sentence_to_index):
             context_between.extend(document_sentences.get(i, []))
 
         context_between = document_sentences[sentence_to_index]
         context_between = self._mask_tokens(context_between, member_to.indices)
-        entire_context_between.extend(context_between)
+        whole_context_between.extend(context_between)
 
         context_right = document_sentences.get(sentence_to_index + 1, [])
 
-        return context_left + entire_context_between + context_right
+        return context_left + whole_context_between + context_right
 
     def make_map(self) -> [List, torch.tensor]:
         keys = []
         vectors = []
 
-        for label, id_domain, relation in self.relations_loader.relations():
+        for label, id_domain, relation in self._relations_loader.relations():
             id_document, member_from, member_to = relation
 
-            if self._is_phrase_too_long(member_from) or self._is_phrase_too_long(member_to):
+            if is_phrase_too_long(member_from) or is_phrase_too_long(member_to):
                 continue
 
-            document_sentences = self.sentence_map[(id_domain, id_document)]
+            key = make_relation_key(label, id_domain, relation)
+
+            document_sentences = self._sentence_map[(id_domain, id_document)]
             if member_from.id_sentence == member_to.id_sentence:
                 context = self.get_context_same_sentence(relation, document_sentences)
             else:
                 context = self.get_context_different_sentences(relation, document_sentences)
 
-            key = self._make_key(label, id_domain, relation)
-            vector = self.vectorizer.embed(context)
+            vector = self._vectorizer.embed(context)
 
             keys.append(key)
             vectors.append(vector)

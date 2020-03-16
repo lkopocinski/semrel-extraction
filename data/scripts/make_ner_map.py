@@ -1,47 +1,34 @@
 #!/usr/bin/env python3.6
+
 from pathlib import Path
 from typing import List
 
 import click
 import torch
 
-from data.scripts.entities import Relation, Member
-from data.scripts.relations import RelationsLoader
+from data.scripts.keys import make_relation_key
+from data.scripts.relations import RelationsLoader, is_phrase_too_long
 from data.scripts.utils.io import save_lines, save_tensor
 
 
 class RelationsMapMaker:
-    PHRASE_LENGTH_LIMIT = 5
 
     def __init__(self, relations_loader: RelationsLoader):
-        self.relations_loader = relations_loader
-
-    def _is_phrase_too_long(self, member: Member) -> bool:
-        return len(member.indices) > self.PHRASE_LENGTH_LIMIT
-
-    @staticmethod
-    def _make_key(label: str, id_domain: str, relation: Relation):
-        id_document, member_from, member_to = relation
-        return '\t'.join([
-            label, id_domain, id_document,
-            member_from.id_sentence, member_from.channel, str(member_from.indices), member_from.lemma,
-            member_to.id_sentence, member_to.channel, str(member_to.indices), member_to.lemma,
-            str(member_from.is_named_entity), str(member_to.is_named_entity)
-        ])
+        self._relations_loader = relations_loader
 
     def make_map(self) -> [List, torch.tensor]:
         keys = []
         vectors = []
 
-        for label, id_domain, relation in self.relations_loader.relations():
+        for label, id_domain, relation in self._relations_loader.relations():
             id_document, member_from, member_to = relation
 
-            if self._is_phrase_too_long(member_from) or self._is_phrase_too_long(member_to):
+            if is_phrase_too_long(member_from) or is_phrase_too_long(member_to):
                 continue
 
             ner_values = [member_from.is_named_entity, member_to.is_named_entity]
 
-            key = self._make_key(label, id_domain, relation)
+            key = make_relation_key(label, id_domain, relation)
             vector = torch.FloatTensor(ner_values).unsqueeze(0)
 
             keys.append(key)

@@ -31,3 +31,5 @@ HEADER = '\t'.join([
     'indices_to',
     'context_to'
 ])
+
+MASK_KEY = 'MASK'
