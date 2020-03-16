@@ -8,12 +8,11 @@ from corpus_ccl import cclutils as ccl
 from corpus_ccl import corpus_object_utils as cou
 from corpus_ccl import token_utils as tou
 
+import data.scripts.constant as constant
 from data.scripts.entities import Member
 
 
 class DocToken:
-    SUBST_KEY = 'subst'
-    TAGSET_KEY = 'nkjp'
 
     def __init__(self, token: corpus2.Token):
         self._token = token
@@ -32,7 +31,7 @@ class DocToken:
 
     @property
     def is_noun(self) -> bool:
-        return self.SUBST_KEY == self._pos
+        return constant.SUBST_KEY == self._pos
 
     def _get_lemma(self) -> str:
         try:
@@ -45,13 +44,12 @@ class DocToken:
 
     def _get_pos(self) -> str:
         try:
-            return cou.get_pos(self._token, self.TAGSET_KEY, True)
+            return cou.get_pos(self._token, constant.TAGSET_KEY, True)
         except IndexError:
             return ''
 
 
 class DocSentence:
-    NAMED_ENTITY_KEY = 'NAMED_ENTITY'
 
     def __init__(self, sentence: corpus2.Sentence):
         self._sentence = sentence
@@ -99,7 +97,7 @@ class DocSentence:
     def _get_named_entities_indices(self) -> List[int]:
         return [index
                 for index, token in enumerate(self._tokens)
-                if tou.get_annotation(self._sentence, token._token, self.NAMED_ENTITY_KEY, default=False)]
+                if tou.get_annotation(self._sentence, token._token, constant.NAMED_ENTITY_KEY, default=False)]
 
     def _get_noun_indices(self) -> List[int]:
         return [index for index, token in enumerate(self._tokens) if token.is_noun]

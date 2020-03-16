@@ -130,7 +130,7 @@ class RelationsLoader:
         return relations_dict
 
     @staticmethod
-    def _parse_relation(relation_dict: dict) -> Relation:
+    def _parse_relation(relation_dict: Dict) -> Relation:
         id_document = relation_dict['id_document']
         member_from = Member(
             id_sentence=relation_dict['id_sentence_from'],
