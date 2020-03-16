@@ -16,7 +16,7 @@ class Vectorizer(abc.ABC):
         pass
 
 
-class ElmoEmbedderVectorizer(Vectorizer):
+class ElmoVectorizer(Vectorizer):
 
     def __init__(self, options_path: str, weights_path: str):
         self.model = ElmoEmbedder(options_path, weights_path, cuda_device=0)
