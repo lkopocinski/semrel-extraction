@@ -1,11 +1,19 @@
 #!/usr/bin/env python3.6
+
 import csv
 from itertools import permutations, product
 from pathlib import Path
 from typing import Iterator, List, Dict
 
+from data.scripts.constant import PHRASE_LENGTH_LIMIT
 from data.scripts.entities import Relation
+from data.scripts.keys import make_token_key_member, make_relation_key
+from data.scripts.max_pool import max_pool_relation_vectors
 from data.scripts.utils.corpus import Document, Member
+
+
+def is_phrase_too_long(member: Member) -> bool:
+    return len(member.indices) > PHRASE_LENGTH_LIMIT
 
 
 class RelationsGenerator:
@@ -116,7 +124,6 @@ class RelationsLoader:
                 index += 1
                 continue
 
-
             relations_dict[index] = relation
             index += 1
 
@@ -143,3 +150,46 @@ class RelationsLoader:
         )
 
         return Relation(id_document, member_from, member_to)
+
+
+class RelationsEmbedder:
+
+    def __init__(self, relations_loader: RelationsLoader, vectors_map: VectorsMap):
+        self.relations_loader = relations_loader
+
+        self._keys = vectors_map.keys
+        self._vectors = vectors_map.vectors
+
+    def _get_vectors_indices(self, id_domain: str, id_document: str, member: Member) -> List[int]:
+        tokens_keys = [make_token_key_member(id_domain, id_document, member, id_token) for id_token in member.indices]
+        return [self._keys[token_key] for token_key in tokens_keys]
+
+    def _get_member_tensor(self, vectors_indices: List[int], max_size) -> torch.Tensor:
+        tensor = torch.zeros(1, max_size, self._vectors.shape[-1])
+        vectors = self._vectors[vectors_indices]
+        tensor[:, 0:vectors.shape[0], :] = vectors
+        return tensor
+
+    def embed(self) -> [List, torch.Tensor]:
+        keys = []
+        vectors = []
+
+        for label, id_domain, relation in self.relations_loader.relations():
+            id_document, member_from, member_to = relation
+
+            if is_phrase_too_long(member_from) or is_phrase_too_long(member_to):
+                continue
+
+            key = make_relation_key(label, id_domain, relation)
+
+            vectors_indices_from = self._get_vectors_indices(id_domain, id_document, member_from)
+            vectors_indices_to = self._get_vectors_indices(id_domain, id_document, member_to)
+
+            vectors_from = self._get_member_tensor(vectors_indices_from, max_size=PHRASE_LENGTH_LIMIT)
+            vectors_to = self._get_member_tensor(vectors_indices_to, max_size=PHRASE_LENGTH_LIMIT)
+
+            keys.append(key)
+            vectors.append((vectors_from, vectors_to))
+
+        max_pooled_tensor = max_pool_relation_vectors(vectors)
+        return keys, max_pooled_tensor

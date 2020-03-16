@@ -1,6 +1,6 @@
 from itertools import chain
 from pathlib import Path
-from typing import Iterator, List, NamedTuple, Dict, Tuple
+from typing import Iterator, List, NamedTuple, Dict
 
 import torch
 
@@ -10,7 +10,7 @@ from data.scripts.utils.vectorizers import Vectorizer
 
 
 class VectorsMap(NamedTuple):
-    keys: Dict[Tuple]
+    keys: Dict
     vectors: torch.Tensor
 
 
@@ -20,12 +20,9 @@ class MapLoader:
         self._keys_path = Path(keys_file)
         self._vectors_file = Path(vectors_file)
 
-    def _load_keys(self) -> Dict[Tuple]:
+    def _load_keys(self) -> Dict:
         with self._keys_path.open('r', encoding='utf-8') as file:
-            return {
-                tuple(line.strip().split('\t')): index
-                for index, line in enumerate(file)
-            }
+            return {line.strip(): index for index, line in enumerate(file)}
 
     def _load_vectors(self) -> torch.Tensor:
         return torch.load(str(self._vectors_file))
