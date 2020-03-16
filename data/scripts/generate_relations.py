@@ -5,6 +5,7 @@ from pathlib import Path
 import click
 
 import data.scripts.constant as constant
+from data.scripts.constant import RelationHeader as rh
 from data.scripts.relations import RelationsGenerator
 from data.scripts.utils.corpus import from_index_documents_gen
 from data.scripts.utils.io import save_lines, save_line
@@ -19,7 +20,7 @@ def main(input_path, output_path):
     documents = from_index_documents_gen(relations_files_index=Path(input_path))
     output_path = Path(output_path)
 
-    save_line(output_path, constant.HEADER)
+    save_line(output_path, rh.HEADER)
 
     for document in documents:
         relations_generator = RelationsGenerator(document=document)
