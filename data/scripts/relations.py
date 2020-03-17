@@ -66,19 +66,28 @@ class RelationsGenerator:
                 lemma_from = sentence_from.lemmas[index_from]
                 lemma_to = sentence_to.lemmas[index_to]
 
+                _is_named_entity = False
+                if _member_from:
+                    _is_named_entity = _member_from.is_named_entity
+
                 __member_from = Member(
                     id_sentence=member_from.id_sentence,
                     lemma=lemma_from,
                     channel=_member_from.channel if _member_from else '',
-                    is_named_entity=_member_from.is_named_entity if _member_from else False,
+                    is_named_entity=_is_named_entity,
                     indices=(index_from,),
                     context=member_from.context
                 )
+
+                _is_named_entity = False
+                if _member_to:
+                    _is_named_entity = _member_to.is_named_entity
+
                 __member_to = Member(
                     id_sentence=member_to.id_sentence,
                     lemma=lemma_to,
                     channel=_member_to.channel if _member_to else '',
-                    is_named_entity=_member_to.is_named_entity if _member_to else False,
+                    is_named_entity=_is_named_entity,
                     indices=(index_to,),
                     context=member_to.context
                 )
@@ -109,13 +118,18 @@ class RelationsGenerator:
     def _are_in_relation(
             self, member_from: Member, member_to: Member, relations: List
     ):
-        return (member_from and member_to
-                and ((Relation(self._document.id, member_from, member_to)
-                      in relations
-                      or Relation(self._document.id, member_to, member_from)
-                      in relations
-                      ))
-                )
+        return member_from and member_to \
+               and (
+                       Relation(self._document.id,
+                                member_from,
+                                member_to) in relations
+
+                       or
+
+                       Relation(self._document.id,
+                                member_to,
+                                member_from) in relations
+               )
 
 
 class RelationsLoader:

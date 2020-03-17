@@ -56,7 +56,7 @@ def main(config):
                     'methods': ', '.join(methods),
                 })
 
-                train_loader, valid_loader, test_loader, vector_size = get_loaders(
+                loaders = get_loaders(
                     data_dir=config['dataset']['dir'],
                     keys_file=config['dataset']['keys'],
                     vectors_files=[
@@ -68,6 +68,8 @@ def main(config):
                     in_domain=in_domain,
                     out_domain=out_domain
                 )
+
+                train_loader, valid_loader, test_loader, vector_size = loaders
 
                 network = RelNet(in_dim=vector_size, **config['net_params'])
                 network = network.to(device)
