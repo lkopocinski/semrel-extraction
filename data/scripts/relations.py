@@ -118,18 +118,21 @@ class RelationsGenerator:
     def _are_in_relation(
             self, member_from: Member, member_to: Member, relations: List
     ):
-        return member_from and member_to \
-               and (
-                       Relation(self._document.id,
-                                member_from,
-                                member_to) in relations
+        return member_from and member_to and (
+                Relation(
+                    self._document.id,
+                    member_from,
+                    member_to
+                ) in relations
 
-                       or
+                or
 
-                       Relation(self._document.id,
-                                member_to,
-                                member_from) in relations
-               )
+                Relation(
+                    self._document.id,
+                    member_to,
+                    member_from
+                ) in relations
+        )
 
 
 class RelationsLoader:
