@@ -64,7 +64,12 @@ class DatasetGenerator:
         avg = len(sequence) / float(5)
         t_len = int(3 * avg)
         v_len = int(avg)
-        return sequence[0:t_len], sequence[t_len:t_len + v_len], sequence[t_len + v_len:]
+
+        train = sequence[0:t_len]
+        valid = sequence[t_len:t_len + v_len]
+        test = sequence[t_len + v_len:]
+
+        return train, valid, test
 
     def _generate(
             self, indices: List, balanced: bool, lexical_split: bool

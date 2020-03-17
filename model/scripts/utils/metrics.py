@@ -82,7 +82,6 @@ class NerMetrics:
             else:
                 self._ner_predicted.append(0)
 
-
     @property
     def accuracy(self) -> float:
         return accuracy_score(self._targets, self._ner_predicted)

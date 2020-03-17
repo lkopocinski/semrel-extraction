@@ -10,11 +10,11 @@ from torch.optim import Adagrad, Optimizer
 from torch.utils.data import DataLoader
 
 from model.runs import RUNS
-from model.scripts.relnet import RelNet
 from model.scripts.utils.data_loader import get_loaders
 from model.scripts.utils.metrics import Metrics
-from model.scripts.utils.utils import parse_config, get_device, is_better_loss, \
-    ignored
+from model.scripts.utils.utils import parse_config, get_device, \
+    is_better_loss, ignored
+from . import RelNet
 
 
 @click.command()
