@@ -6,17 +6,22 @@ import click
 
 from data.scripts.utils.io import save_json
 from model.runs import RUNS
-from model.scripts.utils.data_loader import BrandProductDataset, DatasetGenerator
+from model.scripts.utils.data_loader import BrandProductDataset, \
+    DatasetGenerator
 
 
-def get_indices(keys_file: Path,
-                balanced: bool = False,
-                lexical_split: bool = False,
-                in_domain: str = None,
-                random_seed: int = 42):
+def get_indices(
+        keys_file: Path,
+        balanced: bool = False,
+        lexical_split: bool = False,
+        in_domain: str = None,
+        random_seed: int = 42
+):
     keys = BrandProductDataset._load_keys(keys_file)
     ds_generator = DatasetGenerator(keys, random_seed)
-    return ds_generator.generate_datasets(balanced, lexical_split, in_domain), keys
+    return ds_generator.generate_datasets(
+        balanced, lexical_split, in_domain
+    ), keys
 
 
 @click.command()

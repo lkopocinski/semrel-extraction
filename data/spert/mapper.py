@@ -20,7 +20,9 @@ class BrandProductSPERTMapper(ABC):
         return SPERTRelation(tokens, head, tail, relation_type)
 
     @abstractmethod
-    def map_entities(self, relation: Relation) -> Tuple[SPERTEntity, SPERTEntity]:
+    def map_entities(
+            self, relation: Relation
+    ) -> Tuple[SPERTEntity, SPERTEntity]:
         pass
 
     @abstractmethod
@@ -39,7 +41,9 @@ class InSentenceSPERTMapper(BrandProductSPERTMapper):
         end = member.indices[-1] + 1
         return SPERTEntity(entity_type, start, end)
 
-    def map_entities(self, relation: Relation) -> Tuple[SPERTEntity, SPERTEntity]:
+    def map_entities(
+            self, relation: Relation
+    ) -> Tuple[SPERTEntity, SPERTEntity]:
         entity_from = self._map_entity(relation.member_from)
         entity_to = self._map_entity(relation.member_to)
         return entity_from, entity_to
@@ -56,8 +60,12 @@ class BetweenSentencesSPERTMapper(BrandProductSPERTMapper):
         end = shift + member.indices[-1] + 1
         return SPERTEntity(entity_type, start, end)
 
-    def map_entities(self, relation: Relation) -> Tuple[SPERTEntity, SPERTEntity]:
+    def map_entities(
+            self, relation: Relation
+    ) -> Tuple[SPERTEntity, SPERTEntity]:
         member_from_context_len = len(relation.member_from.context)
         entity_from = self._map_entity(relation.member_from)
-        entity_to = self._map_entity(relation.member_to, shift=member_from_context_len)
+        entity_to = self._map_entity(
+            relation.member_to, shift=member_from_context_len
+        )
         return entity_from, entity_to

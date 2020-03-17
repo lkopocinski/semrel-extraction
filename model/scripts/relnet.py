@@ -13,7 +13,13 @@ class RelNet(nn.Module):
         out_dim: relations quantity
     """
 
-    def __init__(self, in_dim: int = 2048, hidden_dim: int = 512, out_dim: int = 2, dropout: float = 0.5):
+    def __init__(
+            self,
+            in_dim: int = 2048,
+            hidden_dim: int = 512,
+            out_dim: int = 2,
+            dropout: float = 0.5
+    ):
         super(RelNet, self).__init__()
         self.net = nn.Sequential(
             nn.Linear(in_dim, hidden_dim),

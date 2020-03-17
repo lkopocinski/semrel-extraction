@@ -13,10 +13,16 @@ from data.spert.mapper import InSentenceSPERTMapper, BetweenSentencesSPERTMapper
 
 
 def split_relations(indices: Dict, relations_dict: Dict) -> Dict:
-    train_relations = [relation for index, relation in relations_dict.items() if index in indices['train']]
-    valid_relations = [relation for index, relation in relations_dict.items() if index in indices['valid']]
-    test_relations = [relation for index, relation in relations_dict.items() if index in indices['test']]
-    return {'train': train_relations, 'valid': valid_relations, 'test': test_relations}
+    train_relations = [relation for index, relation in relations_dict.items()
+                       if index in indices['train']]
+    valid_relations = [relation for index, relation in relations_dict.items()
+                       if index in indices['valid']]
+    test_relations = [relation for index, relation in relations_dict.items()
+                      if index in indices['test']]
+
+    return {'train': train_relations,
+            'valid': valid_relations,
+            'test': test_relations}
 
 
 def map_relations(relations: Iterator[Relation],
@@ -49,7 +55,9 @@ def map_relations(relations: Iterator[Relation],
         index_from = document.entities.index(spert_relation.head)
         index_to = document.entities.index(spert_relation.tail)
 
-        document.relations.add(SPERTDocRelation(index_from, index_to, spert_relation.relation_type))
+        document.relations.add(
+            SPERTDocRelation(index_from, index_to, spert_relation.relation_type)
+        )
 
     return documents
 

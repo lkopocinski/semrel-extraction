@@ -12,8 +12,9 @@ from torch.utils.data import DataLoader
 from model.runs import RUNS
 from model.scripts.relnet import RelNet
 from model.scripts.utils.data_loader import get_loaders
-from model.scripts.utils.metrics import Metrics, NerMetrics
-from model.scripts.utils.utils import parse_config, get_device, is_better_loss, ignored
+from model.scripts.utils.metrics import Metrics
+from model.scripts.utils.utils import parse_config, get_device, is_better_loss, \
+    ignored
 
 
 @click.command()
@@ -90,11 +91,15 @@ def main(config):
                     print(epoch, end=" ")
 
                     # Train
-                    train_metrics = train(network, optimizer, train_loader, loss_func, device)
+                    train_metrics = train(
+                        network, optimizer, train_loader, loss_func, device
+                    )
                     log_metrics(train_metrics, 'train', epoch)
 
                     # Validate
-                    valid_metrics, _ = evaluate(network, valid_loader, loss_func, device)
+                    valid_metrics, _ = evaluate(
+                        network, valid_loader, loss_func, device
+                    )
                     log_metrics(valid_metrics, 'valid', epoch)
 
                     # Loss stopping
@@ -104,14 +109,17 @@ def main(config):
                         mlflow.log_artifact(f'./{model_name}')
 
                 # Test
-                test_network = RelNet(in_dim=vector_size, **config['net_params'])
-                test_metrics, test_ner_metrics = test(test_network, model_name, test_loader, loss_func, device)
+                test_network = RelNet(in_dim=vector_size,
+                                      **config['net_params'])
+                test_metrics, test_ner_metrics = test(
+                    test_network, model_name, test_loader, loss_func, device
+                )
 
                 print(f'\n\nTest: {test_metrics}')
-               # print(f'\n\nTest ner: {test_ner_metrics}')
+                # print(f'\n\nTest ner: {test_ner_metrics}')
 
                 log_metrics(test_metrics, 'test')
-               # log_metrics(test_ner_metrics, 'test_ner')
+                # log_metrics(test_ner_metrics, 'test_ner')
 
 
 def log_metrics(metrics, prefix: str, step: int = 0):
@@ -131,7 +139,8 @@ def log_metrics(metrics, prefix: str, step: int = 0):
     }, step=step)
 
 
-def train(network: RelNet, optimizer: Optimizer, batches: DataLoader, loss_function, device: torch.device):
+def train(network: RelNet, optimizer: Optimizer, batches: DataLoader,
+          loss_function, device: torch.device):
     metrics = Metrics()
 
     network.train()
@@ -177,13 +186,15 @@ def evaluate(network: RelNet, batches: DataLoader, loss_function,
                 print("Output: ", target)
                 continue
 
-            metrics.update(output.cpu(), target.cpu(), loss.item(), len(batches))
+            metrics.update(output.cpu(), target.cpu(), loss.item(),
+                           len(batches))
             # ner_metrics.append(output.cpu(), target.cpu(), ner_from, ner_to)
 
     return metrics, ner_metrics
 
 
-def test(network: RelNet, model_path: str, batches: DataLoader, loss_function, device: torch.device) -> Metrics:
+def test(network: RelNet, model_path: str, batches: DataLoader, loss_function,
+         device: torch.device) -> Metrics:
     network.load(model_path)
     network.to(device)
     return evaluate(network, batches, loss_function, device)

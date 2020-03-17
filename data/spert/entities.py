@@ -13,7 +13,9 @@ class SPERTEntity(NamedTuple):
     end: int
 
     def to_dict(self):
-        return {"type": self.entity_type, "start": self.start, "end": self.end}
+        return {'type': self.entity_type,
+                'start': self.start,
+                'end': self.end}
 
 
 class SPERTRelation(NamedTuple):
@@ -29,15 +31,19 @@ class SPERTDocRelation(NamedTuple):
     relation_type: str
 
     def to_dict(self):
-        return {'type': self.relation_type, 'head': self.head, 'tail': self.tail}
+        return {'type': self.relation_type,
+                'head': self.head,
+                'tail': self.tail}
 
 
 class SPERTDocument:
 
-    def __init__(self,
-                 tokens: List[str] = None,
-                 entities: List[SPERTEntity] = None,
-                 relations: Set[SPERTDocRelation] = None):
+    def __init__(
+            self,
+            tokens: List[str] = None,
+            entities: List[SPERTEntity] = None,
+            relations: Set[SPERTDocRelation] = None
+    ):
         self.tokens = tokens or []
         self.entities = entities or []
         self.relations = relations or set()

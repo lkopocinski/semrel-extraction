@@ -51,8 +51,10 @@ class DatasetGenerator:
         random.seed(random_seed)
 
     def _filter_indices_by_channels(self, indices: Set[int], channels) -> Set:
-        return {index for index in indices if (self.dataset_keys[index][4] in channels or
-                                               self.dataset_keys[index][8] in channels)}
+        return {index
+                for index in indices
+                if (self.dataset_keys[index][4] in channels or
+                    self.dataset_keys[index][8] in channels)}
 
     def _split(self, indices) -> Tuple[List, List, List]:
         random.shuffle(indices)
@@ -64,14 +66,18 @@ class DatasetGenerator:
         v_len = int(avg)
         return sequence[0:t_len], sequence[t_len:t_len + v_len], sequence[t_len + v_len:]
 
-    def _generate(self, indices: List, balanced: bool, lexical_split: bool) -> Tuple[List, List, List]:
+    def _generate(
+            self, indices: List, balanced: bool, lexical_split: bool
+    ) -> Tuple[List, List, List]:
         """ The data is split to train, dev, and test. """
         if not balanced:
             return self._split(indices)
         # ok, lets try to balance the data (positives vs negatives)
         # 2 cases to cover: i) B-N, P-N, and ii) N-N
-        positives = {index for index in indices if self.dataset_keys[index][0] == 'in_relation'}
-        negatives = {index for index in indices if self.dataset_keys[index][0] == 'no_relation'}
+        positives = {index for index in indices if
+                     self.dataset_keys[index][0] == 'in_relation'}
+        negatives = {index for index in indices if
+                     self.dataset_keys[index][0] == 'no_relation'}
 
         # take the negatives connected with Bs or Ps
         negatives_bps = self._filter_indices_by_channels(negatives, CHANNELS)
@@ -90,7 +96,8 @@ class DatasetGenerator:
         # ok, lexical split... Lets take all the brands and split the dataset
         return self._split_lexically(positives, negatives)
 
-    def _split_lexically(self, positives: Set, negatives: Set) -> Tuple[List, List, List]:
+    def _split_lexically(self, positives: Set, negatives: Set) -> Tuple[
+        List, List, List]:
         # 6 - lemma of left argument,
         # 10 - lemma of right argument
         # 4 - channel name for left argument
@@ -109,11 +116,13 @@ class DatasetGenerator:
             if brand:
                 brands_indices[brand].append(index)
 
-        n_brand_indices = sum(len(indices) for _, indices in brands_indices.items())
+        n_brand_indices = sum(
+            len(indices) for _, indices in brands_indices.items())
 
         # split equally starting from the least frequent brands
         counter = 0
-        for brand in sorted(brands_indices, key=lambda k: len(brands_indices[k])):
+        for brand in sorted(brands_indices,
+                            key=lambda k: len(brands_indices[k])):
             # if some brand has more than 50% of examples -> add it to train
             if len(brands_indices[brand]) > (0.5 * n_brand_indices):
                 counter = 0
@@ -127,17 +136,21 @@ class DatasetGenerator:
 
         # use held_out indices of type N-N and N-P and split them
         # to make our data sets more like 3:1:1
-        train_indices, valid_indices, test_indices = self._split(nns_and_nps_indices)
+        train_indices, valid_indices, test_indices = self._split(
+            nns_and_nps_indices)
         train.extend(train_indices)
         valid.extend(valid_indices)
         test.extend(test_indices)
         return train, valid, test
 
-    def generate_datasets(self, balanced: bool, lexical_split: bool, in_domain: str, out_domain: str = None):
+    def generate_datasets(self, balanced: bool, lexical_split: bool,
+                          in_domain: str, out_domain: str = None):
         if in_domain:
-            indices = [index for index, descriptor in self.dataset_keys.items() if descriptor[1] == in_domain]
+            indices = [index for index, descriptor in self.dataset_keys.items()
+                       if descriptor[1] == in_domain]
         elif out_domain:
-            raise NotImplementedError(f'Out domain dataset split not implemented.')
+            raise NotImplementedError(
+                f'Out domain dataset split not implemented.')
         else:
             indices = self.dataset_keys.keys()
 
@@ -145,7 +158,8 @@ class DatasetGenerator:
 
 
 class BaseSampler(data.Sampler):
-    """Samples elements randomly from a given list of indices, without replacement.
+    """Samples elements randomly from a given list of indices,
+    without replacement.
 
     Arguments:
         indices (sequence): a sequence of indices
@@ -178,7 +192,9 @@ def get_loaders(data_dir: str,
     )
 
     ds_generator = DatasetGenerator(dataset.keys, random_seed)
-    train_indices, valid_indices, test_indices = ds_generator.generate_datasets(balanced, lexical_split, in_domain)
+    train_indices, valid_indices, test_indices = ds_generator.generate_datasets(
+        balanced, lexical_split, in_domain
+    )
 
     train_loader = data.DataLoader(
         dataset=dataset,
