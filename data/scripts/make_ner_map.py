@@ -26,7 +26,8 @@ class RelationsMapMaker:
             if is_phrase_too_long(member_from) or is_phrase_too_long(member_to):
                 continue
 
-            ner_values = [member_from.is_named_entity, member_to.is_named_entity]
+            ner_values = [member_from.is_named_entity,
+                          member_to.is_named_entity]
 
             key = make_relation_key(label, id_domain, relation)
             vector = torch.FloatTensor(ner_values).unsqueeze(0)

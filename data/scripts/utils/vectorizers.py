@@ -40,7 +40,9 @@ class FastTextVectorizer(Vectorizer):
 class RetrofitVectorizer(Vectorizer):
 
     def __init__(self, retrofit_model_path, fasttext_model_path):
-        self.model_retrofit = KeyedVectors.load_word2vec_format(retrofit_model_path)
+        self.model_retrofit = KeyedVectors.load_word2vec_format(
+            retrofit_model_path
+        )
         self.model_fasttext = load_facebook_model(fasttext_model_path)
 
     def _embed_word(self, word: str) -> torch.Tensor:

@@ -97,19 +97,25 @@ class DocSentence:
     def _get_named_entities_indices(self) -> List[int]:
         return [index
                 for index, token in enumerate(self._tokens)
-                if tou.get_annotation(self._sentence, token._token, constant.NAMED_ENTITY_KEY, default=False)]
+                if tou.get_annotation(self._sentence,
+                                      token._token,
+                                      constant.NAMED_ENTITY_KEY,
+                                      default=False)]
 
     def _get_noun_indices(self) -> List[int]:
-        return [index for index, token in enumerate(self._tokens) if token.is_noun]
+        return [index
+                for index, token in enumerate(self._tokens)
+                if token.is_noun]
 
     def __str__(self):
         return ' '.join(self._orths)
 
 
 class DocRelation:
-    NER_RELATION_KEY = 'NER relation'
 
-    def __init__(self, relation: corpus2.Relation, sentences: Dict[str, DocSentence]):
+    def __init__(self,
+                 relation: corpus2.Relation,
+                 sentences: Dict[str, DocSentence]):
         self._relation = relation
 
         self._is_ner = self._is_ner_relation()
@@ -128,9 +134,11 @@ class DocRelation:
         return self._channel_from, self._channel_to
 
     def _is_ner_relation(self) -> bool:
-        return self._relation.rel_set() == self.NER_RELATION_KEY
+        return self._relation.rel_set() == constant.NER_RELATION_KEY
 
-    def _get_member(self, relation_member: corpus2.DirectionPoint, sentence: DocSentence):
+    def _get_member(
+            self, relation_member: corpus2.DirectionPoint, sentence: DocSentence
+    ):
         sentence_id = relation_member.sentence_id()
         channel_name = relation_member.channel_name()
         indices = self._get_annotation_indices(relation_member, sentence)
@@ -140,16 +148,22 @@ class DocRelation:
 
         context = sentence.orths
         lemma = sentence.lemmas[indices[0]]
-        named_entity = all(index in sentence.named_entities_indices for index in indices)
-        return Member(sentence_id, lemma, channel_name, named_entity, indices, context)
+        named_entity = all(
+            index in sentence.named_entities_indices
+            for index in indices
+        )
+        return Member(sentence_id, lemma, channel_name,
+                      named_entity, indices, context)
 
-    @staticmethod
-    def _get_annotation_indices(relation_member: corpus2.DirectionPoint, sentence: DocSentence) -> Tuple[int]:
+    def _get_annotation_indices(
+            self, relation_member: corpus2.DirectionPoint, sentence: DocSentence
+    ) -> Tuple[int]:
         indices = []
 
         for index, token in enumerate(sentence.tokens):
             annotation_number = tou.get_annotation(
-                sentence._sentence, token._token, relation_member.channel_name(), index, default=0
+                sentence._sentence, token._token,
+                relation_member.channel_name(), index, default=0
             )
             if annotation_number == relation_member.annotation_number():
                 indices.append(index)
@@ -157,8 +171,12 @@ class DocRelation:
         return tuple(indices)
 
     def get_members(self) -> [Member, Member]:
-        member_from = self._get_member(self._relation.rel_from(), self._sentence_from)
-        member_to = self._get_member(self._relation.rel_to(), self._sentence_to)
+        member_from = self._get_member(
+            self._relation.rel_from(), self._sentence_from
+        )
+        member_to = self._get_member(
+            self._relation.rel_to(), self._sentence_to
+        )
         return member_from, member_to
 
 
@@ -211,7 +229,8 @@ class Document:
                 for sentence in paragraph.sentences()]
 
     def _get_relations(self) -> List[DocRelation]:
-        return [DocRelation(relation, self._sentence_dict) for relation in self._document.relations()]
+        return [DocRelation(relation, self._sentence_dict)
+                for relation in self._document.relations()]
 
     def __hash__(self):
         return hash(self._id)
@@ -238,7 +257,9 @@ def documents_gen(relations_files: Iterator[Path]) -> Iterator[Document]:
             yield Document(ccl_document)
 
 
-def relations_files_paths(corpora_path: str, directories: List) -> Iterator[Path]:
+def relations_files_paths(
+        corpora_path: str, directories: List
+) -> Iterator[Path]:
     return list(chain.from_iterable(
         dir_path.glob('*.rel.xml')
         for dir_path in Path(corpora_path).iterdir()

@@ -10,7 +10,12 @@ class Member(NamedTuple):
     context: List[str]
 
     def __str__(self):
-        return f'{self.id_sentence}\t{self.lemma}\t{self.channel}\t{self.is_named_entity}\t{self.indices}\t{self.context}'
+        return f'{self.id_sentence}' \
+               f'\t{self.lemma}' \
+               f'\t{self.channel}' \
+               f'\t{self.is_named_entity}' \
+               f'\t{self.indices}' \
+               f'\t{self.context}'
 
 
 class Relation(NamedTuple):
@@ -19,4 +24,6 @@ class Relation(NamedTuple):
     member_to: Member
 
     def __str__(self):
-        return f'{self.id_document}\t{self.member_from}\t{self.member_to}'
+        return f'{self.id_document}' \
+               f'\t{self.member_from}' \
+               f'\t{self.member_to}'

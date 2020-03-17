@@ -38,7 +38,10 @@ def make_sentence_map(relations_paths: Path) -> dict:
 
 class RelationsMapMaker:
 
-    def __init__(self, relations_loader: RelationsLoader, vectorizer: Sent2VecVectorizer, sentence_map: Dict):
+    def __init__(
+            self, relations_loader: RelationsLoader,
+            vectorizer: Sent2VecVectorizer, sentence_map: Dict
+    ):
         self._relations_loader = relations_loader
         self._vectorizer = vectorizer
         self._sentence_map = sentence_map
@@ -47,7 +50,9 @@ class RelationsMapMaker:
         return [constant.MASK_KEY if index in indices else token
                 for index, token in enumerate(context)]
 
-    def get_context_same_sentence(self, relation: Relation, document_sentences: Dict) -> List[str]:
+    def get_context_same_sentence(
+            self, relation: Relation, document_sentences: Dict
+    ) -> List[str]:
         id_document, member_from, member_to = relation
 
         sentence_from_index = sentence_id_to_int(member_from.id_sentence)
@@ -65,7 +70,9 @@ class RelationsMapMaker:
 
         return context_left + context_between + context_right
 
-    def get_context_different_sentences(self, relation: Relation, document_sentences: Dict) -> List[str]:
+    def get_context_different_sentences(
+            self, relation: Relation, document_sentences: Dict
+    ) -> List[str]:
         id_document, member_from, member_to = relation
 
         sentence_from_index = sentence_id_to_int(member_from.id_sentence)
@@ -85,8 +92,10 @@ class RelationsMapMaker:
 
         return context
 
-    def __get_context_different_sentences(self, member_from: Member, member_to: Member,
-                                          document_sentences: Dict) -> List[str]:
+    def __get_context_different_sentences(
+            self, member_from: Member,
+            member_to: Member, document_sentences: Dict
+    ) -> List[str]:
 
         sentence_from_index = sentence_id_to_int(member_from.id_sentence)
         sentence_to_index = sentence_id_to_int(member_to.id_sentence)
@@ -97,14 +106,18 @@ class RelationsMapMaker:
         context_left = document_sentences.get(left_sentence_index, [])
 
         context_between = document_sentences[sentence_from_index]
-        context_between = self._mask_tokens(context_between, member_from.indices)
+        context_between = self._mask_tokens(
+            context_between, member_from.indices
+        )
         whole_context_between.extend(context_between)
 
         for i in range(sentence_from_index + 1, sentence_to_index):
             context_between.extend(document_sentences.get(i, []))
 
         context_between = document_sentences[sentence_to_index]
-        context_between = self._mask_tokens(context_between, member_to.indices)
+        context_between = self._mask_tokens(
+            context_between, member_to.indices
+        )
         whole_context_between.extend(context_between)
 
         context_right = document_sentences.get(sentence_to_index + 1, [])
@@ -125,9 +138,13 @@ class RelationsMapMaker:
 
             document_sentences = self._sentence_map[(id_domain, id_document)]
             if member_from.id_sentence == member_to.id_sentence:
-                context = self.get_context_same_sentence(relation, document_sentences)
+                context = self.get_context_same_sentence(
+                    relation, document_sentences
+                )
             else:
-                context = self.get_context_different_sentences(relation, document_sentences)
+                context = self.get_context_different_sentences(
+                    relation, document_sentences
+                )
 
             vector = self._vectorizer.embed(context)
 

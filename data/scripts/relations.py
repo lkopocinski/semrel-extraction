@@ -42,7 +42,9 @@ class RelationsGenerator:
             relations.append(relation)
 
         for _, member_from, member_to in relations:
-            nouns_indices_pairs = self._get_nouns_indices_pairs(member_from, member_to)
+            nouns_indices_pairs = self._get_nouns_indices_pairs(
+                member_from, member_to
+            )
 
             for index_from, index_to in nouns_indices_pairs:
                 _member_from = self._tokens_indices_to_member.get(
@@ -54,8 +56,15 @@ class RelationsGenerator:
                 if self._are_in_relation(_member_from, _member_to, relations):
                     continue
 
-                lemma_from = self._document.get_sentence(member_from.id_sentence).lemmas[index_from]
-                lemma_to = self._document.get_sentence(member_to.id_sentence).lemmas[index_to]
+                sentence_from = self._document.get_sentence(
+                    member_from.id_sentence
+                )
+                sentence_to = self._document.get_sentence(
+                    member_to.id_sentence
+                )
+
+                lemma_from = sentence_from.lemmas[index_from]
+                lemma_to = sentence_to.lemmas[index_to]
 
                 __member_from = Member(
                     id_sentence=member_from.id_sentence,
@@ -80,11 +89,14 @@ class RelationsGenerator:
         for index in member.indices:
             self._tokens_indices_to_member[(member.id_sentence, index)] = member
 
-    def _get_nouns_indices_pairs(self, member_from: Member, member_to: Member):
+    def _get_nouns_indices_pairs(
+            self, member_from: Member, member_to: Member
+    ):
         sent_id_from = member_from.id_sentence
         sent_id_to = member_to.id_sentence
 
-        nouns_indices_from = self._document.get_sentence(sent_id_from).noun_indices
+        nouns_indices_from = self._document.get_sentence(
+            sent_id_from).noun_indices
         nouns_indices_to = self._document.get_sentence(sent_id_to).noun_indices
 
         if sent_id_from == sent_id_to:
@@ -94,10 +106,13 @@ class RelationsGenerator:
 
         return nouns_indices_pairs
 
-    def _are_in_relation(self, member_from: Member, member_to: Member, relations: List):
+    def _are_in_relation(
+            self, member_from: Member, member_to: Member, relations: List
+    ):
         return member_from and member_to and (
             (Relation(self._document.id, member_from, member_to) in relations
-             or Relation(self._document.id, member_to, member_from) in relations))
+             or Relation(self._document.id, member_to,
+                         member_from) in relations))
 
 
 class RelationsLoader:
@@ -106,7 +121,9 @@ class RelationsLoader:
         self._relations_path_csv = relations_path
 
     def relations(self):
-        with self._relations_path_csv.open('r', newline='', encoding='utf-8') as file_csv:
+        with self._relations_path_csv.open(
+                'r', newline='', encoding='utf-8'
+        ) as file_csv:
             reader_csv = csv.DictReader(file_csv, delimiter='\t')
             for line_dict in reader_csv:
                 label = line_dict[rh.LABEL]
@@ -120,7 +137,8 @@ class RelationsLoader:
         relations_dict = {}
         index = 0
         for label, _, relation in self.relations():
-            if is_phrase_too_long(relation.member_from) or is_phrase_too_long(relation.member_to):
+            if is_phrase_too_long(relation.member_from) \
+                    or is_phrase_too_long(relation.member_to):
                 continue
 
             if label == filter_label:
@@ -155,17 +173,26 @@ class RelationsLoader:
 
 class RelationsEmbedder:
 
-    def __init__(self, relations_loader: RelationsLoader, vectors_map: VectorsMap):
+    def __init__(
+            self, relations_loader: RelationsLoader, vectors_map: VectorsMap
+    ):
         self.relations_loader = relations_loader
 
         self._keys = vectors_map.keys
         self._vectors = vectors_map.vectors
 
-    def _get_vectors_indices(self, id_domain: str, id_document: str, member: Member) -> List[int]:
-        tokens_keys = [make_token_key_member(id_domain, id_document, member, id_token) for id_token in member.indices]
+    def _get_vectors_indices(
+            self, id_domain: str, id_document: str, member: Member
+    ) -> List[int]:
+        tokens_keys = [
+            make_token_key_member(id_domain, id_document, member, id_token)
+            for id_token in member.indices]
+
         return [self._keys[token_key] for token_key in tokens_keys]
 
-    def _get_member_tensor(self, vectors_indices: List[int], max_size) -> torch.Tensor:
+    def _get_member_tensor(
+            self, vectors_indices: List[int], max_size
+    ) -> torch.Tensor:
         tensor = torch.zeros(1, max_size, self._vectors.shape[-1])
         vectors = self._vectors[vectors_indices]
         tensor[:, 0:vectors.shape[0], :] = vectors
@@ -183,11 +210,19 @@ class RelationsEmbedder:
 
             key = make_relation_key(label, id_domain, relation)
 
-            vectors_indices_from = self._get_vectors_indices(id_domain, id_document, member_from)
-            vectors_indices_to = self._get_vectors_indices(id_domain, id_document, member_to)
+            vectors_indices_from = self._get_vectors_indices(
+                id_domain, id_document, member_from
+            )
+            vectors_indices_to = self._get_vectors_indices(
+                id_domain, id_document, member_to
+            )
 
-            vectors_from = self._get_member_tensor(vectors_indices_from, max_size=constant.PHRASE_LENGTH_LIMIT)
-            vectors_to = self._get_member_tensor(vectors_indices_to, max_size=constant.PHRASE_LENGTH_LIMIT)
+            vectors_from = self._get_member_tensor(
+                vectors_indices_from, max_size=constant.PHRASE_LENGTH_LIMIT
+            )
+            vectors_to = self._get_member_tensor(
+                vectors_indices_to, max_size=constant.PHRASE_LENGTH_LIMIT
+            )
 
             keys.append(key)
             vectors.append((vectors_from, vectors_to))

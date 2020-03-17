@@ -38,21 +38,29 @@ class MapMaker:
     def __init__(self, vectorizer: Vectorizer):
         self._vectorizer = vectorizer
 
-    def make_sentence_map(self, document: Document, sentence: DocSentence) -> [List[str], torch.Tensor]:
+    def make_sentence_map(
+            self, document: Document, sentence: DocSentence
+    ) -> [List[str], torch.Tensor]:
         keys = make_sentence_keys(document, sentence)
         vectors = self._vectorizer.embed(sentence.orths)
         return keys, vectors
 
-    def make_document_map(self, document: Document) -> [List[str], torch.Tensor]:
-        sentences_maps = [self.make_sentence_map(document, sentence) for sentence in document.sentences]
+    def make_document_map(
+            self, document: Document
+    ) -> [List[str], torch.Tensor]:
+        sentences_maps = [self.make_sentence_map(document, sentence)
+                          for sentence in document.sentences]
         keys, vectors = zip(*sentences_maps)
 
         keys = list(chain(*keys))
         vectors = torch.stack(vectors)
         return keys, vectors
 
-    def make_map(self, documents: Iterator[Document]) -> [List[str], torch.Tensor]:
-        document_maps = [self.make_document_map(document) for document in documents]
+    def make_map(
+            self, documents: Iterator[Document]
+    ) -> [List[str], torch.Tensor]:
+        document_maps = [self.make_document_map(document)
+                         for document in documents]
         keys, vectors = zip(*document_maps)
 
         keys = list(chain(*keys))

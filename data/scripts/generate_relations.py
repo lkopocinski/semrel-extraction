@@ -25,13 +25,17 @@ def main(input_path, output_path):
     for document in documents:
         relations_generator = RelationsGenerator(document=document)
 
-        positive_relations = relations_generator.generate_positive(channels=constant.CHANNELS)
+        positive_relations = relations_generator.generate_positive(
+            channels=constant.CHANNELS
+        )
         positives_lines = [f'{constant.IN_RELATION_LABEL}'
                            f'\t{document.directory}'
                            f'\t{relation}'
                            for relation in positive_relations]
 
-        negative_relations = relations_generator.generate_negative(channels=constant.CHANNELS)
+        negative_relations = relations_generator.generate_negative(
+            channels=constant.CHANNELS
+        )
         negatives_lines = [f'{constant.NO_RELATION_LABEL}'
                            f'\t{document.directory}'
                            f'\t{relation}'
