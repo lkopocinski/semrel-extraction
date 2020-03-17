@@ -59,7 +59,9 @@ def main(config):
                 train_loader, valid_loader, test_loader, vector_size = get_loaders(
                     data_dir=config['dataset']['dir'],
                     keys_file=config['dataset']['keys'],
-                    vectors_files=[f'{method}.rel.pt' for method in methods],
+                    vectors_files=[
+                        f'{method}.rel.pt' for method in methods
+                    ],
                     batch_size=config['learn_params']['batch_size'],
                     balanced=True,
                     lexical_split=lexical_split,

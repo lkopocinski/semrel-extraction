@@ -101,8 +101,9 @@ class DatasetGenerator:
         # ok, lexical split... Lets take all the brands and split the dataset
         return self._split_lexically(positives, negatives)
 
-    def _split_lexically(self, positives: Set, negatives: Set) -> Tuple[
-        List, List, List]:
+    def _split_lexically(
+            self, positives: Set, negatives: Set
+    ) -> Tuple[List, List, List]:
         # 6 - lemma of left argument,
         # 10 - lemma of right argument
         # 4 - channel name for left argument
