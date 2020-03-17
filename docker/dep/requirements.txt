@@ -22,5 +22,3 @@ tqdm==4.42.0
 virtualenv==20.0.0
 virtualenv-clone==0.5.3
 wordfreq==2.2.1
-
-pudb

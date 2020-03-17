@@ -186,8 +186,8 @@ class RelationsEmbedder:
             vectors_indices_from = self._get_vectors_indices(id_domain, id_document, member_from)
             vectors_indices_to = self._get_vectors_indices(id_domain, id_document, member_to)
 
-            vectors_from = self._get_member_tensor(vectors_indices_from, max_size=PHRASE_LENGTH_LIMIT)
-            vectors_to = self._get_member_tensor(vectors_indices_to, max_size=PHRASE_LENGTH_LIMIT)
+            vectors_from = self._get_member_tensor(vectors_indices_from, max_size=constant.PHRASE_LENGTH_LIMIT)
+            vectors_to = self._get_member_tensor(vectors_indices_to, max_size=constant.PHRASE_LENGTH_LIMIT)
 
             keys.append(key)
             vectors.append((vectors_from, vectors_to))
