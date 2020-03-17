@@ -137,4 +137,4 @@ RUN git clone https://github.com/epfml/sent2vec.git && \
     cd /home/install && \
     rm -rf sent2vec
 
-WORKDIR /semrel-extraction
+WORKDIR /semrel-extraction 

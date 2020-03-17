@@ -22,19 +22,19 @@ class RelationHeader:
     DOCUMENT = 'id_document'
 
     # member from
-    SENTENCE_FROM = 'id_sentence_from',
-    LEMMA_FROM = 'lemma_from',
-    CHANNEL_FROM = 'channel_from',
-    NAMED_ENTITY_FROM = 'is_named_entity_from',
-    INDICES_FROM = 'indices_from',
-    CONTEXT_FROM = 'context_from',
+    SENTENCE_FROM = 'id_sentence_from'
+    LEMMA_FROM = 'lemma_from'
+    CHANNEL_FROM = 'channel_from'
+    NAMED_ENTITY_FROM = 'is_named_entity_from'
+    INDICES_FROM = 'indices_from'
+    CONTEXT_FROM = 'context_from'
 
     # member to
-    SENTENCE_TO = 'id_sentence_to',
-    LEMMA_TO = 'lemma_to',
-    CHANNEL_TO = 'channel_to',
-    NAMED_ENTITY_TO = 'is_named_entity_to',
-    INDICES_TO = 'indices_to',
+    SENTENCE_TO = 'id_sentence_to'
+    LEMMA_TO = 'lemma_to'
+    CHANNEL_TO = 'channel_to'
+    NAMED_ENTITY_TO = 'is_named_entity_to'
+    INDICES_TO = 'indices_to'
     CONTEXT_TO = 'context_to'
 
     HEADER = '\t'.join([
@@ -56,5 +56,5 @@ class RelationHeader:
         CHANNEL_TO,
         NAMED_ENTITY_TO,
         INDICES_TO,
-        CONTEXT_TO,
+        CONTEXT_TO
     ])

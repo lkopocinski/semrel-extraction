@@ -18,7 +18,7 @@ def save_lines(path: Path, lines: Iterator, mode='w+'):
             f.write(f'{line}\n')
 
 
-def read_lines(path: Path) -> Generator[str]:
+def read_lines(path: Path) -> Generator[str, None, None]:
     with path.open('r', encoding='utf-8') as f:
         for line in f:
             yield line.strip()
