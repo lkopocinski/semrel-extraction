@@ -3,11 +3,11 @@ from typing import List
 import torch
 from torch import nn
 
-from data.scripts.constant import PHRASE_LENGTH_LIMIT
+from .. import constant
 
 
 def max_pool_member_vectors(tensor: torch.Tensor) -> torch.Tensor:
-    pool = nn.MaxPool1d(PHRASE_LENGTH_LIMIT, stride=0)
+    pool = nn.MaxPool1d(constant.PHRASE_LENGTH_LIMIT, stride=0)
     tensor = tensor.transpose(2, 1)
     output = pool(tensor)
     return output.transpose(2, 1).squeeze()

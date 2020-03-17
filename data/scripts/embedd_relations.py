@@ -4,9 +4,9 @@ from pathlib import Path
 
 import click
 
-from data.scripts.maps import MapLoader
-from data.scripts.relations import RelationsLoader, RelationsEmbedder
-from data.scripts.utils.io import save_lines, save_tensor
+from .maps import MapLoader
+from .relations import RelationsLoader, RelationsEmbedder
+from .utils.io import save_lines, save_tensor
 
 
 @click.command()

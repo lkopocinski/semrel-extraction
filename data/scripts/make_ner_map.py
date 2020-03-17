@@ -6,9 +6,9 @@ from typing import List
 import click
 import torch
 
-from data.scripts.keys import make_relation_key
-from data.scripts.relations import RelationsLoader, is_phrase_too_long
-from data.scripts.utils.io import save_lines, save_tensor
+from .utils.keys import make_relation_key
+from .relations import RelationsLoader, is_phrase_too_long
+from .utils.io import save_lines, save_tensor
 
 
 class RelationsMapMaker:

@@ -7,13 +7,13 @@ from typing import Iterator, List, Dict
 
 import torch
 
-import data.scripts.constant as constant
-from data.scripts.constant import RelationHeader as rh
-from data.scripts.entities import Relation
-from data.scripts.keys import make_token_key_member, make_relation_key
-from data.scripts.maps import VectorsMap
-from data.scripts.max_pool import max_pool_relation_vectors
-from data.scripts.utils.corpus import Document, Member
+from . import constant
+from .constant import RelationHeader as Rh
+from .entities import Relation
+from .utils.keys import make_token_key_member, make_relation_key
+from .maps import VectorsMap
+from .utils.max_pool import max_pool_relation_vectors
+from .utils.corpus import Document, Member
 
 
 def is_phrase_too_long(member: Member) -> bool:
@@ -146,8 +146,8 @@ class RelationsLoader:
         ) as file_csv:
             reader_csv = csv.DictReader(file_csv, delimiter='\t')
             for line_dict in reader_csv:
-                label = line_dict[rh.LABEL]
-                id_domain = line_dict[rh.DOMAIN]
+                label = line_dict[Rh.LABEL]
+                id_domain = line_dict[Rh.DOMAIN]
                 relation = self._parse_relation(line_dict)
 
                 yield label, id_domain, relation
@@ -170,22 +170,22 @@ class RelationsLoader:
 
     @staticmethod
     def _parse_relation(relation_dict: Dict) -> Relation:
-        id_document = relation_dict[rh.DOCUMENT]
+        id_document = relation_dict[Rh.DOCUMENT]
         member_from = Member(
-            id_sentence=relation_dict[rh.SENTENCE_FROM],
-            lemma=relation_dict[rh.LEMMA_FROM],
-            channel=relation_dict[rh.CHANNEL_FROM],
-            is_named_entity=eval(relation_dict[rh.NAMED_ENTITY_FROM]),
-            indices=eval(relation_dict[rh.INDICES_FROM]),
-            context=eval(relation_dict[rh.CONTEXT_FROM])
+            id_sentence=relation_dict[Rh.SENTENCE_FROM],
+            lemma=relation_dict[Rh.LEMMA_FROM],
+            channel=relation_dict[Rh.CHANNEL_FROM],
+            is_named_entity=eval(relation_dict[Rh.NAMED_ENTITY_FROM]),
+            indices=eval(relation_dict[Rh.INDICES_FROM]),
+            context=eval(relation_dict[Rh.CONTEXT_FROM])
         )
         member_to = Member(
-            id_sentence=relation_dict[rh.SENTENCE_TO],
-            lemma=relation_dict[rh.LEMMA_TO],
-            channel=relation_dict[rh.CHANNEL_TO],
-            is_named_entity=eval(relation_dict[rh.NAMED_ENTITY_TO]),
-            indices=eval(relation_dict[rh.INDICES_TO]),
-            context=eval(relation_dict[rh.CONTEXT_TO])
+            id_sentence=relation_dict[Rh.SENTENCE_TO],
+            lemma=relation_dict[Rh.LEMMA_TO],
+            channel=relation_dict[Rh.CHANNEL_TO],
+            is_named_entity=eval(relation_dict[Rh.NAMED_ENTITY_TO]),
+            indices=eval(relation_dict[Rh.INDICES_TO]),
+            context=eval(relation_dict[Rh.CONTEXT_TO])
         )
 
         return Relation(id_document, member_from, member_to)

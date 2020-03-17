@@ -4,10 +4,10 @@ from pathlib import Path
 
 import click
 
-from data.scripts.maps import MapMaker
-from data.scripts.utils.corpus import from_index_documents_gen
-from data.scripts.utils.io import save_lines, save_tensor
-from data.scripts.utils.vectorizers import ElmoVectorizer
+from .maps import MapMaker
+from .utils.corpus import from_index_documents_gen
+from .utils.io import save_lines, save_tensor
+from .utils.vectorizers import ElmoVectorizer
 
 
 @click.command()

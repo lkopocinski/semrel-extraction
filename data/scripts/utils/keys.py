@@ -1,7 +1,7 @@
 from typing import List
 
-from data.scripts.entities import Relation, Member
-from data.scripts.utils.corpus import Document, DocSentence
+from .corpus import Document, DocSentence
+from ..entities import Relation, Member
 
 
 def _make_token_key(

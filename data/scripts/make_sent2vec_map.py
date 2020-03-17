@@ -6,13 +6,13 @@ from typing import List, Tuple, Dict
 import click
 import torch
 
-import data.scripts.constant as constant
-from data.scripts.entities import Relation, Member
-from data.scripts.keys import make_relation_key
-from data.scripts.relations import RelationsLoader, is_phrase_too_long
-from data.scripts.utils.corpus import from_index_documents_gen
-from data.scripts.utils.io import save_lines, save_tensor
-from data.scripts.utils.vectorizers import Sent2VecVectorizer
+from . import constant
+from .entities import Relation, Member
+from .relations import RelationsLoader, is_phrase_too_long
+from .utils.corpus import from_index_documents_gen
+from .utils.io import save_lines, save_tensor
+from .utils.keys import make_relation_key
+from .utils.vectorizers import Sent2VecVectorizer
 
 
 def sentence_id_to_int(id_sentence) -> int:

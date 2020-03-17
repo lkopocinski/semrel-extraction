@@ -4,9 +4,9 @@ from typing import Iterator, List, NamedTuple, Dict
 
 import torch
 
-from data.scripts.keys import make_sentence_keys
-from data.scripts.utils.corpus import DocSentence, Document
-from data.scripts.utils.vectorizers import Vectorizer
+from .utils.keys import make_sentence_keys
+from .utils.corpus import DocSentence, Document
+from .utils.vectorizers import Vectorizer
 
 
 class VectorsMap(NamedTuple):
