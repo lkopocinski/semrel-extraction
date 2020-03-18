@@ -1,7 +1,7 @@
 from unittest import mock
 from unittest.mock import PropertyMock
 
-from data.scripts.maps import MapMaker
+from scripts import MapMaker
 
 
 @mock.patch('data.scripts.maps.Document', autospec=True)

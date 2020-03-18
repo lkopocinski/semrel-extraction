@@ -7,6 +7,6 @@ services:
       - ../../semrel-extraction:/semrel-extraction
       - ./dep/credentials:/root/.aws/credentials
     env_file:
-      - dep/mlflow.env
+      - deps/mlflow.env
     entrypoint:
       - /bin/bash

@@ -4,7 +4,7 @@ import nlp_ws
 import torch
 from corpus_ccl import cclutils
 
-from data.scripts.utils.vectorizers import ElmoVectorizer, FastTextVectorizer
+from scripts import ElmoVectorizer, FastTextVectorizer
 from worker.extractor import Parser, NounExtractor, NERxtractor
 from scripts import RelNet
 

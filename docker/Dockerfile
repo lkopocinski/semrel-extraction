@@ -53,7 +53,7 @@ RUN update-alternatives --install \
 # requirements
 WORKDIR /home/install
 ENV PIP_EXTRA_INDEX_URL "https://pypi.clarin-pl.eu/"
-COPY dep/requirements.txt requirements.txt
+COPY deps/requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 

@@ -1,6 +1,6 @@
 import torch
 
-from data.scripts.maps import MapLoader
+from scripts import MapLoader
 
 KEYS_FILE = './test.map.keys'
 VECTORS_FILE = './test.map.pt'

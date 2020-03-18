@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='semrel',
-    version='0.1.2',
+    version='0.2.0',
     author='Arkadiusz Janz',
     author_email='arkadiusz.janz@pwr.edu.pl',
     maintainer='Łukasz Kopociński',
