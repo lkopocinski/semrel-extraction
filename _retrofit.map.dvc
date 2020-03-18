@@ -1,0 +1,23 @@
+md5: 4aa5d14bd1e3ced4fa6dd7e358f6d8b9
+cmd: CUDA_VISIBLE_DEVICES=0 ./semrel/data/scripts/cli/make_retrofit_map.py --input-path
+  ./semrel/data/data/relations.files.list --model-retrofit ./semrel/data/data/fasttext/kgr10.plain.skipgram.dim300.neg10.retrofit.vec
+  --model-fasttext ./semrel/data/data/fasttext/kgr10.plain.skipgram.dim300.neg10.bin
+  --output-paths ./semrel/data/data/maps/retrofit.map.keys ./semrel/data/data/maps/retrofit.map.pt
+deps:
+- md5: 157a217de2adc49fcc72e3ed8b5d86bb
+  path: semrel/data/data/relations.files.list
+- md5: c42c5efba4f6aec66a615f974013d3cb
+  path: semrel/data/scripts/cli/make_retrofit_map.py
+- md5: 14fa344f624b3105e02e46e2567cb3ae
+  path: semrel/data/scripts/maps.py
+outs:
+- md5: d8f7a05782631e72e328a4ec303ea770
+  path: semrel/data/data/maps/retrofit.map.keys
+  cache: true
+  metric: false
+  persist: false
+- md5: 333ac2d2ede42d07329f990502b27b4d
+  path: semrel/data/data/maps/retrofit.map.pt
+  cache: true
+  metric: false
+  persist: false

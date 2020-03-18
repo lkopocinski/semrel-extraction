@@ -1,0 +1,22 @@
+md5: d6ac7b87c9e7c87e41ae45620c06cb40
+cmd: CUDA_VISIBLE_DEVICES=0 ./semrel/data/scripts/cli/make_fasttext_map.py --input-path
+  ./semrel/data/data/relations.files.list --model ./semrel/data/data/fasttext/kgr10.plain.skipgram.dim300.neg10.bin
+  --output-paths ./semrel/data/data/maps/fasttext.map.keys ./semrel/data/data/maps/fasttext.map.pt
+deps:
+- md5: 157a217de2adc49fcc72e3ed8b5d86bb
+  path: semrel/data/data/relations.files.list
+- md5: 9d988a887cba28b9774b3171f9c511f0
+  path: semrel/data/scripts/cli/make_fasttext_map.py
+- md5: 14fa344f624b3105e02e46e2567cb3ae
+  path: semrel/data/scripts/maps.py
+outs:
+- md5: d8f7a05782631e72e328a4ec303ea770
+  path: semrel/data/data/maps/fasttext.map.keys
+  cache: true
+  metric: false
+  persist: false
+- md5: ddaccfb76b6176bf54f66eadb4104125
+  path: semrel/data/data/maps/fasttext.map.pt
+  cache: true
+  metric: false
+  persist: false
