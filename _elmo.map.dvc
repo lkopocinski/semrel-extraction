@@ -1,0 +1,23 @@
+md5: c076d3614ee870973cc9e7f2271a4a21
+cmd: CUDA_VISIBLE_DEVICES=0 ./semrel/data/scripts/cli/make_elmo_map.py --input-path
+  ./semrel/data/data/relations.files.list --model ./semrel/data/data/elmo/options.json
+  ./semrel/data/data/elmo/weights.hdf5 --output-paths ./semrel/data/data/maps/elmo.map.keys
+  ./semrel/data/data/maps/elmo.map.pt
+deps:
+- md5: 157a217de2adc49fcc72e3ed8b5d86bb
+  path: semrel/data/data/relations.files.list
+- md5: dbd134c52a749668cf6b65d064456140
+  path: semrel/data/scripts/cli/make_elmo_map.py
+- md5: fe3bd3e5a2f47d5cf0e47cf3bb10ff9c
+  path: semrel/data/scripts/maps.py
+outs:
+- md5: d8f7a05782631e72e328a4ec303ea770
+  path: semrel/data/data/maps/elmo.map.keys
+  cache: true
+  metric: false
+  persist: false
+- md5: d29aea6be2de86643f75ff0e8b1d4a42
+  path: semrel/data/data/maps/elmo.map.pt
+  cache: true
+  metric: false
+  persist: false

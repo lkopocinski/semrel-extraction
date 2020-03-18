@@ -1,10 +1,10 @@
-md5: 8898282a3443d937daf21099bb165612
-cmd: find ./semrel/data/data/corpora/ -type f -name *.rel.xml > ./semrel/data/data/relations.files.list
+md5: 4c32e1b2010e8f694eca90a6e1ca0c28
+cmd: find ./semrel/data/data/corpora/000 -type f -name *.rel.xml > ./semrel/data/data/relations.files.list
 deps:
-- md5: d171bbc05d28098ebd033f5241cf6929.dir
-  path: semrel/data/data/corpora
+- md5: d5067d94218270bfb54237e0109e24ab.dir
+  path: semrel/data/data/corpora/000
 outs:
-- md5: e34115c7c699baaf15c97ca5364ad554
+- md5: 157a217de2adc49fcc72e3ed8b5d86bb
   path: semrel/data/data/relations.files.list
   cache: true
   metric: false
