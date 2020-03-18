@@ -66,28 +66,28 @@ class RelationsGenerator:
                 lemma_from = sentence_from.lemmas[index_from]
                 lemma_to = sentence_to.lemmas[index_to]
 
-                _is_named_entity = False
+                _is_named_entity_from = False
                 if _member_from:
-                    _is_named_entity = _member_from.is_named_entity
+                    _is_named_entity_from = _member_from.is_named_entity
 
                 __member_from = Member(
                     id_sentence=member_from.id_sentence,
                     lemma=lemma_from,
                     channel=_member_from.channel if _member_from else '',
-                    is_named_entity=_is_named_entity,
+                    is_named_entity=_is_named_entity_from,
                     indices=(index_from,),
                     context=member_from.context
                 )
 
-                _is_named_entity = False
+                _is_named_entity_to = False
                 if _member_to:
-                    _is_named_entity = _member_to.is_named_entity
+                    _is_named_entity_to = _member_to.is_named_entity
 
                 __member_to = Member(
                     id_sentence=member_to.id_sentence,
                     lemma=lemma_to,
                     channel=_member_to.channel if _member_to else '',
-                    is_named_entity=_is_named_entity,
+                    is_named_entity=_is_named_entity_to,
                     indices=(index_to,),
                     context=member_to.context
                 )
