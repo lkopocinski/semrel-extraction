@@ -21,7 +21,7 @@ from semrel.data.scripts.vectorizers import RetrofitVectorizer
               help="Paths to fasttext model.")
 @click.option('--output-paths', required=True, type=(str, str),
               metavar='retrofit.map.keys retrofit.map.pt',
-              help='Paths for saving keys and map files.')
+              help='Paths for saving keys and vectors files.')
 def main(input_path, model_retrofit, model_fasttext, output_paths):
     vectorizer = RetrofitVectorizer(
         retrofit_model_path=model_retrofit,
@@ -33,8 +33,8 @@ def main(input_path, model_retrofit, model_fasttext, output_paths):
     keys, vectors = mapmaker.make_map(documents)
 
     keys_path, vectors_path = output_paths
-    save_lines(Path(f'{keys_path}'), keys)
-    save_tensor(Path(f'{vectors_path}'), vectors)
+    save_lines(Path(keys_path), keys)
+    save_tensor(Path(vectors_path), vectors)
 
 
 if __name__ == '__main__':

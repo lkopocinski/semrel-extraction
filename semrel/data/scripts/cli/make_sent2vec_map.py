@@ -15,7 +15,7 @@ from semrel.data.scripts.utils.keys import make_relation_key
 from semrel.data.scripts.vectorizers import Sent2VecVectorizer
 
 
-def sentence_id_to_int(id_sentence) -> int:
+def sentence_id_to_int(id_sentence: str) -> int:
     return int(id_sentence.replace('sent', ''))
 
 
