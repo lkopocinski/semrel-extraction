@@ -24,7 +24,7 @@ dvc run \
   -o ${OUTPUT_DIR}/fasttext.rel.pt \
   -o ${OUTPUT_DIR}/retrofit.rel.keys \
   -o ${OUTPUT_DIR}/retrofit.rel.pt \
-  -f _vectors.dvc
+  -f _vectors.dvc \
   CUDA_VISIBLE_DEVICES=0 ${CLI_DIR}/embedd_relations.py --input-path ${INPUT_PATH} \
                                                         --elmo-map "${MAPS_DIR}/elmo.map.keys" "${MAPS_DIR}/elmo.map.pt" \
                                                         --fasttext-map "${MAPS_DIR}/fasttext.map.keys" "${MAPS_DIR}/fasttext.map.pt" \

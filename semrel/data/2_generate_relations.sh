@@ -19,7 +19,7 @@ dvc run \
   -d ${CLI_DIR}/generate_relations.py \
   -d ${SCRIPTS_DIR}/relations.py \
   -o ${RELATIONS_PATH} \
-  -f _relations.tsv.dvc
+  -f _relations.tsv.dvc \
   CUDA_VISIBLE_DEVICES=0 ${CLI_DIR}/generate_relations.py --input-path ${INPUT_PATH} \
                                                           --output-path ${RELATIONS_PATH}
 
