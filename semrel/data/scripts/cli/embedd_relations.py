@@ -4,9 +4,9 @@ from pathlib import Path
 
 import click
 
-from maps import MapLoader
-from relations import RelationsLoader, RelationsEmbedder
-from utils.io import save_lines, save_tensor
+from semrel.data.scripts.maps import MapLoader
+from semrel.data.scripts.relations import RelationsLoader, RelationsEmbedder
+from semrel.data.scripts.utils.io import save_lines, save_tensor
 
 
 @click.command()

@@ -4,10 +4,10 @@ from pathlib import Path
 
 import click
 
-from maps import MapMaker
-from corpus.corpus import from_index_documents_gen
-from utils.io import save_lines, save_tensor
-from vectorizers import FastTextVectorizer
+from semrel.data.scripts.corpus import from_index_documents_gen
+from semrel.data.scripts.maps import MapMaker
+from semrel.data.scripts.utils.io import save_lines, save_tensor
+from semrel.data.scripts.vectorizers import FastTextVectorizer
 
 
 @click.command()

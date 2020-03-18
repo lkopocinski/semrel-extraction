@@ -4,10 +4,10 @@ from pathlib import Path
 
 import click
 
-import constant
-from relations import RelationsGenerator
-from corpus import from_index_documents_gen
-from utils.io import save_lines, save_line
+from semrel.data.scripts import constant
+from semrel.data.scripts.corpus import from_index_documents_gen
+from semrel.data.scripts.relations import RelationsGenerator
+from semrel.data.scripts.utils.io import save_lines, save_line
 
 
 @click.command()

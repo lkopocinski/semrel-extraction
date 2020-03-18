@@ -6,13 +6,13 @@ from typing import List, Tuple, Dict
 import click
 import torch
 
-import constant
-from entities import Relation, Member
-from relations import RelationsLoader, is_phrase_too_long
-from corpus.corpus import from_index_documents_gen
-from utils.io import save_lines, save_tensor
-from utils.keys import make_relation_key
-from vectorizers import Sent2VecVectorizer
+from semrel.data.scripts import constant
+from semrel.data.scripts.corpus import from_index_documents_gen
+from semrel.data.scripts.entities import Relation, Member
+from semrel.data.scripts.relations import RelationsLoader, is_phrase_too_long
+from semrel.data.scripts.utils.io import save_lines, save_tensor
+from semrel.data.scripts.utils.keys import make_relation_key
+from semrel.data.scripts.vectorizers import Sent2VecVectorizer
 
 
 def sentence_id_to_int(id_sentence) -> int:
