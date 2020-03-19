@@ -2,11 +2,13 @@
 
 pushd "$(git rev-parse --show-toplevel)"
 
-SCRIPTS_DIR="./data/spert"
-INDICES_FILE="./data/spert/indices.json"
+DATA_DIR="./semrel/data/data"
 
-INPUT_PATH="./data/relations/relations.tsv"
-OUTPUT_DIR="./data/spert/dataset"
+SCRIPTS_DIR="./spert/scripts"
+INDICES_FILE="./spert/data/indices.json"
+
+INPUT_PATH="${DATA_DIR}/relations/relations.tsv"
+OUTPUT_DIR="./spert/data/dataset"
 
 mkdir -p ${OUTPUT_DIR}
 
@@ -15,7 +17,7 @@ dvc run \
   -d ${INDICES_FILE} \
   -d ${SCRIPTS_DIR}/generate_spert_json.py \
   -o ${OUTPUT_DIR} \
-  -f spert.jsons.dvc \
+  -f _spert.jsons.dvc \
   ${SCRIPTS_DIR}/generate_spert_json.py --input-path ${INPUT_PATH} \
                                         --indices-file ${INDICES_FILE} \
                                         --output-dir ${OUTPUT_DIR}

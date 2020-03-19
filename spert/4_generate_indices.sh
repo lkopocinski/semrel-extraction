@@ -2,16 +2,22 @@
 
 pushd "$(git rev-parse --show-toplevel)"
 
-DATA_DIR="./data/vectors"
-SCRIPTS_DIR="./data/spert"
-OUTPUT_PATH="./data/spert/indices.json"
+DATA_DIR="./semrel/data/data"
+VECTORS_DIR="${DATA_DIR}/vectors"
+
+SCRIPTS_DIR="./spert/scripts"
+OUTPUT_DIR="./spert/data"
+OUTPUT_PATH="${OUTPUT_DIR}/indices.json"
+
+mkdir -p ${OUTPUT_DIR}
 
 dvc run \
   -d ${DATA_DIR} \
+  -d ${VECTORS_DIR} \
   -d ${SCRIPTS_DIR}/generate_indices.py \
-  -O ${OUTPUT_PATH} \
-  -f spert.indices.dvc \
-  ${SCRIPTS_DIR}/generate_indices.py --dataset-keys ${DATA_DIR}/elmo.rel.keys \
+  -o ${OUTPUT_PATH} \
+  -f _spert.indices.dvc \
+  ${SCRIPTS_DIR}/generate_indices.py --dataset-keys ${VECTORS_DIR}/elmo.rel.keys \
                                      --output-path ${OUTPUT_PATH}
 
 popd

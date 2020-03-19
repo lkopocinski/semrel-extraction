@@ -1,4 +1,4 @@
-from typing import NamedTuple, List, Set
+from typing import NamedTuple, List, Set, Dict
 
 
 class Indices(NamedTuple):
@@ -48,7 +48,7 @@ class SPERTDocument:
         self.entities = entities or []
         self.relations = relations or set()
 
-    def to_dict(self):
+    def to_dict(self) -> Dict:
         return {
             'tokens': self.tokens,
             'entities': [entity.to_dict() for entity in self.entities],

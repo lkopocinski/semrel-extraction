@@ -1,12 +1,13 @@
 #!/usr/bin/env python3.6
 
 from pathlib import Path
+from typing import List, Tuple, Dict
 
 import click
 
-from scripts import save_json
-from semrel.model import RUNS
-from semrel.model.scripts.utils import BrandProductDataset, \
+from semrel.data.scripts.utils.io import save_json
+from semrel.model.runs import RUNS, IN_DOMAIN_KEY, LEXICAL_SPLIT_KEY
+from semrel.model.scripts.utils.data_loader import BrandProductDataset, \
     DatasetGenerator
 
 
@@ -16,12 +17,13 @@ def get_indices(
         lexical_split: bool = False,
         in_domain: str = None,
         random_seed: int = 42
-):
+) -> Tuple[Tuple[List, List, List], Dict[int, str]]:
     keys = BrandProductDataset._load_keys(keys_file)
     ds_generator = DatasetGenerator(keys, random_seed)
-    return ds_generator.generate_datasets(
+    train, valid, test = ds_generator.generate_datasets(
         balanced, lexical_split, in_domain
-    ), keys
+    )
+    return train, valid, test, keys
 
 
 @click.command()
@@ -32,8 +34,8 @@ def main(dataset_keys, output_path):
 
     spert_runs = RUNS['spert']
     for index, params in spert_runs.items():
-        in_domain = params.get('in_domain')
-        lexical_split = params.get('lexical_split', False)
+        in_domain = params.get(IN_DOMAIN_KEY)
+        lexical_split = params.get(LEXICAL_SPLIT_KEY, False)
 
         (train, valid, test), keys = get_indices(
             keys_file=Path(dataset_keys),

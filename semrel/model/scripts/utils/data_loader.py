@@ -149,8 +149,13 @@ class DatasetGenerator:
         test.extend(test_indices)
         return train, valid, test
 
-    def generate_datasets(self, balanced: bool, lexical_split: bool,
-                          in_domain: str, out_domain: str = None):
+    def generate_datasets(
+            self,
+            balanced: bool,
+            lexical_split: bool,
+            in_domain: str,
+            out_domain: str = None
+    ) -> Tuple[List, List, List]:
         if in_domain:
             indices = [index for index, descriptor in self.dataset_keys.items()
                        if descriptor[1] == in_domain]

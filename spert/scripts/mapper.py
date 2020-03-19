@@ -1,14 +1,15 @@
 from abc import ABC, abstractmethod
 from typing import Tuple, List
 
-from entities import Relation, Member
-from spert import SPERTEntity, SPERTRelation
+from semrel.data.scripts.constant import BRAND_NAME_KEY, PRODUCT_NAME_KEY
+from semrel.data.scripts.entities import Relation, Member
+from spert.scripts.entities import SPERTEntity, SPERTRelation
 
 
 class BrandProductSPERTMapper(ABC):
     ENTITY_TYPE_MAP = {
-        'BRAND_NAME': 'Brand',
-        'PRODUCT_NAME': 'Product',
+        BRAND_NAME_KEY: 'Brand',
+        PRODUCT_NAME_KEY: 'Product',
     }
 
     RELATION_TYPE = 'Brand-Product'

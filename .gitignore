@@ -18,5 +18,5 @@ credentials
 
 .tox
 
-data
 semrel/data/data
+spert/data

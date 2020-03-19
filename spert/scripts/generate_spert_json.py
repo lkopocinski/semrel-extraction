@@ -5,11 +5,12 @@ from typing import Iterator, Dict
 
 import click
 
-from entities import Relation
-from scripts import RelationsLoader
-from scripts import save_json, load_json
-from spert import SPERTDocument, SPERTDocRelation
-from spert.mapper import InSentenceSPERTMapper, BetweenSentencesSPERTMapper
+from semrel.data.scripts.entities import Relation
+from semrel.data.scripts.relations import RelationsLoader
+from semrel.data.scripts.utils.io import save_json, load_json
+from spert.scripts.entities import SPERTDocument, SPERTDocRelation
+from spert.scripts.mapper import InSentenceSPERTMapper, \
+    BetweenSentencesSPERTMapper
 
 
 def split_relations(indices: Dict, relations_dict: Dict) -> Dict:
@@ -25,23 +26,25 @@ def split_relations(indices: Dict, relations_dict: Dict) -> Dict:
             'test': test_relations}
 
 
-def map_relations(relations: Iterator[Relation],
-                  in_sentence_mapper: InSentenceSPERTMapper,
-                  between_sentence_mapper: BetweenSentencesSPERTMapper):
+def map_relations(
+        relations: Iterator[Relation],
+        in_sentence_mapper: InSentenceSPERTMapper,
+        between_sentence_mapper: BetweenSentencesSPERTMapper
+) -> Dict:
     documents = defaultdict(SPERTDocument)
 
     for relation in relations:
         id_document, member_from, member_to = relation
         in_same_context = member_from.id_sentence == member_to.id_sentence
 
-        id_from = relation.member_from.id_sentence
-        id_to = relation.member_to.id_sentence
-        key = f'{id_document}-{id_from}-{id_to}'
-
         if in_same_context:
             spert_relation = in_sentence_mapper.map(relation)
         else:
             spert_relation = between_sentence_mapper.map(relation)
+
+        id_from = relation.member_from.id_sentence
+        id_to = relation.member_to.id_sentence
+        key = f'{id_document}-{id_from}-{id_to}'
 
         document = documents[key]
         document.tokens = spert_relation.tokens
@@ -70,7 +73,6 @@ def map_relations(relations: Iterator[Relation],
 @click.option('--output-dir', required=True, type=str,
               help='Paths for saving SPERT json file.')
 def main(input_path, indices_file, output_dir):
-
     indices = load_json(Path(indices_file))
     relations_loader = RelationsLoader(Path(input_path))
     relations = relations_loader._filter_relations(filter_label='in_relation')
