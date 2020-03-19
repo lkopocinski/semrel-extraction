@@ -2,7 +2,7 @@ tracking_uri: 'http://10.17.50.132:8080'
 experiment_name: 'LREC_3.0'
 
 dataset:
-  dir: './data/vectors'
+  dir: './semrel/data/data/vectors'
   keys: 'elmo.rel.keys'
 
 net_params:
@@ -13,3 +13,4 @@ learn_params:
   runs: 'default'
   batch_size: 100
   epochs: 50
+  learning_rate: 0.001

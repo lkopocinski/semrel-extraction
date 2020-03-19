@@ -2,8 +2,11 @@ from typing import List
 
 import numpy as np
 import torch
-from sklearn.metrics import accuracy_score, precision_score, \
-    recall_score, f1_score
+from sklearn.metrics import \
+    accuracy_score, \
+    precision_score, \
+    recall_score, \
+    f1_score
 
 
 class Metrics:
@@ -15,7 +18,13 @@ class Metrics:
         self._predicted = np.array([])
         self._targets = np.array([])
 
-    def update(self, predicted, targets, loss, batches: int):
+    def update(
+            self,
+            predicted: torch.Tensor,
+            targets: torch.Tensor,
+            loss,
+            batches: int
+    ) -> None:
         _, predicted = torch.max(predicted, dim=1)
         predicted = predicted.data.numpy()
         targets = targets.data.numpy()
@@ -49,57 +58,6 @@ class Metrics:
     def __str__(self):
         return f'\tLoss: {self._loss}' \
                f'\n\tAccuracy: {self.accuracy}' \
-               f'\n\tPrecision: {self.precision}' \
-               f'\n\tRecall: {self.recall}' \
-               f'\n\tFscore: {self.fscore}'
-
-
-class NerMetrics:
-
-    def __init__(self):
-        self._predicted = []
-        self._targets = []
-        self._ner_from = []
-        self._ner_to = []
-        self._ner_predicted = []
-
-    def append(self, predicted, targets, ner_from, ner_to):
-        _, predicted = torch.max(predicted, dim=1)
-        predicted = predicted.data.numpy()
-        targets = targets.data.numpy()
-
-        self._predicted = np.append(self._predicted, predicted)
-        self._targets = np.append(self._targets, targets)
-        self._ner_from.extend(ner_from)
-        self._ner_to.extend(ner_to)
-        self.predict_ner(predicted, ner_from, ner_to)
-
-    def predict_ner(self, predicted, ner_from, ner_to):
-        for ner_from, ner_to, prediction in zip(ner_from, ner_to, predicted):
-            both_ner = eval(ner_from) and eval(ner_to)
-            if both_ner:
-                self._ner_predicted.append(prediction)
-            else:
-                self._ner_predicted.append(0)
-
-    @property
-    def accuracy(self) -> float:
-        return accuracy_score(self._targets, self._ner_predicted)
-
-    @property
-    def precision(self) -> List[float]:
-        return precision_score(self._targets, self._ner_predicted, average=None)
-
-    @property
-    def recall(self) -> List[float]:
-        return recall_score(self._targets, self._ner_predicted, average=None)
-
-    @property
-    def fscore(self) -> List[float]:
-        return f1_score(self._targets, self._ner_predicted, average=None)
-
-    def __str__(self):
-        return f'\tAccuracy: {self.accuracy}' \
                f'\n\tPrecision: {self.precision}' \
                f'\n\tRecall: {self.recall}' \
                f'\n\tFscore: {self.fscore}'

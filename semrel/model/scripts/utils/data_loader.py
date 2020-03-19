@@ -1,18 +1,20 @@
 import random
 from collections import defaultdict
 from pathlib import Path
-from typing import List, Dict, Set, Tuple
+from typing import List, Dict, Set, Tuple, NamedTuple
 
 import torch
 from torch.utils import data
+
+from semrel.data.scripts import constant
 
 CHANNELS = ('BRAND_NAME', 'PRODUCT_NAME')
 
 
 class BrandProductDataset(data.Dataset):
     label2digit = {
-        'no_relation': 0,
-        'in_relation': 1,
+        constant.NO_RELATION_LABEL: 0,
+        constant.IN_RELATION_LABEL: 1,
     }
 
     def __init__(self, keys_file: str, vectors_files: List[str]):
@@ -20,11 +22,13 @@ class BrandProductDataset(data.Dataset):
         self.vectors = [torch.load(file) for file in vectors_files]
         self.vectors = torch.cat(self.vectors, dim=1)
 
-    @staticmethod
-    def _load_keys(path: Path) -> Dict[int, str]:
+    @classmethod
+    def _load_keys(cls, path: Path) -> Dict[int, str]:
         with path.open('r', encoding='utf-8') as file:
-            return {index: tuple(line.strip().split('\t'))
-                    for index, line in enumerate(file)}
+            return {
+                index: tuple(line.strip().split('\t'))
+                for index, line in enumerate(file)
+            }
 
     @property
     def vector_size(self) -> int:
@@ -36,12 +40,10 @@ class BrandProductDataset(data.Dataset):
     def __getitem__(self, index: int):
         key = self.keys[index]
         label = key[0]
-        is_named_entity_f = key[11]
-        is_named_entity_t = key[12]
 
         x = self.vectors[index]
         y = self.label2digit[label]
-        return x, y, is_named_entity_f, is_named_entity_t
+        return x, y
 
 
 class DatasetGenerator:
@@ -51,10 +53,14 @@ class DatasetGenerator:
         random.seed(random_seed)
 
     def _filter_indices_by_channels(self, indices: Set[int], channels) -> Set:
-        return {index
-                for index in indices
-                if (self.dataset_keys[index][4] in channels or
-                    self.dataset_keys[index][8] in channels)}
+        return {
+            index
+            for index in indices
+            if (
+                    self.dataset_keys[index][4] in channels
+                    or self.dataset_keys[index][9] in channels
+            )
+        }
 
     def _split(self, indices) -> Tuple[List, List, List]:
         random.shuffle(indices)
@@ -79,10 +85,16 @@ class DatasetGenerator:
             return self._split(indices)
         # ok, lets try to balance the data (positives vs negatives)
         # 2 cases to cover: i) B-N, P-N, and ii) N-N
-        positives = {index for index in indices if
-                     self.dataset_keys[index][0] == 'in_relation'}
-        negatives = {index for index in indices if
-                     self.dataset_keys[index][0] == 'no_relation'}
+        positives = {
+            index
+            for index in indices
+            if self.dataset_keys[index][0] == constant.IN_RELATION_LABEL
+        }
+        negatives = {
+            index
+            for index in indices
+            if self.dataset_keys[index][0] == constant.NO_RELATION_LABEL
+        }
 
         # take the negatives connected with Bs or Ps
         negatives_bps = self._filter_indices_by_channels(negatives, CHANNELS)
@@ -113,17 +125,19 @@ class DatasetGenerator:
         brands_indices = defaultdict(list)
         for index in sorted(positives | negatives):
             brand = None
-            if self.dataset_keys[index][4] == 'BRAND_NAME':
+            if self.dataset_keys[index][4] == constant.BRAND_NAME_KEY:
                 brand = self.dataset_keys[index][6]
-            elif self.dataset_keys[index][8] == 'BRAND_NAME':
-                brand = self.dataset_keys[index][10]
+            elif self.dataset_keys[index][9] == constant.BRAND_NAME_KEY:
+                brand = self.dataset_keys[index][11]
             else:
                 nns_and_nps_indices.append(index)
             if brand:
                 brands_indices[brand].append(index)
 
         n_brand_indices = sum(
-            len(indices) for _, indices in brands_indices.items())
+            len(indices)
+            for _, indices in brands_indices.items()
+        )
 
         # split equally starting from the least frequent brands
         counter = 0
@@ -142,14 +156,16 @@ class DatasetGenerator:
 
         # use held_out indices of type N-N and N-P and split them
         # to make our data sets more like 3:1:1
-        train_indices, valid_indices, test_indices = self._split(
-            nns_and_nps_indices)
+        splits = self._split(nns_and_nps_indices)
+        train_indices, valid_indices, test_indices = splits
+
         train.extend(train_indices)
         valid.extend(valid_indices)
         test.extend(test_indices)
+
         return train, valid, test
 
-    def generate_datasets(
+    def generate(
             self,
             balanced: bool,
             lexical_split: bool,
@@ -157,8 +173,11 @@ class DatasetGenerator:
             out_domain: str = None
     ) -> Tuple[List, List, List]:
         if in_domain:
-            indices = [index for index, descriptor in self.dataset_keys.items()
-                       if descriptor[1] == in_domain]
+            indices = [
+                index
+                for index, descriptor in self.dataset_keys.items()
+                if descriptor[1] == in_domain
+            ]
         elif out_domain:
             raise NotImplementedError(
                 f'Out domain dataset split not implemented.')
@@ -186,26 +205,34 @@ class BaseSampler(data.Sampler):
         return len(self.indices)
 
 
-def get_loaders(data_dir: str,
-                keys_file: str,
-                vectors_files: List[str],
-                batch_size: int,
-                balanced: bool = False,
-                lexical_split: bool = False,
-                in_domain: str = None,
-                out_domain: str = None,
-                random_seed: int = 42,
-                num_workers: int = 0,
-                pin_memory: bool = False):
+class Loaders(NamedTuple):
+    train: data.DataLoader
+    valid: data.DataLoader
+    test: data.DataLoader
+    vector_size: int
+
+
+def get_loaders(
+        data_dir: str,
+        keys_file: str,
+        vectors_files: List[str],
+        batch_size: int,
+        balanced: bool = False,
+        lexical_split: bool = False,
+        in_domain: str = None,
+        out_domain: str = None,
+        random_seed: int = 42,
+        num_workers: int = 0,
+        pin_memory: bool = False
+) -> [data.DataLoader, data.DataLoader, data.DataLoader, Dict]:
     dataset = BrandProductDataset(
         keys_file=f'{data_dir}/{keys_file}',
         vectors_files=[f'{data_dir}/{file}' for file in vectors_files],
     )
 
-    ds_generator = DatasetGenerator(dataset.keys, random_seed)
-    train_indices, valid_indices, test_indices = ds_generator.generate_datasets(
-        balanced, lexical_split, in_domain
-    )
+    dataset_generator = DatasetGenerator(dataset.keys, random_seed)
+    indices = dataset_generator.generate(balanced, lexical_split, in_domain)
+    train_indices, valid_indices, test_indices = indices
 
     train_loader = data.DataLoader(
         dataset=dataset,
@@ -230,4 +257,9 @@ def get_loaders(data_dir: str,
 
     )
 
-    return train_loader, valid_loader, test_loader, dataset.vector_size
+    return Loaders(
+            train=train_loader,
+            valid=valid_loader,
+            test=test_loader,
+            vector_size=dataset.vector_size
+        )

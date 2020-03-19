@@ -9,11 +9,11 @@ import yaml
 logger = logging.getLogger(__name__)
 
 
-def is_better_fscore(fscore: List[int], best_fscore: List[int]):
+def is_better_fscore(fscore: List[int], best_fscore: List[int]) -> bool:
     return fscore[0] > best_fscore[0] and fscore[1] > best_fscore[1]
 
 
-def is_better_loss(loss: float, best_loss: float):
+def is_better_loss(loss: float, best_loss: float) -> bool:
     return loss < best_loss if best_loss else True
 
 
@@ -26,9 +26,7 @@ def parse_config(path: Path):
 
 
 def get_device() -> torch.device:
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-    print(f'Runing on: {device}.')
-    return device
+    return torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 
 @contextmanager
