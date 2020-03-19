@@ -37,7 +37,7 @@ def main(dataset_keys, output_path):
         in_domain = params.get(IN_DOMAIN_KEY)
         lexical_split = params.get(LEXICAL_SPLIT_KEY, False)
 
-        (train, valid, test), keys = get_indices(
+        train, valid, test, keys = get_indices(
             keys_file=Path(dataset_keys),
             balanced=True,
             lexical_split=lexical_split,
