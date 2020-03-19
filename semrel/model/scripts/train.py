@@ -69,7 +69,7 @@ def main(config):
                 network = network.to(device)
                 optimizer = Adagrad(
                     network.parameters(),
-                    lr=config['net_params']['learning_rate']
+                    lr=config['learn_params']['learning_rate']
                 )
                 loss_func = nn.CrossEntropyLoss()
 
@@ -98,7 +98,7 @@ def main(config):
                     log_metrics(train_metrics, 'train', epoch)
 
                     # Validate
-                    valid_metrics, _ = evaluate(
+                    valid_metrics = evaluate(
                         network, loaders.valid, loss_func, device
                     )
                     log_metrics(valid_metrics, 'valid', epoch)
