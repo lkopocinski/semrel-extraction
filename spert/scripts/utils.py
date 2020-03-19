@@ -1,6 +1,6 @@
 from typing import Dict, List
 
-from entities import Relation
+from semrel.data.scripts.entities import Relation
 
 
 def in_same_context(relation: Relation) -> bool:
