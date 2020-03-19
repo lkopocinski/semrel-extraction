@@ -1,3 +1,13 @@
+PHRASE_LENGTH_LIMIT = 5
+MASK_KEY = 'MASK'
+
+# corpus
+SUBSTANTIVE_KEY = 'subst'
+TAGSET_KEY = 'nkjp'
+NAMED_ENTITY_KEY = 'NAMED_ENTITY'
+NER_RELATION_KEY = 'NER relation'
+
+# relations
 IN_RELATION_LABEL = 'in_relation'
 NO_RELATION_LABEL = 'no_relation'
 
