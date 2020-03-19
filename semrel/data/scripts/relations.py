@@ -152,7 +152,7 @@ class RelationsLoader:
 
                 yield label, id_domain, relation
 
-    def _filter_relations(self, filter_label: str) -> Dict[int, Relation]:
+    def filter_relations(self, filter_label: str) -> Dict[int, Relation]:
         """Experimental feature"""
         relations_dict = {}
         index = 0
