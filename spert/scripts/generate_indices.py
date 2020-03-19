@@ -17,7 +17,7 @@ def get_indices(
         lexical_split: bool = False,
         in_domain: str = None,
         random_seed: int = 42
-) -> Tuple[Tuple[List, List, List], Dict[int, str]]:
+) -> Tuple[List, List, List, Dict[int, str]]:
     keys = BrandProductDataset._load_keys(keys_file)
     ds_generator = DatasetGenerator(keys, random_seed)
     train, valid, test = ds_generator.generate_datasets(
