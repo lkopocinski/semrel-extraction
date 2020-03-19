@@ -56,10 +56,8 @@ class DatasetGenerator:
         return {
             index
             for index in indices
-            if (
-                    self.dataset_keys[index][4] in channels
-                    or self.dataset_keys[index][9] in channels
-            )
+            if (self.dataset_keys[index][4] in channels
+                or self.dataset_keys[index][9] in channels)
         }
 
     def _split(self, indices) -> Tuple[List, List, List]:
@@ -257,9 +255,7 @@ def get_loaders(
 
     )
 
-    return Loaders(
-            train=train_loader,
-            valid=valid_loader,
-            test=test_loader,
-            vector_size=dataset.vector_size
-        )
+    return Loaders(train=train_loader,
+                   valid=valid_loader,
+                   test=test_loader,
+                   vector_size=dataset.vector_size)

@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 
 from semrel.model import runs
 from semrel.model.scripts import RelNet
-from semrel.model.scripts.utils import parse_config, get_device, \
+from semrel.model.scripts.utils.utils import parse_config, get_device, \
     is_better_loss, ignored
 from semrel.model.scripts.utils.data_loader import get_loaders
 from semrel.model.scripts.utils.metrics import Metrics

@@ -117,22 +117,13 @@ class RelationsGenerator:
 
     def _are_in_relation(
             self, member_from: Member, member_to: Member, relations: List
-    ):
-        return member_from and member_to and (
-                Relation(
-                    self._document.id,
-                    member_from,
-                    member_to
-                ) in relations
-
-                or
-
-                Relation(
-                    self._document.id,
-                    member_to,
-                    member_from
-                ) in relations
-        )
+    ) -> bool:
+        if not (member_from and member_to):
+            return False
+        else:
+            rel_from_to = Relation(self._document.id, member_from, member_to)
+            rel_to_from = Relation(self._document.id, member_to, member_from)
+            return rel_from_to in relations or rel_to_from in relations
 
 
 class RelationsLoader:

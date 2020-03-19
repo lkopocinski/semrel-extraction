@@ -58,8 +58,10 @@ def map_relations(
         for relation in diff_context_relations
     ]
 
-    spert_relations = spert_same_context_relations + spert_diff_context_relations
-    spert_keys = spert_same_context_relations_keys + spert_diff_context_relations_keys
+    spert_relations = (spert_same_context_relations
+                       + spert_diff_context_relations)
+    spert_keys = (spert_same_context_relations_keys
+                  + spert_diff_context_relations_keys)
 
     return generate_spert_jsons(spert_relations, spert_keys)
 
