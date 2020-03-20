@@ -1,0 +1,7 @@
+md5: 1208e7e581bdffa6e8bb1feb8c76004b
+outs:
+- md5: 554db712988ad5ce544d40ca32cde01a.dir
+  path: semrel/data/data/elmo
+  cache: true
+  metric: false
+  persist: false
