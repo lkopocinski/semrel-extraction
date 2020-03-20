@@ -1,0 +1,7 @@
+md5: f5b640a205f82fa6af38883643fb401e
+outs:
+- md5: 8c7366784929b1b98e955c44d1e104df.dir
+  path: semrel/data/data/corpora
+  cache: true
+  metric: false
+  persist: false

@@ -12,7 +12,6 @@ OUTPUT_PATH="${OUTPUT_DIR}/indices.json"
 mkdir -p ${OUTPUT_DIR}
 
 dvc run \
-  -d ${DATA_DIR} \
   -d ${VECTORS_DIR} \
   -d ${SCRIPTS_DIR}/generate_indices.py \
   -o ${OUTPUT_PATH} \
