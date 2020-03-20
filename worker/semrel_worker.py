@@ -1,16 +1,18 @@
+import logging
 import os
+from typing import Iterator
 
 import nlp_ws
-import torch
 from corpus_ccl import cclutils
 
-from scripts import ElmoVectorizer, FastTextVectorizer
-from worker.extractor import Parser, NounExtractor, NERxtractor
-from scripts import RelNet
+from semrel.data.scripts.corpus import Document
+from semrel.data.scripts.vectorizers import ElmoVectorizer
+from semrel.model.scripts import RelNet
+from semrel.model.scripts.utils.utils import get_device
+from worker.extractor import Parser, NounExtractor
+from worker.prediction import Predictor
 
-
-def get_device():
-    return torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+_log = logging.getLogger(__name__)
 
 
 def load_model(model_path, vector_size=2648) -> RelNet:
@@ -20,85 +22,68 @@ def load_model(model_path, vector_size=2648) -> RelNet:
     return net
 
 
-def documents(fileindex: str):
-    with open(fileindex, 'r', encoding='utf-8') as f:
-        paths = [line.strip() for line in f if os.path.exists(line.strip())]
-    return (cclutils.read_ccl(path) for path in paths)
-
-
-class Predictor(object):
-
-    def __init__(self, net_model, elmo, fasttext, device='cpu'):
-        self._net = net_model
-        self._elmo = elmo
-        self._fasttext = fasttext
-        self.device = device
-
-    def _make_vectors(self, pair):
-        (idx1, ctx1), (idx2, ctx2) = pair
-        print(pair)
-        ev1 = self._elmo.embed(ctx1)[idx1]
-        ev2 = self._elmo.embed(ctx2)[idx2]
-
-        fv1 = self._fasttext.embed(ctx1)[idx1]
-        fv2 = self._fasttext.embed(ctx2)[idx2]
-
-        v = torch.cat([ev1, ev2, fv1, fv2])
-        return v.to(self.device)
-
-    def _predict(self, vectors):
-        with torch.no_grad():
-            prediction = self._net(vectors)
-            prediction = torch.argmax(prediction)
-            return prediction.item()
-
-    def predict(self, pair):
-        vectors = self._make_vectors(pair)
-        return self._predict(vectors)
-
-
 class SemrelWorker(nlp_ws.NLPWorker):
 
     @classmethod
     def static_init(cls, config):
-        cls.elmo = ElmoVectorizer(
-            options_path=os.getenv('ELMO_MODEL_OPTIONS'),
-            weights_path=os.getenv('ELMO_MODEL_WEIGHTS')
+        pass
+
+    def init(self):
+        _log.critical("Started loading models.")
+        _log.critical("Loading ELMO ...")
+
+        self.elmo = ElmoVectorizer(
+            options=os.getenv('ELMO_MODEL_OPTIONS'),
+            weights=os.getenv('ELMO_MODEL_WEIGHTS')
         )
 
-        cls.fasttext = FastTextVectorizer(
-            model_path=os.getenv('FASTTEXT_MODEL')
-        )
+        # _log.critical("Loading FASTTEXT ...")
+        self.fasttext = None
+        # self.fasttext = FastTextVectorizer(
+        #     model_path=os.getenv('FASTTEXT_MODEL')
+        # )
+        # _log.critical("Finished loading models.")
 
-    def process(self, input_path, task_options, output_path):
+    def process(self, input_path: str, task_options: dict, output_path: str):
+        extractor = self._get_extractor(task_options)
+        parser = Parser(extractor)
+        predictions = self.predict(input_path, parser)
+
+        self.save_predictions(predictions, output_path)
+
+    def _get_extractor(self, task_options: dict):
         if task_options.get('ner', False):
-            extractor = NERxtractor()
+            extractor = NerExtractor()
         else:
             extractor = NounExtractor()
+        return extractor
 
-        predictions = self.predict(input_path, Parser(extractor))
-
-        with open(output_path, 'w', encoding='utf-8') as f:
-            for pred in predictions:
-                f.write(pred)
-
-    def predict(self, fileindex, parser):
+    def predict(self, path: str, parser: Parser):
+        _log.critical("Loading net model ...")
         device = get_device()
         net = load_model(os.getenv('PREDICTION_MODEL'))
         net = net.to(device)
+        _log.critical("Net model loaded " + str(net))
 
         predictor = Predictor(net, self.elmo, self.fasttext, device)
 
-        for doc in documents(fileindex):
-            for pair in parser(doc):
-                decision = predictor.predict(pair)
-                (f_idx, f_ctx), (s_idx, s_ctx) = pair
+        document = Document(cclutils.read_ccl(path))
+        for pair in parser(document):
+            decision = predictor.predict(pair)
 
-                orth_from = f_ctx[f_idx]
-                orth_to = s_ctx[s_idx]
-                yield f'{orth_from}\t{orth_to}: {decision}\n'
+            (f_idx, f_ctx), (s_idx, s_ctx) = pair
+            orth_from = f_ctx[f_idx]
+            orth_to = s_ctx[s_idx]
+
+            _log.critical(f'{orth_from}\t{orth_to}: {decision}\n')
+            yield f'{orth_from}\t{orth_to}: {decision}\n'
+
+    def save_predictions(self, predictions: Iterator, output_path: str):
+        with open(output_path, 'w', encoding='utf-8') as out_file:
+            for pred in predictions:
+                out_file.write(pred)
 
 
 if __name__ == '__main__':
-    print('Start')
+    _log.critical("Start semrel prediction.")
     nlp_ws.NLPService.main(SemrelWorker)

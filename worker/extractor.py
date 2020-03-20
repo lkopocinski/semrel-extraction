@@ -77,10 +77,10 @@ class NounExtractor(ExtractorType):
         return matched
 
 
-class NERxtractor(ExtractorType):
+class NERExtractor(ExtractorType):
 
-    def __init__(self, name='NEExtractor'):
-        super(NERxtractor, self).__init__(name)
+    def __init__(self, name='NERExtractor'):
+        super(NERExtractor, self).__init__(name)
 
     def _extract(self, context):
         matched = []
