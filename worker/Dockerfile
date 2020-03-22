@@ -26,7 +26,7 @@ RUN apt update && apt install -y dvc
 
 # download resources
 WORKDIR /home/
-COPY ./credentials /root/.aws/credentials
+COPY ./deps/credentials /root/.aws/credentials
 RUN dvc get https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction --rev lkopocinski/code-clean-up semrel/data/data/elmo
 RUN dvc get https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction --rev lkopocinski/code-clean-up semrel/data/data/fasttext
 

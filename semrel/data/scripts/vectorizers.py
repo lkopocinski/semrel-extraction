@@ -18,8 +18,10 @@ class Vectorizer(abc.ABC):
 
 class ElmoVectorizer(Vectorizer):
 
-    def __init__(self, options_path: str, weights_path: str):
-        self.model = ElmoEmbedder(options_path, weights_path, cuda_device=0)
+    def __init__(self, options_path: str, weights_path: str, device: int = 0):
+        self.model = ElmoEmbedder(
+            options_path, weights_path, cuda_device=device
+        )
 
     def embed(self, context: List[str]) -> torch.Tensor:
         vectors = self.model.embed_sentence(context)

@@ -1,21 +1,23 @@
 import logging
-import os
-from typing import Iterator
+from pathlib import Path
+from typing import Dict, Iterator
 
 import nlp_ws
 from corpus_ccl import cclutils
 
 from semrel.data.scripts.corpus import Document
-from semrel.data.scripts.vectorizers import ElmoVectorizer
+from semrel.data.scripts.utils.io import save_lines
+from semrel.data.scripts.vectorizers import ElmoVectorizer, FastTextVectorizer
 from semrel.model.scripts import RelNet
 from semrel.model.scripts.utils.utils import get_device
-from worker.extractor import Parser, NounExtractor
-from worker.prediction import Predictor
+from worker.scripts import constant
+from worker.scripts.extractor import Parser, find_named_entities, find_nouns
+from worker.scripts.prediction import Predictor
 
 _log = logging.getLogger(__name__)
 
 
-def load_model(model_path, vector_size=2648) -> RelNet:
+def load_model(model_path: str, vector_size: int = 2648) -> RelNet:
     net = RelNet(in_dim=vector_size)
     net.load(model_path)
     net.eval()
@@ -29,59 +31,55 @@ class SemrelWorker(nlp_ws.NLPWorker):
         pass
 
     def init(self):
-        _log.critical("Started loading models.")
-        _log.critical("Loading ELMO ...")
+        _log.critical("Loading models.")
+        self._device = get_device()
 
-        self.elmo = ElmoVectorizer(
-            options=os.getenv('ELMO_MODEL_OPTIONS'),
-            weights=os.getenv('ELMO_MODEL_WEIGHTS')
+        _log.critical("Loading ELMO model ...")
+        self._elmo = ElmoVectorizer(
+            options_path=constant.ELMO_MODEL_OPTIONS,
+            weights_path=constant.ELMO_MODEL_WEIGHTS,
+            device=self._device.index
         )
 
-        # _log.critical("Loading FASTTEXT ...")
-        self.fasttext = None
-        # self.fasttext = FastTextVectorizer(
-        #     model_path=os.getenv('FASTTEXT_MODEL')
-        # )
-        # _log.critical("Finished loading models.")
+        _log.critical("Loading FASTTEXT model ...")
+        self._fasttext = FastTextVectorizer(
+            model_path=constant.FASTTEXT_MODEL
+        )
 
-    def process(self, input_path: str, task_options: dict, output_path: str):
-        extractor = self._get_extractor(task_options)
-        parser = Parser(extractor)
-        predictions = self.predict(input_path, parser)
+        _log.critical("Loading models completed.")
 
-        self.save_predictions(predictions, output_path)
+    def process(self, input_path: str, task_options: Dict, output_path: str):
+        # load model
+        net = load_model(constant.PREDICTION_MODEL)
+        net = net.to(self._device)
 
-    def _get_extractor(self, task_options: dict):
-        if task_options.get('ner', False):
-            extractor = NerExtractor()
+        if task_options.get(constant.NER_KEY, False):
+            parser = Parser(find_named_entities)
         else:
-            extractor = NounExtractor()
-        return extractor
+            parser = Parser(find_nouns)
 
-    def predict(self, path: str, parser: Parser):
-        _log.critical("Loading net model ...")
-        device = get_device()
-        net = load_model(os.getenv('PREDICTION_MODEL'))
-        net = net.to(device)
-        _log.critical("Net model loaded " + str(net))
+        predictor = Predictor(net, self._elmo, self._fasttext)
 
-        predictor = Predictor(net, self.elmo, self.fasttext, device)
+        document = Document(cclutils.read_ccl(input_path))
+        for indices_context in parser(document):
+            predictions = predictor.predict(indices_context)
 
-        document = Document(cclutils.read_ccl(path))
-        for pair in parser(document):
-            decision = predictor.predict(pair)
+        # save predictions
+        save_lines(Path(output_path), predictions)
 
-            (f_idx, f_ctx), (s_idx, s_ctx) = pair
-            orth_from = f_ctx[f_idx]
-            orth_to = s_ctx[s_idx]
-
-            _log.critical(f'{orth_from}\t{orth_to}: {decision}\n')
-            yield f'{orth_from}\t{orth_to}: {decision}\n'
-
-    def save_predictions(self, predictions: Iterator, output_path: str):
-        with open(output_path, 'w', encoding='utf-8') as out_file:
-            for pred in predictions:
-                out_file.write(pred)
+    # def _predict(self, predictor: Predictor, pairs: Iterator):
+    #     pairs = list(pairs)
+    #     members_from, members_to = zip(*pairs)
+    #     orths_from = [context[index] for index, context in members_from]
+    #     orths_to = [context[index] for index, context in members_to]
+    #
+    #     predictions = [predictor.predict(pair) for pair in pairs]
+    #
+    #     return [
+    #         f'{orth_from}\t{orth_to}: {decision}\n'
+    #         for orth_from, orth_to, decision
+    #         in zip(orths_from, orths_to, predictions)
+    #     ]
 
 
 if __name__ == '__main__':
