@@ -2,7 +2,7 @@
 
 pushd "$(git rev-parse --show-toplevel)"
 
-CORPORA_DIR="./semrel/data/data/corpora/000"
+CORPORA_DIR="./semrel/data/data/corpora"
 OUTPUT_FILE="./semrel/data/data/relations.files.list"
 
 dvc run \
