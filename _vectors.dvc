@@ -1,43 +1,43 @@
-md5: 308cec2b9fc6214de61d944908a33fbc
+md5: be08d688e6409f335151e7e21bf7cb0c
 cmd: CUDA_VISIBLE_DEVICES=0 ./semrel/data/scripts/cli/embedd_relations.py --input-path
   ./semrel/data/data/relations/relations.tsv --elmo-map ./semrel/data/data/maps/elmo.map.keys
   ./semrel/data/data/maps/elmo.map.pt --fasttext-map ./semrel/data/data/maps/fasttext.map.keys
   ./semrel/data/data/maps/fasttext.map.pt --retrofit-map ./semrel/data/data/maps/retrofit.map.keys
   ./semrel/data/data/maps/retrofit.map.pt --output-dir ./semrel/data/data/vectors
 deps:
-- md5: 9f143991d477536ee442ceea00338dc3
+- md5: 1f97be140dcfa90a912c0aea2fe1d502
   path: semrel/data/data/relations/relations.tsv
 - md5: 3b6cedb5638139cddf43e24a01b31419
   path: semrel/data/scripts/cli/embedd_relations.py
-- md5: a0f386d5211002cd1ff97d1009637cbe.dir
+- md5: b6de9c8a19585412edfc1c4a93feed78.dir
   path: semrel/data/data/maps
 outs:
-- md5: 10cf459c70dacaf961c928147383cdf9
+- md5: 3b0e670c1466e7b44e40b6a30160d0e5
   path: semrel/data/data/vectors/elmo.rel.keys
   cache: true
   metric: false
   persist: false
-- md5: 18c4dc44242424ff7b49a0b295f6e5b7
+- md5: 4b09441d5e41686fb049ade57b5a4103
   path: semrel/data/data/vectors/elmo.rel.pt
   cache: true
   metric: false
   persist: false
-- md5: 10cf459c70dacaf961c928147383cdf9
+- md5: 3b0e670c1466e7b44e40b6a30160d0e5
   path: semrel/data/data/vectors/fasttext.rel.keys
   cache: true
   metric: false
   persist: false
-- md5: 7f76783776eb6239a55b42afa6c24c82
+- md5: 43a869894a3a208e89c435a048daf562
   path: semrel/data/data/vectors/fasttext.rel.pt
   cache: true
   metric: false
   persist: false
-- md5: 10cf459c70dacaf961c928147383cdf9
+- md5: 3b0e670c1466e7b44e40b6a30160d0e5
   path: semrel/data/data/vectors/retrofit.rel.keys
   cache: true
   metric: false
   persist: false
-- md5: 5de4cfab54a1e67aef4e81eb0177bdfd
+- md5: ccda8b1c07e0f06e00f61e3e6e869e2e
   path: semrel/data/data/vectors/retrofit.rel.pt
   cache: true
   metric: false

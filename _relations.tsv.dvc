@@ -1,15 +1,15 @@
-md5: 39e778edd425dda90b962684ef9a1acf
+md5: b4f221037aedcb8dece9c37bc93fab80
 cmd: CUDA_VISIBLE_DEVICES=0 ./semrel/data/scripts/cli/generate_relations.py --input-path
   ./semrel/data/data/relations.files.list --output-path ./semrel/data/data/relations/relations.tsv
 deps:
-- md5: 157a217de2adc49fcc72e3ed8b5d86bb
+- md5: e34115c7c699baaf15c97ca5364ad554
   path: semrel/data/data/relations.files.list
 - md5: d9666f218a44a6001428420a830f250b
   path: semrel/data/scripts/cli/generate_relations.py
 - md5: 248d917ea0798532020a401c8b2060f3
   path: semrel/data/scripts/relations.py
 outs:
-- md5: 9f143991d477536ee442ceea00338dc3
+- md5: 1f97be140dcfa90a912c0aea2fe1d502
   path: semrel/data/data/relations/relations.tsv
   cache: true
   metric: false
