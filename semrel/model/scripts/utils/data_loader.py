@@ -115,9 +115,9 @@ class DatasetGenerator:
             self, positives: Set, negatives: Set
     ) -> Tuple[List, List, List]:
         # 6 - lemma of left argument,
-        # 10 - lemma of right argument
+        # 11 - lemma of right argument
         # 4 - channel name for left argument
-        # 8 - channel name for right argument
+        # 9 - channel name for right argument
         train, valid, test = [], [], []
         nns_and_nps_indices = []
         brands_indices = defaultdict(list)
@@ -178,7 +178,8 @@ class DatasetGenerator:
             ]
         elif out_domain:
             raise NotImplementedError(
-                f'Out domain dataset split not implemented.')
+                f'Out domain dataset split not implemented.'
+            )
         else:
             indices = self.dataset_keys.keys()
 
