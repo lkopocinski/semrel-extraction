@@ -27,8 +27,8 @@ RUN apt update && apt install -y dvc
 # download resources
 WORKDIR /home/
 COPY ./deps/credentials /root/.aws/credentials
-RUN dvc get https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction --rev lkopocinski/code-clean-up semrel/data/data/elmo
-RUN dvc get https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction --rev lkopocinski/code-clean-up semrel/data/data/fasttext
+RUN dvc get https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction --rev lkopocinski/worker semrel/data/data/elmo
+RUN dvc get https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction --rev lkopocinski/worker semrel/data/data/fasttext
 
 ENV ELMO_MODEL_OPTIONS="/home/elmo/options.json"
 ENV ELMO_MODEL_WEIGHTS="/home/elmo/weights.hdf5"
@@ -93,5 +93,5 @@ ENV PREDICTION_MODEL="/home/model.pt"
 # install dependencies used in worker
 RUN git clone https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction.git && \
     cd semrel-extraction && \
-    git checkout --track origin/lkopocinski/code-clean-up && \
+    git checkout --track origin/lkopocinski/worker && \
     python3.6 setup.py install
