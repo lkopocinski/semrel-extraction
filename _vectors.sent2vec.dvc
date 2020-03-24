@@ -1,0 +1,23 @@
+md5: bf87f0672762ca73c4cf5a64886eab0f
+cmd: CUDA_VISIBLE_DEVICES=0 ./semrel/data/scripts/cli/make_sent2vec_map.py --relations-file
+  ./semrel/data/data/relations/relations.tsv --documents-files ./semrel/data/data/relations.files.list
+  --model ./semrel/data/data/sent2vec/kgr10.bin --output-paths ./semrel/data/data/vectors/sent2vec.rel.keys
+  ./semrel/data/data/vectors/sent2vec.rel.pt
+deps:
+- md5: 1f97be140dcfa90a912c0aea2fe1d502
+  path: semrel/data/data/relations/relations.tsv
+- md5: e34115c7c699baaf15c97ca5364ad554
+  path: semrel/data/data/relations.files.list
+- md5: 6143026d334ec949aaaf4192160e4aed
+  path: semrel/data/scripts/cli/make_sent2vec_map.py
+outs:
+- md5: 3b0e670c1466e7b44e40b6a30160d0e5
+  path: semrel/data/data/vectors/sent2vec.rel.keys
+  cache: true
+  metric: false
+  persist: false
+- md5: ee24cbccd8e51c1afbb8955619cc76be
+  path: semrel/data/data/vectors/sent2vec.rel.pt
+  cache: true
+  metric: false
+  persist: false

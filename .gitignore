@@ -12,5 +12,11 @@ dist
 
 *.map
 *.pt
+*.keys
 
 credentials
+
+.tox
+
+semrel/data/data
+spert/data

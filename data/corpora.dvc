@@ -1,7 +1,0 @@
-md5: 95fe168079b050fcce6805511c009149
-outs:
-- md5: fec63c0bd1ca725b1ed49e3df15abb13.dir
-  path: corpora
-  cache: true
-  metric: false
-  persist: false

@@ -1,0 +1,19 @@
+md5: 435f9e42b38fb833eaf3b9b6af4f72ae
+cmd: ./semrel/data/scripts/cli/make_ner_map.py --relations-file ./semrel/data/data/relations/relations.tsv
+  --output-paths ./semrel/data/data/vectors/ner.rel.keys ./semrel/data/data/vectors/ner.rel.pt
+deps:
+- md5: 1f97be140dcfa90a912c0aea2fe1d502
+  path: semrel/data/data/relations/relations.tsv
+- md5: 1f0f59ff5cb80777a2912d3a0b26b494
+  path: semrel/data/scripts/cli/make_ner_map.py
+outs:
+- md5: 3b0e670c1466e7b44e40b6a30160d0e5
+  path: semrel/data/data/vectors/ner.rel.keys
+  cache: true
+  metric: false
+  persist: false
+- md5: 7ba176bb876bcb51673145a85c85f394
+  path: semrel/data/data/vectors/ner.rel.pt
+  cache: true
+  metric: false
+  persist: false

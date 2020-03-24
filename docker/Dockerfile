@@ -4,7 +4,7 @@ LABEL maintainer="Łukasz Kopocinski <lkopocinski@gmail.com>"
 RUN apt update && apt install -y software-properties-common && \
     add-apt-repository ppa:deadsnakes/ppa
 
-
+# default ubuntu packages
 RUN apt update && apt install -y \
     bison \
     build-essential \
@@ -29,11 +29,19 @@ RUN apt update && apt install -y \
     python3.6-dev \
     python3.6-venv \
     ranger \
-    subversion \
     swig \
     wget \
     vim
 
+
+# locale
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+
+# python3.6
 RUN update-alternatives --install \
     /usr/bin/python python /usr/bin/python3.6 10 && \
     wget https://bootstrap.pypa.io/get-pip.py && \
@@ -41,7 +49,16 @@ RUN update-alternatives --install \
     rm get-pip.py && \
     pip install --upgrade pip
 
-# Morfeusz
+
+# requirements
+WORKDIR /home/install
+ENV PIP_EXTRA_INDEX_URL "https://pypi.clarin-pl.eu/"
+COPY deps/requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+
+
+# morfeusz
+WORKDIR /home/install
 RUN wget -O - http://download.sgjp.pl/apt/sgjp.gpg.key|sudo apt-key add - && \
     apt-add-repository http://download.sgjp.pl/apt/ubuntu && apt update && \
     apt install -y *morfeusz2*
@@ -57,7 +74,7 @@ RUN mkdir morfeusz/ && cd morfeusz/ && \
     cd /home/install && \
     rm -rf morfeusz-sgjp
 
-# Corpus2
+# corpus2
 WORKDIR /home/install
 RUN git clone http://nlp.pwr.edu.pl/corpus2.git && \
     cd corpus2/ && \
@@ -71,7 +88,7 @@ RUN git clone http://nlp.pwr.edu.pl/corpus2.git && \
     cd /home/install && \
     rm -rf corpus2
 
-# Toki
+# toki
 WORKDIR /home/install
 RUN git clone http://nlp.pwr.edu.pl/toki.git && \
     cd toki/ && \
@@ -85,7 +102,7 @@ RUN git clone http://nlp.pwr.edu.pl/toki.git && \
     cd /home/install && \
     rm -rf toki
 
-# Maca
+# maca
 WORKDIR /home/install
 RUN git clone https://gitlab.clarin-pl.eu/analysers/maca.git && \
     cd maca && \
@@ -98,7 +115,7 @@ RUN git clone https://gitlab.clarin-pl.eu/analysers/maca.git && \
     cd /home/install && \
     rm -rf maca
 
-# Wccl
+# wccl
 WORKDIR /home/install
 RUN git clone http://nlp.pwr.edu.pl/wccl.git && \
     cd wccl/ && \
@@ -112,18 +129,6 @@ RUN git clone http://nlp.pwr.edu.pl/wccl.git && \
     cd /home/install && \
     rm -rf wccl
 
-
-RUN locale-gen en_US.UTF-8
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
-ENV MLFLOW_TRACKING_URI "http://10.17.50.132:8080"
-ENV MLFLOW_S3_ENDPOINT_URL=https://minio.clarin-pl.eu
-ENV PIP_EXTRA_INDEX_URL "https://pypi.clarin-pl.eu/"
-
-COPY requirements.txt /
-RUN pip install -r /requirements.txt
-
-
 # sent2vec
 WORKDIR /home/install
 RUN git clone https://github.com/epfml/sent2vec.git && \
@@ -132,7 +137,4 @@ RUN git clone https://github.com/epfml/sent2vec.git && \
     cd /home/install && \
     rm -rf sent2vec
 
-COPY credentials /root/.aws/credentials
-
-WORKDIR /
-ENTRYPOINT ["/bin/bash"]
+WORKDIR /semrel-extraction 

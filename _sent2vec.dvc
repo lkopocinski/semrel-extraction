@@ -1,0 +1,7 @@
+md5: 39be35ee4d87c8fd497d255af6cd6968
+outs:
+- md5: b44cd38cdc97474a008db8f6995df30a.dir
+  path: semrel/data/data/sent2vec
+  cache: true
+  metric: false
+  persist: false

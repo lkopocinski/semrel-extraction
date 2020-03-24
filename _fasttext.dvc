@@ -1,0 +1,7 @@
+md5: 98ed9f4d303600a6be92178081f39a22
+outs:
+- md5: d1e20ac9018c3de356cb1ed1c38674a4.dir
+  path: semrel/data/data/fasttext
+  cache: true
+  metric: false
+  persist: false

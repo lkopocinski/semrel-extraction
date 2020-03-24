@@ -1,7 +1,0 @@
-md5: b4269061f70f06caf22b273745c52b3c
-outs:
-- md5: d1e20ac9018c3de356cb1ed1c38674a4.dir
-  path: fasttext
-  cache: true
-  metric: false
-  persist: false
