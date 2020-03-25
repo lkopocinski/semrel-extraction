@@ -26,7 +26,7 @@ class Predictor:
         vectors = []
 
         for indices, context in indices_context:
-            _orths = [
+            orths_pairs = [
                 orth
                 for index, orth in enumerate(context)
                 if index in indices
@@ -37,7 +37,7 @@ class Predictor:
             _vectors_elmo = _vectors_elmo[indices]
             _vectors_fasttext = _vectors_fasttext[indices]
 
-            orths.extend(_orths)
+            orths.extend(orths_pairs)
             vectors.append((_vectors_elmo, _vectors_fasttext))
 
         vectors_elmo, vectors_fasttext = zip(*vectors)
@@ -59,14 +59,16 @@ class Predictor:
 
         vector = torch.cat([elmo_vectors, fasttext_vectors], 1)
 
-        return vector.to(self._device)
+        orths_pairs = [(orths[idx_f], orths[idx_t])
+                  for idx_f, idx_t in zip(idx_from, idx_to)]
+        return orths_pairs, vector.to(self._device)
 
     def _predict(self, vectors: torch.Tensor):
         with torch.no_grad():
             predictions = self._net(vectors)
-            predictions = torch.argmax(predictions)
-            return predictions
+            return torch.argmax(predictions)
 
     def predict(self, indices_context: List[Tuple]):
-        vectors = self._make_vectors(indices_context)
-        return self._predict(vectors)
+        orths, vectors = self._make_vectors(indices_context)
+        predictions = self._predict(vectors)
+        return zip(orths, predictions)

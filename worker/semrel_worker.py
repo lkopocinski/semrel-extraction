@@ -41,11 +41,10 @@ class SemrelWorker(nlp_ws.NLPWorker):
             device=self._device.index
         )
 
-        self._fasttext = self._elmo
-        # _log.critical("Loading FASTTEXT model ...")
-        # self._fasttext = FastTextVectorizer(
-        #     model_path=constant.FASTTEXT_MODEL
-        # )
+        _log.critical("Loading FASTTEXT model ...")
+        self._fasttext = FastTextVectorizer(
+            model_path=constant.FASTTEXT_MODEL
+        )
 
         _log.critical("Loading models completed.")
 
@@ -66,23 +65,8 @@ class SemrelWorker(nlp_ws.NLPWorker):
             predictions = predictor.predict(indices_context)
             _log.critical(str(predictions))
 
-
         # save predictions
         # save_lines(Path(output_path), predictions)
-
-    # def _predict(self, predictor: Predictor, pairs: Iterator):
-    #     pairs = list(pairs)
-    #     members_from, members_to = zip(*pairs)
-    #     orths_from = [context[index] for index, context in members_from]
-    #     orths_to = [context[index] for index, context in members_to]
-    #
-    #     predictions = [predictor.predict(pair) for pair in pairs]
-    #
-    #     return [
-    #         f'{orth_from}\t{orth_to}: {decision}\n'
-    #         for orth_from, orth_to, decision
-    #         in zip(orths_from, orths_to, predictions)
-    #     ]
 
 
 if __name__ == '__main__':
