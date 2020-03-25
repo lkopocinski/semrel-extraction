@@ -8,20 +8,14 @@ from corpus_ccl import cclutils
 from semrel.data.scripts.corpus import Document
 from semrel.data.scripts.utils.io import save_lines
 from semrel.data.scripts.vectorizers import ElmoVectorizer
-from semrel.model.scripts import RelNet
 from semrel.model.scripts.utils.utils import get_device
 from worker.scripts import constant
-from worker.scripts.extractor import Parser, find_named_entities, find_nouns
+from worker.scripts.extractor import \
+    Parser, find_named_entities, find_nouns, SentenceWindow
 from worker.scripts.prediction import Predictor
+from worker.scripts.utils import load_model, format_output
 
 _log = logging.getLogger(__name__)
-
-
-def load_model(model_path: str, vector_size: int = 2048) -> RelNet:
-    net = RelNet(in_dim=vector_size)
-    net.load(model_path)
-    net.eval()
-    return net
 
 
 class SemrelWorker(nlp_ws.NLPWorker):
@@ -31,44 +25,39 @@ class SemrelWorker(nlp_ws.NLPWorker):
         pass
 
     def init(self):
-        _log.critical("Loading models.")
+        self._vector_size = 2048
+        self._window_size = 3
         self._device = get_device()
-
-        _log.critical("Loading ELMO model ...")
         self._elmo = ElmoVectorizer(
             options_path=constant.ELMO_MODEL_OPTIONS,
             weights_path=constant.ELMO_MODEL_WEIGHTS,
             device=self._device.index
         )
 
-        # _log.critical("Loading FASTTEXT model ...")
-        # self._fasttext = FastTextVectorizer(
-        #     model_path=constant.FASTTEXT_MODEL
-        # )
+    def process(
+            self, input_path: str, task_options: Dict, output_path: str
+    ) -> None:
+        net = load_model(
+            model_path=constant.PREDICTION_MODEL,
+            vector_size=self._vector_size,
+            device=self._device
+        )
 
-        _log.critical("Loading models completed.")
+        is_ner_task = task_options.get(constant.NER_KEY, False)
+        extractor = find_named_entities if is_ner_task else find_nouns
 
-    def process(self, input_path: str, task_options: Dict, output_path: str):
-        _log.critical("Load MODEL")
-        net = load_model(constant.PREDICTION_MODEL)
-        net = net.to(self._device)
-
-        if task_options.get(constant.NER_KEY, False):
-            parser = Parser(find_named_entities)
-        else:
-            parser = Parser(find_nouns)
-
+        slicer = SentenceWindow(window_size=self._window_size)
+        parser = Parser(slicer, extractor)
         predictor = Predictor(net, self._elmo, self._device)
 
         document = Document(cclutils.read_ccl(input_path))
-        for indices_context in parser(document):
-            orths, predictions = predictor.predict(indices_context)
-            lines = [
-                f'{orth_from} : {orth_to} - {prediction}'
-                for (orth_from, orth_to), prediction in zip(orths, predictions)
-            ]
-            # save predictions
-            save_lines(Path(output_path), lines, mode='a+')
+        orths, predictions = zip(*[
+            predictor.predict(indices_context)
+            for indices_context in parser(document)
+        ])
+
+        lines = format_output(orths, predictions)
+        save_lines(Path(output_path), lines, mode='a+')
 
 
 if __name__ == '__main__':

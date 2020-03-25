@@ -5,8 +5,6 @@ from typing import Deque, Tuple, Callable, List
 
 from semrel.data.scripts.corpus import Document, DocSentence
 
-WINDOW_SIZE = 3
-
 
 class Slicer(ABC):
 
@@ -38,8 +36,8 @@ class SentenceWindow(Slicer):
 
 class Parser:
 
-    def __init__(self, extractor: Callable):
-        self._slicer = SentenceWindow(window_size=WINDOW_SIZE)
+    def __init__(self, slicer: Slicer, extractor: Callable):
+        self._slicer = slicer
         self._extractor = extractor
 
     def __call__(self, document: Document) -> List[Tuple]:
