@@ -15,7 +15,7 @@ from worker.scripts.prediction import Predictor
 _log = logging.getLogger(__name__)
 
 
-def load_model(model_path: str, vector_size: int = 2648) -> RelNet:
+def load_model(model_path: str, vector_size: int = 2048) -> RelNet:
     net = RelNet(in_dim=vector_size)
     net.load(model_path)
     net.eval()

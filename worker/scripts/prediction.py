@@ -54,4 +54,4 @@ class Predictor:
     def predict(self, indices_context: List[Tuple]):
         orths, vectors = self._make_vectors(indices_context)
         predictions = self._predict(vectors)
-        return zip(orths, predictions)
+        return orths, predictions

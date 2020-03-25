@@ -85,10 +85,6 @@ ENV PIP_EXTRA_INDEX_URL "https://pypi.clarin-pl.eu/"
 COPY deps/requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
-# copy model
-COPY deps/model.pt model.pt
-ENV PREDICTION_MODEL="/home/model.pt"
-
 
 # sent2vec
 WORKDIR /home/install
@@ -104,3 +100,9 @@ RUN git clone https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction.git &
     cd semrel-extraction && \
     git checkout --track origin/lkopocinski/worker && \
     python3.6 setup.py install
+
+
+# copy model
+WORKDIR /home/
+COPY deps/model.pt model.pt
+ENV PREDICTION_MODEL="/home/model.pt"
