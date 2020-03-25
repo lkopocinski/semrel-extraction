@@ -25,7 +25,7 @@ class Predictor:
         orths = []
         vectors = []
 
-        for indices, context in zip(*indices_context):
+        for indices, context in indices_context:
             _orths = [
                 orth
                 for index, orth in enumerate(context)
@@ -46,18 +46,18 @@ class Predictor:
 
         size = len(orths)
 
-        idx_from, idx_to = zip(*list(permutations(range(size))))
+        idx_from, idx_to = zip(*list(permutations(range(size), 2)))
 
-        elmo_from = vectors_elmo[idx_from]
-        elmo_to = vectors_elmo[idx_to]
+        elmo_from = vectors_elmo[[*idx_from]]
+        elmo_to = vectors_elmo[[*idx_to]]
 
-        fasttext_from = vectors_fasttext[idx_from]
-        fasttext_to = vectors_fasttext[idx_to]
+        fasttext_from = vectors_fasttext[[*idx_from]]
+        fasttext_to = vectors_fasttext[[*idx_to]]
 
-        elmo_vectors = torch.cat([elmo_from, elmo_to])
-        fasttext_vectors = torch.cat([fasttext_from, fasttext_to])
+        elmo_vectors = torch.cat([elmo_from, elmo_to], 1)
+        fasttext_vectors = torch.cat([fasttext_from, fasttext_to], 1)
 
-        vector = torch.cat([elmo_vectors, fasttext_vectors])
+        vector = torch.cat([elmo_vectors, fasttext_vectors], 1)
 
         return vector.to(self._device)
 

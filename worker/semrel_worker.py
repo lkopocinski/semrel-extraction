@@ -41,7 +41,7 @@ class SemrelWorker(nlp_ws.NLPWorker):
             device=self._device.index
         )
 
-        self._fasttext = None
+        self._fasttext = self._elmo
         # _log.critical("Loading FASTTEXT model ...")
         # self._fasttext = FastTextVectorizer(
         #     model_path=constant.FASTTEXT_MODEL
@@ -63,8 +63,9 @@ class SemrelWorker(nlp_ws.NLPWorker):
 
         document = Document(cclutils.read_ccl(input_path))
         for indices_context in parser(document):
-            print(indices_context)
-            # predictions = predictor.predict(indices_context)
+            predictions = predictor.predict(indices_context)
+            _log.critical(str(predictions))
+
 
         # save predictions
         # save_lines(Path(output_path), predictions)
