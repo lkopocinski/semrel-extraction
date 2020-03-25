@@ -49,9 +49,9 @@ class Predictor:
     def _predict(self, vectors: torch.Tensor):
         with torch.no_grad():
             predictions = self._net(vectors)
-            return torch.argmax(predictions)
+            return torch.argmax(predictions, 1)
 
     def predict(self, indices_context: List[Tuple]):
         orths, vectors = self._make_vectors(indices_context)
         predictions = self._predict(vectors)
-        return orths, predictions
+        return orths, predictions.numpy()

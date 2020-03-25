@@ -1,10 +1,12 @@
 import logging
+from pathlib import Path
 from typing import Dict
 
 import nlp_ws
 from corpus_ccl import cclutils
 
 from semrel.data.scripts.corpus import Document
+from semrel.data.scripts.utils.io import save_lines
 from semrel.data.scripts.vectorizers import ElmoVectorizer
 from semrel.model.scripts import RelNet
 from semrel.model.scripts.utils.utils import get_device
@@ -60,11 +62,13 @@ class SemrelWorker(nlp_ws.NLPWorker):
 
         document = Document(cclutils.read_ccl(input_path))
         for indices_context in parser(document):
-            predictions = predictor.predict(indices_context)
-            _log.critical(str(predictions))
-
-        # save predictions
-        # save_lines(Path(output_path), predictions)
+            orths, predictions = predictor.predict(indices_context)
+            lines = [
+                f'{orth_from} : {orth_to} - {prediction}'
+                for (orth_from, orth_to), prediction in zip(orths, predictions)
+            ]
+            # save predictions
+            save_lines(Path(output_path), lines, mode='a+')
 
 
 if __name__ == '__main__':
