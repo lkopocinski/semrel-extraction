@@ -51,12 +51,12 @@ class SemrelWorker(nlp_ws.NLPWorker):
         predictor = Predictor(net, self._elmo, self._device)
 
         document = Document(cclutils.read_ccl(input_path))
-        orths, predictions = zip(*[
+        results = [
             predictor.predict(indices_context)
             for indices_context in parser(document)
-        ])
+        ]
 
-        lines = format_output(orths, predictions)
+        lines = format_output(results)
         save_lines(Path(output_path), lines, mode='a+')
 
 

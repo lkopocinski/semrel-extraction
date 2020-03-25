@@ -1,9 +1,9 @@
-from typing import List, Tuple
+from typing import List
 
-import numpy
 import torch
 
 from semrel.model.scripts import RelNet
+from worker.scripts.prediction import Results
 
 
 def load_model(
@@ -17,9 +17,10 @@ def load_model(
 
 
 def format_output(
-        orths: List[Tuple[str, str]], predictions: numpy.array
+        results: List[Results]
 ) -> List[str]:
     return [
         f'{orth_from} : {orth_to} - {prediction}'
+        for orths, predictions in results
         for (orth_from, orth_to), prediction in zip(orths, predictions)
     ]

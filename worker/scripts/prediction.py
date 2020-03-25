@@ -1,11 +1,16 @@
 from itertools import permutations
-from typing import Tuple, List
+from typing import Tuple, List, NamedTuple
 
 import numpy
 import torch
 
 from semrel.data.scripts.vectorizers import Vectorizer
 from semrel.model.scripts import RelNet
+
+
+class Results(NamedTuple):
+    orths: List[Tuple[str, str]]
+    predictions: numpy.array
 
 
 class Predictor:
@@ -60,7 +65,7 @@ class Predictor:
 
     def predict(
             self, indices_context: List[Tuple[List[int], List[str]]]
-    ) -> [List[Tuple[str, str]], numpy.array]:
+    ) -> Results:
         orths, vectors = self._make_vectors(indices_context)
         predictions = self._predict(vectors)
-        return orths, predictions
+        return Results(orths, predictions)
