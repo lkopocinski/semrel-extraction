@@ -3,7 +3,7 @@ from typing import Tuple, List
 
 import torch
 
-from semrel.data.scripts.vectorizers import ElmoVectorizer, FastTextVectorizer
+from semrel.data.scripts.vectorizers import Vectorizer
 from semrel.model.scripts import RelNet
 
 
@@ -12,55 +12,38 @@ class Predictor:
     def __init__(
             self,
             net_model: RelNet,
-            elmo: ElmoVectorizer,
-            fasttext: FastTextVectorizer,
+            vectorizer: Vectorizer,
             device: torch.device
     ):
         self._net = net_model
-        self._elmo = elmo
-        self._fasttext = fasttext
+        self._vectorizer = vectorizer
         self._device = device
 
-    def _make_vectors(self, indices_context: List[Tuple]):
-        orths = []
-        vectors = []
+    def _make_vectors(
+            self,
+            indices_context: List[Tuple]
+    ) -> Tuple[List[Tuple[str, str]], torch.Tensor]:
+        orths = [orth
+                 for indices, context in indices_context
+                 for index, orth in enumerate(context)
+                 if index in indices]
 
-        for indices, context in indices_context:
-            orths_pairs = [
-                orth
-                for index, orth in enumerate(context)
-                if index in indices
-            ]
-            _vectors_elmo = self._elmo.embed(context)
-            _vectors_fasttext = self._fasttext.embed(context)
+        vectors = [self._vectorizer.embed(context)[indices]
+                   for indices, context in indices_context]
+        vectors = torch.cat(vectors)
 
-            _vectors_elmo = _vectors_elmo[indices]
-            _vectors_fasttext = _vectors_fasttext[indices]
+        orths_size = len(orths)
+        orths_indices = range(orths_size)
+        indices_pairs = [*permutations(orths_indices, 2)]
+        idx_from, idx_to = zip(*indices_pairs)
 
-            orths.extend(orths_pairs)
-            vectors.append((_vectors_elmo, _vectors_fasttext))
-
-        vectors_elmo, vectors_fasttext = zip(*vectors)
-        vectors_elmo = torch.cat(vectors_elmo)
-        vectors_fasttext = torch.cat(vectors_fasttext)
-
-        size = len(orths)
-
-        idx_from, idx_to = zip(*list(permutations(range(size), 2)))
-
-        elmo_from = vectors_elmo[[*idx_from]]
-        elmo_to = vectors_elmo[[*idx_to]]
-
-        fasttext_from = vectors_fasttext[[*idx_from]]
-        fasttext_to = vectors_fasttext[[*idx_to]]
-
-        elmo_vectors = torch.cat([elmo_from, elmo_to], 1)
-        fasttext_vectors = torch.cat([fasttext_from, fasttext_to], 1)
-
-        vector = torch.cat([elmo_vectors, fasttext_vectors], 1)
+        vec_from = vectors[[*idx_from]]
+        vec_to = vectors[[*idx_to]]
+        vector = torch.cat([vec_from, vec_to], 1)
 
         orths_pairs = [(orths[idx_f], orths[idx_t])
-                  for idx_f, idx_t in zip(idx_from, idx_to)]
+                       for idx_f, idx_t in indices_pairs]
+
         return orths_pairs, vector.to(self._device)
 
     def _predict(self, vectors: torch.Tensor):

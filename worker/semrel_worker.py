@@ -1,13 +1,11 @@
 import logging
-from pathlib import Path
-from typing import Dict, Iterator
+from typing import Dict
 
 import nlp_ws
 from corpus_ccl import cclutils
 
 from semrel.data.scripts.corpus import Document
-from semrel.data.scripts.utils.io import save_lines
-from semrel.data.scripts.vectorizers import ElmoVectorizer, FastTextVectorizer
+from semrel.data.scripts.vectorizers import ElmoVectorizer
 from semrel.model.scripts import RelNet
 from semrel.model.scripts.utils.utils import get_device
 from worker.scripts import constant
@@ -41,10 +39,10 @@ class SemrelWorker(nlp_ws.NLPWorker):
             device=self._device.index
         )
 
-        _log.critical("Loading FASTTEXT model ...")
-        self._fasttext = FastTextVectorizer(
-            model_path=constant.FASTTEXT_MODEL
-        )
+        # _log.critical("Loading FASTTEXT model ...")
+        # self._fasttext = FastTextVectorizer(
+        #     model_path=constant.FASTTEXT_MODEL
+        # )
 
         _log.critical("Loading models completed.")
 
@@ -58,7 +56,7 @@ class SemrelWorker(nlp_ws.NLPWorker):
         else:
             parser = Parser(find_nouns)
 
-        predictor = Predictor(net, self._elmo, self._fasttext, self._device)
+        predictor = Predictor(net, self._elmo, self._device)
 
         document = Document(cclutils.read_ccl(input_path))
         for indices_context in parser(document):
