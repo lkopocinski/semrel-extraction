@@ -90,6 +90,15 @@ COPY deps/model.pt model.pt
 ENV PREDICTION_MODEL="/home/model.pt"
 
 
+# sent2vec
+WORKDIR /home/install
+RUN git clone https://github.com/epfml/sent2vec.git && \
+    cd sent2vec/ && \
+    pip install . && \
+    cd /home/install && \
+    rm -rf sent2vec
+
+
 # install dependencies used in worker
 RUN git clone https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction.git && \
     cd semrel-extraction && \

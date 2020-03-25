@@ -13,12 +13,13 @@ class Predictor:
             self,
             net_model: RelNet,
             elmo: ElmoVectorizer,
-            fasttext: FastTextVectorizer
+            fasttext: FastTextVectorizer,
+            device: torch.device
     ):
         self._net = net_model
         self._elmo = elmo
         self._fasttext = fasttext
-        self._device = self._net.get_device()
+        self._device = device
 
     def _make_vectors(self, indices_context: List[Tuple]):
         orths = []

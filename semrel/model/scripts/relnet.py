@@ -32,7 +32,7 @@ class RelNet(nn.Module):
         )
 
     def forward(self, x: torch.tensor):
-        """ x: a concatenation of word vectors """
+        """x: a concatenation of word vectors."""
         return self.net(x)
 
     def extract_layer_weights(self, layer_name: str):

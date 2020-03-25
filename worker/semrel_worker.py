@@ -41,15 +41,16 @@ class SemrelWorker(nlp_ws.NLPWorker):
             device=self._device.index
         )
 
-        _log.critical("Loading FASTTEXT model ...")
-        self._fasttext = FastTextVectorizer(
-            model_path=constant.FASTTEXT_MODEL
-        )
+        self._fasttext = None
+        # _log.critical("Loading FASTTEXT model ...")
+        # self._fasttext = FastTextVectorizer(
+        #     model_path=constant.FASTTEXT_MODEL
+        # )
 
         _log.critical("Loading models completed.")
 
     def process(self, input_path: str, task_options: Dict, output_path: str):
-        # load model
+        _log.critical("Load MODEL")
         net = load_model(constant.PREDICTION_MODEL)
         net = net.to(self._device)
 
@@ -58,14 +59,15 @@ class SemrelWorker(nlp_ws.NLPWorker):
         else:
             parser = Parser(find_nouns)
 
-        predictor = Predictor(net, self._elmo, self._fasttext)
+        predictor = Predictor(net, self._elmo, self._fasttext, self._device)
 
         document = Document(cclutils.read_ccl(input_path))
         for indices_context in parser(document):
-            predictions = predictor.predict(indices_context)
+            print(indices_context)
+            # predictions = predictor.predict(indices_context)
 
         # save predictions
-        save_lines(Path(output_path), predictions)
+        # save_lines(Path(output_path), predictions)
 
     # def _predict(self, predictor: Predictor, pairs: Iterator):
     #     pairs = list(pairs)
