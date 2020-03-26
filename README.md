@@ -1,51 +1,64 @@
 # Semrel Extraction
-A project focused on mining semantic relations.
+Repository contains a codebase used in research on the extraction of semantic relations (brand-product). 
+Research description and results are included in the paper: 
+["Brand-Product Relation Extraction Using Heterogeneous Vector Space Representations"](https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction/-/blob/develop/LREC_BP.pdf).  
 
-## Package tree
-
-+-- .dvc : contains config for Data Version Control   
-+-- data : contains all dataset, transformed data, vector models and data preparation pipeline scripts nr_*.sh are scripts with DVC pipeline command  
-|&nbsp;&nbsp;&nbsp;&nbsp;+-- scripts : scripts used to prepare data, called by .sh pipeline scripts  
-+-- docker : contains Docker file for entire project environment (not finished)  
-+-- relextr : contains training and testing scripts train.sh, test.sh - last scripts in DVC pipeline  
-|&nbsp;&nbsp;&nbsp;&nbsp;+-- evaluation : contains scripts for visual evaluation of a model (due to major changes in project api they could not working correctly)  
-|&nbsp;&nbsp;&nbsp;&nbsp;+-- model : contains code with neural network architecture, train, test scripts and utils for them  
-|&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;+-- config : contains config used as parametrization for train and test scripts, change in this file will impact dvc pipeline  
-|&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;+-- scripts : scripts  
-|&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;+-- model :  POJO classes  
-|&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;+-- utils : batches.py - batch loader, engines.py - implementation of different type of vectorizers, metrics.py - metrics holder  
 
 ## Frameworks
-To mage the project with ease consider familiarize with [DVC](https://dvc.org/doc) and [mlflow](https://mlflow.org/docs/latest/index.html) frameworks.  
+Two frameworks were used in the project. [DVC](https://dvc.org/doc) for versioning the datasets and [mlflow](https://mlflow.org/docs/latest/index.html) for tracking experiments.
+To manage the project with ease consider familiarize with them.  
+
+## Setup project
+
+To setup the project in your machine perform following commands
+
+Download repository: \
+`$ git clone https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction.git`
+
+Enter main folder: \
+`$ cd semrel-extraction`
+
+Download datasets related to actual commit: \
+`$ dvc pull`
+
+Then enter to docker folder: \
+`$ cd docker`
+
+Copy __credentials.template__ into __credentials__ files and fill with correct access keys.\
+`$ cp deps/credentials.template deps/credentials`
+
+Start docker: \
+`$ docker-compose up`   
+
 
 ## FAQ
-
 #### Where is data stored?
-Data is verisioned by DVC which works like a git. All data is stored on the remote storage (https://minio.clarin-pl.eu/minio/semrel/) in dvc folder.
+Data is versioned by [DVC](https://dvc.org/doc) which works like a git but for data. 
+All data is stored on the remote storage (https://minio.clarin-pl.eu/minio/semrel/) in dvc folder.
 To retrieve data execute:  
 
-$ git checkout [branch_name]  
-$ git dvc checkout  
+`$ git checkout [branch_name]`  
+`$ git dvc checkout`
 
 DVC will download all data related to actual commit.  
 
 #### How to train and test a model?
-Make changes in config [train.yaml, test.yaml] or any other dependent script. Do not forget to pass apropriate experiment_name and tags. Then in main repository directory execute:  
+There is a script __semrel/model/train.sh__ which starts training. 
+Adjust training params in __semrel/model/config.yaml__ and then execute.
+`$ ./train.sh`    
 
-$ dvc repro train.dvc  
-$ dvc repro test.dvc  
-
-Result will be automaticaly uploaded to mlflow server and visible at http://10.17.50.132:8080/ 
-Please commit files after each successful run as *.dvc metrics and model will change.  
-
+Training result will be automatically uploaded to mlflow server.
+   
 #### Do I need to setup anything on my machine?
-Yes, to make mlflow log artifacts properly set environment variable otherwise mlflow try to ping orginal Amazon S3 storage.  
+Yes, to make mlflow log artifacts properly set environment variable, 
+otherwise mlflow try to ping original Amazon S3 storage.  
 
-export MLFLOW_S3_ENDPOINT_URL=https://minio.clarin-pl.eu  
+`$ export MLFLOW_S3_ENDPOINT_URL=https://minio.clarin-pl.eu`  
 
-add also config file:
+add also config file filled with correct credentials:
 
-echo "[default]" > ~/.aws/credentials  
-echo "aws_access_key_id = access_key" >> ~/.aws/credentials  
-echo "aws_secret_access_key = secret_key" >> ~/.aws/credentials  
-
+```
+$ echo "[default]" > ~/.aws/credentials  
+$ echo "aws_access_key_id = access_key" >> ~/.aws/credentials  
+$ echo "aws_secret_access_key = secret_key" >> ~/.aws/credentials
+```  
