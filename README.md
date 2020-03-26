@@ -1,7 +1,8 @@
 # Semrel Extraction
 Repository contains a codebase used in research on the extraction of semantic relations (brand-product). 
 Research description and results are included in the paper: 
-["Brand-Product Relation Extraction Using Heterogeneous Vector Space Representations"](https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction/-/blob/develop/LREC_BP.pdf).  
+["Brand-Product Relation Extraction Using Heterogeneous Vector Space Representations"](https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction/-/blob/develop/LREC_BP.pdf) 
+published in [LREC2020](https://lrec2020.lrec-conf.org/en/) conference.  
 
 
 ## Frameworks
@@ -24,11 +25,20 @@ Download datasets related to actual commit: \
 Then enter to docker folder: \
 `$ cd docker`
 
-Copy __credentials.template__ into __credentials__ files and fill with correct access keys.\
+Copy __credentials.template__ into __credentials__ files and fill with correct access keys. \
 `$ cp deps/credentials.template deps/credentials`
 
 Start docker: \
-`$ docker-compose up`   
+`$ docker-compose up`
+
+
+## Repository packages
+Repository also contains code for additional functionalities:
+
+__docker__ - docker configuration and execution environment for semrel package. \
+__mlflow__ - configuration and execution environment for mlflow server used for tracking experiments. \
+__spert__ - scripts used to prepare dataset in format required to train [SpERT](https://github.com/markus-eberts/spert) model. \
+__worker__ - scripts and execution environment to use trained model as a worker. \ 
 
 
 ## FAQ
@@ -44,8 +54,8 @@ DVC will download all data related to actual commit.
 
 #### How to train and test a model?
 There is a script __semrel/model/train.sh__ which starts training. 
-Adjust training params in __semrel/model/config.yaml__ and then execute.
-`$ ./train.sh`    
+Adjust training params in __semrel/model/config.yaml__ and then execute:\
+`$ ./train.sh`
 
 Training result will be automatically uploaded to mlflow server.
    
