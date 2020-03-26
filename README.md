@@ -38,7 +38,7 @@ Repository also contains code for additional functionalities:
 __docker__ - docker configuration and execution environment for semrel package. \
 __mlflow__ - configuration and execution environment for mlflow server used for tracking experiments. \
 __spert__ - scripts used to prepare dataset in format required to train [SpERT](https://github.com/markus-eberts/spert) model. \
-__worker__ - scripts and execution environment to use trained model as a worker. \ 
+__worker__ - scripts and execution environment to use trained model as a worker.
 
 
 ## FAQ
@@ -67,8 +67,6 @@ otherwise mlflow try to ping original Amazon S3 storage.
 
 add also config file filled with correct credentials:
 
-```
-$ echo "[default]" > ~/.aws/credentials  
-$ echo "aws_access_key_id = access_key" >> ~/.aws/credentials  
-$ echo "aws_secret_access_key = secret_key" >> ~/.aws/credentials
-```  
+`$ echo "[default]" > ~/.aws/credentials`  
+`$ echo "aws_access_key_id = access_key" >> ~/.aws/credentials`  
+`$ echo "aws_secret_access_key = secret_key" >> ~/.aws/credentials`
