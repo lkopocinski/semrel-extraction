@@ -1,0 +1,12 @@
+version: '3'
+services:
+  semrel:
+    build: .
+    shm_size: '300gb'
+    volumes:
+      - ../../semrel-extraction:/semrel-extraction
+      - ./deps/credentials:/root/.aws/credentials
+    env_file:
+      - deps/mlflow.env
+    entrypoint:
+      - /bin/bash

@@ -1,19 +1,11 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-from setuptools import setup
+#!/usr/bin/env python3.6
+from setuptools import setup, find_packages
 
 setup(
-    name='relextr',
-    version='0.1.1',
-    author='Arkadiusz Janz',
-    author_email='arkadiusz.janz@pwr.edu.pl',
-    maintainer='Łukasz Kopociński',
-    maintainer_email='lukasz.kopocinski@pwr.edu.pl',
-    packages=[
-        'relextr',
-        'relextr.base',
-        'relextr.model',
-        'relextr.utils'
-    ],
+    name='semrel',
+    version='0.2.0',
+    author='Łukasz Kopociński',
+    author_email='lukasz.kopocinski@pwr.edu.pl',
+    packages=find_packages(),
     zip_safe=False
 )
