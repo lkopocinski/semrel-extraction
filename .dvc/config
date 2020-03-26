@@ -1,5 +1,6 @@
 ['remote "origin"']
 url = s3://semrel/dvc
 endpointurl = https://minio.clarin-pl.eu
+
 [core]
 remote = origin
