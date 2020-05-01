@@ -2,7 +2,9 @@
 Repository contains a codebase used in research on the extraction of semantic relations (brand-product). 
 Research description and results are included in the paper: 
 ["Brand-Product Relation Extraction Using Heterogeneous Vector Space Representations"](https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction/-/blob/develop/LREC_BP.pdf) 
-published in [LREC2020](https://lrec2020.lrec-conf.org/en/) conference.  
+published in [LREC2020](https://lrec2020.lrec-conf.org/en/) conference.
+
+Original repository used in development you can find [here](https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction).   
 
 ## Frameworks
 Two frameworks were used in the project. [DVC](https://dvc.org/doc) for versioning the datasets and [mlflow](https://mlflow.org/docs/latest/index.html) for tracking experiments.
