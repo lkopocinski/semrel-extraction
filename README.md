@@ -4,7 +4,6 @@ Research description and results are included in the paper:
 ["Brand-Product Relation Extraction Using Heterogeneous Vector Space Representations"](https://gitlab.clarin-pl.eu/team-semantics/semrel-extraction/-/blob/develop/LREC_BP.pdf) 
 published in [LREC2020](https://lrec2020.lrec-conf.org/en/) conference.  
 
-
 ## Frameworks
 Two frameworks were used in the project. [DVC](https://dvc.org/doc) for versioning the datasets and [mlflow](https://mlflow.org/docs/latest/index.html) for tracking experiments.
 To manage the project with ease consider familiarize with them.  
@@ -70,3 +69,6 @@ add also config file filled with correct credentials:
 `$ echo "[default]" > ~/.aws/credentials`  
 `$ echo "aws_access_key_id = access_key" >> ~/.aws/credentials`  
 `$ echo "aws_secret_access_key = secret_key" >> ~/.aws/credentials`
+
+## How it works?
+![Project diagram](https://github.com/lkopocinski/semrel-extraction/blob/master/arch-diagram.svg)
