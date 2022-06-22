@@ -10,7 +10,7 @@ corpus_ccl==0.9
 gensim==3.8.1
 matplotlib==3.1.2
 nlp_ws==0.6.0
-numpy==1.17.4
+numpy==1.22.0
 pandas==0.25.3
 pika==0.12.0
 PyYAML==5.4
